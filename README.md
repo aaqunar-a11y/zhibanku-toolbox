@@ -21,10 +21,8 @@
 | 工具 | 在线地址 | 源码 |
 | --- | --- | --- |
 | 密码生成器 | [在线使用](https://www.zhibanku.com/tools/password-generator.html) | [`tools/password-generator/`](tools/password-generator/) |
-| URL 编解码 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [`tools/url-encoder/`](tools/url-encoder/) |
-| 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [`tools/case-converter/`](tools/case-converter/) |
 
-共 3 个工具，源码同步自 <https://www.zhibanku.com/tools/>（该站每日新增一个工具，本目录同步跟进）。
+共 1 个工具，源码同步自 <https://www.zhibanku.com/tools/>（该站每日新增一个工具，本目录同步跟进）。
 
 设计约定：
 
