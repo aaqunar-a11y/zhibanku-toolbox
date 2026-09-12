@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文件哈希校验器 — 本地计算 SHA-256 / SHA-1 / MD5 | 知办库</title>
+<meta name="description" content="在浏览器本地计算文件的 SHA-256、SHA-1、MD5 校验值，并可与官方公布的校验值比对，直接给出 MATCH / MISMATCH 结论。文件不上传，断网可用。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/file-hash-checker.html">
+<meta property="og:title" content="文件哈希校验器 — 本地计算 SHA-256 / SHA-1 / MD5">
+<meta property="og:description" content="在浏览器本地计算文件的 SHA-256、SHA-1、MD5，并与官方公布的校验值比对。文件不上传，断网可用。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.zhibanku.com/tools/file-hash-checker.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb;--ok:#15803d;--ok-soft:#f0fdf4;--bad:#b91c1c;--bad-soft:#fef2f2;--warn:#b45309;--warn-soft:#fffbeb;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none;display:inline-block;padding:4px 0;min-height:24px}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+h2{font-size:21px;margin:0 0 10px}
+h3{font-size:16px;margin:18px 0 6px}
+section.block{margin-top:34px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:22px 14px;text-align:center;background:#fcfcfd;transition:border-color .15s,background .15s}
+.drop.hot{border-color:var(--brand);background:var(--brand-soft)}
+.drop p{margin:0 0 10px;color:var(--muted);font-size:14px}
+.filecard{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;margin-top:12px;padding:10px 12px;background:#f9fafb;border:1px solid var(--line);border-radius:10px;font-size:14px}
+.filecard .nm{font-weight:600;word-break:break-all}
+.filecard .mt{color:var(--muted);font-size:13px}
+.opts{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer;min-height:32px;padding:2px 0}
+.opts input[type=checkbox]{width:16px;height:16px;margin:0}
+.opts select{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit;min-height:32px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer;display:inline-block;min-height:36px;line-height:20px}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.primary:hover{color:#fff;border-color:#1d4ed8;background:#1d4ed8}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;align-items:center}
+progress{width:100%;height:10px;border-radius:6px;overflow:hidden;appearance:none;border:0;background:var(--line);margin-top:12px}
+progress::-webkit-progress-bar{background:var(--line);border-radius:6px}
+progress::-webkit-progress-value{background:var(--brand);border-radius:6px}
+progress::-moz-progress-bar{background:var(--brand);border-radius:6px}
+.results{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.results .row{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;padding:10px 12px;border-bottom:1px solid var(--line)}
+.results .row:last-child{border-bottom:0}
+.results .al{min-width:84px;font-size:13px;color:var(--muted)}
+.results .hx{font-family:var(--mono);font-size:13px;word-break:break-all;flex:1 1 240px}
+.results .tag{font-size:12px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.results .tag.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}
+.results .tag.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-soft)}
+.expect{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.expect label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.expect input[type=text]{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;font-family:var(--mono);outline:none}
+.expect input[type=text]:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);font-size:14px;background:#f9fafb;color:var(--muted)}
+.verdict.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}
+.verdict.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-soft)}
+.verdict.warn{color:var(--warn);border-color:var(--warn);background:var(--warn-soft)}
+.verdict strong{font-family:var(--mono);letter-spacing:.4px}
+.note{font-size:13px;color:var(--muted)}
+.note.bad{color:var(--bad)}
+.tip{font-size:13px;color:var(--muted);margin-top:10px}
+.fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.fact ul{margin:8px 0 0;padding-left:20px}
+.fact li{margin-bottom:6px;font-size:14px;color:#374151}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff;display:inline-flex;align-items:center;min-height:38px}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer a{color:var(--brand);display:inline-block;padding:4px 0;min-height:24px}
+@media (max-width:560px){h1{font-size:24px}h2{font-size:19px}.results .al{min-width:auto}.opts{gap:4px 16px}
+  /* 移动端触控目标：主控件抬到 44px，勾选项 40px，导航/页脚文本链接 32px
+     （WCAG 2.5.8 AA 要求 ≥24px；此处按更舒适的 2.5.5 建议值再加余量） */
+  .btn,.related a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .opts label{min-height:40px}.opts select{min-height:40px}
+  .brand a,nav.crumbs a,footer a{display:inline-block;min-height:32px;padding:6px 0}
+}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"文件哈希校验器","url":"https://www.zhibanku.com/tools/file-hash-checker.html","description":"在浏览器本地计算文件的 SHA-256、SHA-1、MD5 校验值，并可与官方公布的校验值比对，直接给出 MATCH / MISMATCH 结论。文件不上传，断网可用。","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"browserRequirements":"需要启用 JavaScript","featureList":["SHA-256 校验值计算","SHA-1 校验值计算","MD5 校验值计算（不适用于安全校验）","与期望校验值自动比对","分片读取，内存占用与文件大小无关","纯本地计算，无网络请求"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"计算时会偷偷上传我的文件吗？","acceptedAnswer":{"@type":"Answer","text":"不会。本页源码里没有任何网络请求代码（没有 fetch、XMLHttpRequest、WebSocket、sendBeacon，也没有表单提交目标），也不引用外部脚本或样式。断网后打开本页仍然可以正常计算；在开发者工具的 Network 面板里清空记录后选择文件并计算，面板中不会出现新的请求。这几点都可以自己验证。"}},{"@type":"Question","name":"支持多大的文件？","acceptedAnswer":{"@type":"Answer","text":"采用分片读取，默认每片 4 MiB，内存占用与文件大小无关，几十 GB 的文件也不会把内存撑爆。实际速度取决于设备与文件大小，页面会显示实时进度与总耗时，可据此自行判断；数 GB 的文件建议使用仓库附带的 Node 命令行工具，流式读取吞吐更高。"}},{"@type":"Question","name":"为什么还保留 MD5？应该用哪个算法？","acceptedAnswer":{"@type":"Answer","text":"优先使用 SHA-256。MD5 已被证明可在实际时间内构造碰撞，因此不得用于判断文件是否被恶意替换等安全用途。保留它的唯一原因是：部分软件至今仍只公布 MD5 校验值，为了能与这类历史清单兼容。"}},{"@type":"Question","name":"结果和 certutil、sha256sum 不一致怎么办？","acceptedAnswer":{"@type":"Answer","text":"先确认比较的是同一种算法——32 位十六进制是 MD5，40 位是 SHA-1，64 位是 SHA-256。若算法一致仍不同，通常意味着文件在下载或传输中被改动、下载不完整，或者你手上的校验值对应的并不是同一个版本。也可以勾选「独立实现交叉校验」，用浏览器原生 WebCrypto 再算一次，从而排除本页实现本身的问题。"}},{"@type":"Question","name":"为什么「期望哈希」显示 NOT CHECKED？","acceptedAnswer":{"@type":"Answer","text":"有三种可能：一是期望值为空，所以没有比对；二是期望值长度不是 32、40 或 64 位十六进制，无法识别算法，此时会显示 INVALID；三是期望值对应的算法本次没有勾选，改勾上再计算即可。"}},{"@type":"Question","name":"能一次校验多个文件吗？","acceptedAnswer":{"@type":"Answer","text":"当前版本一次处理一个文件，对应「一个下载包对一个官方校验值」这个最常见场景。批量校验已在计划中，尚未实现。"}}]}</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://www.zhibanku.com/">知办<span>库</span></a> · 开发工具</div></header>
+  <nav class="crumbs"><a href="https://www.zhibanku.com/tools/">在线工具</a> / <a href="https://www.zhibanku.com/tools/">开发工具</a> / 文件哈希校验</nav>
+  <h1>文件哈希校验器</h1>
+  <p class="sub">选择本地文件，在浏览器里计算 SHA-256 / SHA-1 / MD5，并与官方公布的校验值比对。文件不上传，断网也能用。</p>
+
+  <div class="box">
+    <div class="drop" id="drop">
+      <p>把文件拖到这里，或者</p>
+      <label class="btn primary" for="file">选择文件</label>
+      <input class="sr-only" type="file" id="file" aria-label="选择要计算哈希的文件">
+    </div>
+
+    <div class="filecard" id="filecard" hidden>
+      <span class="nm" id="fname">—</span>
+      <span class="mt" id="fmeta">—</span>
+    </div>
+
+    <div class="opts">
+      <span>算法：</span>
+      <label><input type="checkbox" id="alg-sha256" checked> SHA-256</label>
+      <label><input type="checkbox" id="alg-sha1"> SHA-1</label>
+      <label><input type="checkbox" id="alg-md5"> MD5</label>
+      <label>分片 <select id="chunk" aria-label="分片大小">
+        <option value="1048576">1 MiB</option>
+        <option value="4194304" selected>4 MiB</option>
+        <option value="16777216">16 MiB</option>
+      </select></label>
+      <label><input type="checkbox" id="xcheck" checked> 独立实现交叉校验</label>
+    </div>
+    <p class="tip">MD5 已被证明可在实际时间内构造碰撞，<strong>不得用于安全校验</strong>，仅用于兼容仍在发布 MD5 的历史校验清单。</p>
+
+    <div class="bar">
+      <button class="btn primary" id="runBtn" type="button" disabled>计算哈希</button>
+      <button class="btn" id="resetBtn" type="button">清空</button>
+      <button class="btn" id="copyBtn" type="button">复制结果</button>
+    </div>
+
+    <progress id="prog" max="100" value="0" aria-label="计算进度"></progress>
+    <p class="note" id="live" aria-live="polite">尚未选择文件。</p>
+
+    <div class="results" id="results" aria-live="polite"></div>
+
+    <div class="expect">
+      <label for="expect">期望哈希（可选，粘贴官方公布的校验值）</label>
+      <input type="text" id="expect" spellcheck="false" autocomplete="off"
+             placeholder="例：e3b0c44298fc1c149afbf4c8996fb924…（32 位=MD5，40 位=SHA-1，64 位=SHA-256，自动识别）">
+      <div class="verdict" id="verdict" role="status" aria-live="polite">未提供期望哈希，因此不进行比对（NOT CHECKED）。</div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>工具说明</h2>
+    <p>本工具在浏览器本地读取你选择的文件，用 SHA-256 / SHA-1 / MD5 计算校验值，并可与软件发布方公布的校验值逐字符比对，直接给出 MATCH 或 MISMATCH 的结论。</p>
+    <p>整个过程不涉及任何网络请求：页面源码里没有 fetch、XMLHttpRequest、WebSocket、sendBeacon 之类的调用，也没有表单提交目标，不引用任何外部脚本、样式或字体。全部逻辑都在这一个 HTML 文件里。</p>
+  </section>
+
+  <section class="block">
+    <h2>使用场景</h2>
+    <ul>
+      <li>下载安装包后，把发布方给出的 SHA-256 粘进来核对，确认下载完整、中途没有被替换。</li>
+      <li>从第三方镜像站或网盘取到的文件，与官方值比对，判断是否被重新打包过。</li>
+      <li>归档或交付前记录文件指纹，日后用来确认文件有没有被意外改动。</li>
+      <li>需要快速得到 MD5 以兼容旧的校验清单（注意：此场景只求一致，不代表安全）。</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2>使用方法</h2>
+    <ol>
+      <li>把文件拖入虚线框，或点击「选择文件」。</li>
+      <li>勾选需要计算的算法，默认只算 SHA-256，通常也只需要 SHA-256。</li>
+      <li>点击「计算哈希」。大文件会显示进度，并实时给出已处理的字节数。</li>
+      <li>把官方公布的校验值粘贴到「期望哈希」输入框，长度会自动识别算法，并立刻给出 MATCH / MISMATCH。</li>
+      <li>点「复制结果」，可把文件名、大小和各算法的校验值一起复制走。</li>
+    </ol>
+    <h3>大文件是怎么处理的</h3>
+    <p>工具按分片读取文件（可选 1 / 4 / 16 MiB），内存占用只与分片大小有关，与文件本身大小无关，不会把整个文件读进内存。计算耗时取决于浏览器实现和你文件所在磁盘的速度。若文件达到数 GB，建议改用本工具所属开源仓库里附带的 Node 命令行版本，同样是流式读取。</p>
+  </section>
+
+  <section class="block">
+    <h2>关于「文件不上传」</h2>
+    <div class="fact">
+      <p>这不是一句承诺，而是可以自己验证的技术事实：</p>
+      <ul>
+        <li>页面源码中没有任何网络请求代码，也没有表单提交目标。你可以在浏览器里查看网页源代码，直接搜索这些关键字。</li>
+        <li>打开开发者工具，切到 Network 面板，清空记录，然后选择文件并点击「计算哈希」——面板里不会出现任何新的请求。</li>
+        <li>断网（或让浏览器进入离线模式）后打开本页，依然可以正常算出结果。</li>
+        <li>页面不引用任何外部脚本、样式或字体，全部逻辑都在这一个文件里。</li>
+      </ul>
+      <p class="tip">本工具不做的事：不读取所选文件以外的本地数据；不使用 localStorage / IndexedDB；不记录、不上传、不在本地留下任何副本。</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>结果的可靠性边界</h2>
+    <ul>
+      <li>SHA-256 与 SHA-1 由本页内嵌的独立实现计算。文件较小时可勾选「独立实现交叉校验」，用浏览器原生 WebCrypto 再算一次并逐字符比对，两者一致时才会显示「互证一致」。</li>
+      <li>本工具不提供任何担保。校验值必须来自你自己的可信来源（通常是软件发布方的官方页面），由你粘贴、由你核对。</li>
+      <li>哈希一致只说明「本地文件内容与该校验值所对应的内容一致」，不说明该文件一定安全或一定适合安装。</li>
+      <li>如果粘贴的校验值本身来源不可信，那么比对结论也没有意义。</li>
+      <li>MD5 已被证明可在实际时间内构造碰撞，因此不得用于安全校验；本工具保留它只为兼容历史校验清单。</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2>常见问题</h2>
+    <div class="faq">
+      <details><summary>计算时会偷偷上传我的文件吗？</summary><p>不会。本页源码里没有任何网络请求代码（没有 fetch、XMLHttpRequest、WebSocket、sendBeacon，也没有表单提交目标），也不引用外部脚本或样式。断网后打开本页仍然可以正常计算；在开发者工具的 Network 面板里清空记录后选择文件并计算，面板中不会出现新的请求。这几点都可以自己验证。</p></details>
+      <details><summary>支持多大的文件？</summary><p>采用分片读取，默认每片 4 MiB，内存占用与文件大小无关，几十 GB 的文件也不会把内存撑爆。实际速度取决于设备与文件大小，页面会显示实时进度与总耗时，可据此自行判断；数 GB 的文件建议使用仓库附带的 Node 命令行工具，流式读取吞吐更高。</p></details>
+      <details><summary>为什么还保留 MD5？应该用哪个算法？</summary><p>优先使用 SHA-256。MD5 已被证明可在实际时间内构造碰撞，因此不得用于判断文件是否被恶意替换等安全用途。保留它的唯一原因是：部分软件至今仍只公布 MD5 校验值，为了能与这类历史清单兼容。</p></details>
+      <details><summary>结果和 certutil、sha256sum 不一致怎么办？</summary><p>先确认比较的是同一种算法——32 位十六进制是 MD5，40 位是 SHA-1，64 位是 SHA-256。若算法一致仍不同，通常意味着文件在下载或传输中被改动、下载不完整，或者你手上的校验值对应的并不是同一个版本。也可以勾选「独立实现交叉校验」，用浏览器原生 WebCrypto 再算一次，从而排除本页实现本身的问题。</p></details>
+      <details><summary>为什么「期望哈希」显示 NOT CHECKED？</summary><p>有三种可能：一是期望值为空，所以没有比对；二是期望值长度不是 32、40 或 64 位十六进制，无法识别算法，此时会显示 INVALID；三是期望值对应的算法本次没有勾选，改勾上再计算即可。</p></details>
+      <details><summary>能一次校验多个文件吗？</summary><p>当前版本一次处理一个文件，对应「一个下载包对一个官方校验值」这个最常见场景。批量校验已在计划中，尚未实现。</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <p>知办库开发工具 — 免费、隐私优先、纯浏览器工具。文件哈希校验器 v1.0.0（hashkit v1.0.0）。</p>
+    <section class="block">
+      <h2>相关工具</h2>
+      <div class="related">
+        <a href="https://www.zhibanku.com/tools/">全部在线工具</a>
+        <a href="https://www.zhibanku.com/tools/md5-sheng-cheng-qi.html">MD5 生成器（文本内容）</a>
+        <a href="https://www.zhibanku.com/tools/base64-encoder.html">Base64 编码</a>
+        <a href="https://www.zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验工具</a>
+        <a href="https://www.zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳转换器</a>
+      </div>
+    </section>
+  </footer>
+</div>
+
+<script>/*__HASHKIT_LIB_SOURCE__*/</script>
+<script>
+(function () {
+  "use strict";
+  var HK = window.HashKit;
+  if (!HK) {
+    document.getElementById("live").textContent = "哈希库未能加载，请刷新页面。";
+    return;
+  }
+
+  var el = function (id) { return document.getElementById(id); };
+  var fileInput = el("file"), drop = el("drop"), filecard = el("filecard"),
+      fname = el("fname"), fmeta = el("fmeta"), runBtn = el("runBtn"),
+      resetBtn = el("resetBtn"), copyBtn = el("copyBtn"), prog = el("prog"),
+      live = el("live"), results = el("results"), expect = el("expect"),
+      verdict = el("verdict"), chunkSel = el("chunk"), xcheck = el("xcheck");
+
+  var ALG_LABEL = { sha256: "SHA-256", sha1: "SHA-1", md5: "MD5" };
+  var currentFile = null;
+  var currentResult = null;
+  var busy = false;
+
+  function fmtBytes(n) {
+    if (n < 1024) return n + " B";
+    var u = ["KiB", "MiB", "GiB", "TiB"], i = -1, v = n;
+    do { v /= 1024; i++; } while (v >= 1024 && i < u.length - 1);
+    return v.toFixed(v >= 100 ? 0 : 1) + " " + u[i] + "（" + n.toLocaleString("en-US") + " 字节）";
+  }
+  function say(msg, bad) {
+    live.textContent = msg;
+    live.className = bad ? "note bad" : "note";
+  }
+  function pickedAlgos() {
+    var out = [];
+    ["sha256", "sha1", "md5"].forEach(function (a) {
+      if (el("alg-" + a).checked) out.push(a);
+    });
+    return out;
+  }
+
+  function selectFile(f) {
+    if (!f) return;
+    currentFile = f;
+    currentResult = null;
+    results.innerHTML = "";
+    prog.value = 0;
+    filecard.hidden = false;
+    fname.textContent = f.name;
+    fmeta.textContent = fmtBytes(f.size) + (f.lastModified
+      ? " · 修改时间 " + new Date(f.lastModified).toLocaleString("zh-CN") : "");
+    runBtn.disabled = false;
+    var empty = f.size === 0;
+    say(empty ? "已选择空文件（0 字节），点击「计算哈希」后可直接得到空输入的校验值。"
+              : "已选择文件，点击「计算哈希」开始。");
+    updateVerdict();
+  }
+
+  function renderResults(res, nativeCmp) {
+    var html = "";
+    for (var i = 0; i < HK.ALGORITHMS.length; i++) {
+      var a = HK.ALGORITHMS[i];
+      if (!res.hashes[a]) continue;
+      var tag = "";
+      if (nativeCmp && nativeCmp[a]) {
+        tag = (nativeCmp[a] === res.hashes[a])
+          ? '<span class="tag ok">互证一致</span>'
+          : '<span class="tag bad">互证不一致</span>';
+      }
+      html += '<div class="row"><span class="al">' + ALG_LABEL[a] + '</span>' +
+              '<span class="hx" id="hx-' + a + '">' + res.hashes[a] + '</span>' + tag + "</div>";
+    }
+    html += '<div class="row"><span class="al">文件大小</span><span class="hx">' +
+            fmtBytes(res.bytes) + '</span></div>';
+    html += '<div class="row"><span class="al">处理方式</span><span class="hx">' +
+            res.chunks + ' 个分片 × ' + fmtBytes(parseInt(chunkSel.value, 10)) +
+            ' · 耗时 ' + (res.ms / 1000).toFixed(2) + ' 秒</span></div>';
+    results.innerHTML = html;
+  }
+
+  function updateVerdict() {
+    if (!currentFile) {
+      verdict.className = "verdict";
+      verdict.textContent = "尚未选择文件。";
+      return;
+    }
+    if (!currentResult) {
+      verdict.className = "verdict";
+      verdict.textContent = expect.value.trim()
+        ? "已填入期望哈希，点击「计算哈希」后给出比对结论。"
+        : "未提供期望哈希，因此不进行比对（NOT CHECKED）。";
+      return;
+    }
+    var c = HK.compare(currentResult.hashes, expect.value);
+    if (c.status === "MATCH") {
+      verdict.className = "verdict ok";
+      verdict.textContent = "";
+      verdict.innerHTML = "<strong>MATCH</strong> — 本地 " + ALG_LABEL[c.algorithm] +
+        " 值与期望值完全一致。这只说明内容与该校验值对应的内容相同，不说明文件是否安全。";
+    } else if (c.status === "MISMATCH") {
+      verdict.className = "verdict bad";
+      verdict.innerHTML = "<strong>MISMATCH</strong> — 与期望值不一致。请确认比较的是同一算法（" +
+        ALG_LABEL[c.algorithm] + "）、同一版本；若仍不一致，文件可能在下载或传输中被改动，建议重新下载。";
+    } else if (c.status === "INVALID") {
+      verdict.className = "verdict warn";
+      verdict.innerHTML = "<strong>INVALID</strong> — 期望值长度不是 32 / 40 / 64 位十六进制，" +
+        "无法识别是 MD5、SHA-1 还是 SHA-256，因此不做比对。";
+    } else {
+      verdict.className = "verdict";
+      verdict.innerHTML = "<strong>NOT CHECKED</strong> — " + (c.note || "未提供期望哈希") +
+        (c.algorithm ? "（期望值看起来是 " + ALG_LABEL[c.algorithm] + "）" : "") + "。";
+    }
+  }
+
+  function run() {
+    if (busy || !currentFile) return;
+    var algos = pickedAlgos();
+    if (algos.length === 0) { say("请至少勾选一个算法。", true); return; }
+    busy = true;
+    runBtn.disabled = true;
+    results.innerHTML = "";
+    prog.max = currentFile.size || 1;
+    prog.value = 0;
+    say("正在计算…");
+    var chunkSize = parseInt(chunkSel.value, 10);
+
+    HK.hashBlob(currentFile, {
+      algorithms: algos,
+      chunkSize: chunkSize,
+      onProgress: function (loaded, total) {
+        prog.value = loaded;
+        var pct = total ? (loaded / total * 100) : 100;
+        say("正在计算… " + pct.toFixed(1) + "%（" + fmtBytes(loaded) + " / " + fmtBytes(total) + "）");
+      }
+    }).then(function (res) {
+      currentResult = res;
+      prog.value = prog.max;
+      say("计算完成，" + res.chunks + " 个分片，用时 " + (res.ms / 1000).toFixed(2) + " 秒。");
+
+      var wantNative = xcheck.checked &&
+        (algos.indexOf("sha256") !== -1 || algos.indexOf("sha1") !== -1);
+      if (!wantNative) { renderResults(res, null); updateVerdict(); finish(); return; }
+
+      if (currentFile.size > 64 * 1024 * 1024) {
+        renderResults(res, null);
+        say("计算完成，用时 " + (res.ms / 1000).toFixed(2) +
+            " 秒。文件超过 64 MiB，已跳过原生交叉校验，以免整文件读入内存。");
+        updateVerdict(); finish(); return;
+      }
+      say("正在用浏览器原生实现交叉校验…");
+      HK.hashBlobNative(currentFile, algos).then(function (native) {
+        if (!native) {
+          renderResults(res, null);
+          say("计算完成。当前环境无法使用原生交叉校验（需 HTTPS 或 localhost），已跳过。");
+        } else {
+          renderResults(res, native);
+          var allSame = Object.keys(native).every(function (a) { return native[a] === res.hashes[a]; });
+          say(allSame
+            ? "计算完成，两种独立实现结果互证一致。"
+            : "计算完成，但两种实现结果不一致 —— 请勿采信本次结果，并反馈该问题。", !allSame);
+        }
+        updateVerdict();
+        finish();
+      });
+    }).catch(function (e) {
+      say("计算失败：" + (e && e.message ? e.message : String(e)), true);
+      finish();
+    });
+
+    function finish() { busy = false; runBtn.disabled = false; }
+  }
+
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(t);
+    }
+    var ta = document.createElement("textarea");
+    ta.value = t;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "absolute";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { /* 忽略 */ }
+    document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+
+  function copyResults() {
+    if (!currentResult) { say("还没有可复制的结果。", true); return; }
+    var lines = ["文件：" + currentFile.name, "大小：" + currentFile.size + " 字节"];
+    Object.keys(currentResult.hashes).forEach(function (a) {
+      lines.push(ALG_LABEL[a] + "：" + currentResult.hashes[a]);
+    });
+    var c = HK.compare(currentResult.hashes, expect.value);
+    if (c.status === "MATCH" || c.status === "MISMATCH") {
+      lines.push("比对：" + c.status + "（期望 " + c.expected + "）");
+    }
+    copyText(lines.join("\n")).then(function () { say("结果已复制到剪贴板。"); },
+      function () { say("复制失败，请手动选中结果行复制。", true); });
+  }
+
+  function reset() {
+    currentFile = null;
+    currentResult = null;
+    fileInput.value = "";
+    filecard.hidden = true;
+    results.innerHTML = "";
+    prog.value = 0;
+    runBtn.disabled = true;
+    expect.value = "";
+    say("尚未选择文件。");
+    updateVerdict();
+  }
+
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files && fileInput.files[0]) selectFile(fileInput.files[0]);
+  });
+  ["dragenter", "dragover"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) {
+      e.preventDefault(); e.stopPropagation(); drop.classList.add("hot");
+    });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) {
+      e.preventDefault(); e.stopPropagation(); drop.classList.remove("hot");
+    });
+  });
+  drop.addEventListener("drop", function (e) {
+    var dt = e.dataTransfer;
+    if (dt && dt.files && dt.files[0]) selectFile(dt.files[0]);
+  });
+
+  runBtn.addEventListener("click", run);
+  resetBtn.addEventListener("click", reset);
+  copyBtn.addEventListener("click", copyResults);
+  expect.addEventListener("input", updateVerdict);
+  expect.addEventListener("change", updateVerdict);
+
+  updateVerdict();
+})();
+</script>
+</body>
+</html>

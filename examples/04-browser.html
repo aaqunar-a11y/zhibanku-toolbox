@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hashkit 浏览器最小示例</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       max-width:720px;margin:40px auto;padding:0 16px;line-height:1.6;color:#1f2933}
+  h1{font-size:22px}
+  #drop{border:2px dashed #d0d5dd;border-radius:12px;padding:28px 16px;text-align:center;color:#6b7280;cursor:pointer}
+  #drop.hot{border-color:#2563eb;background:#eff4ff;color:#2563eb}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+  td,th{border-bottom:1px solid #e5e7eb;padding:8px 6px;text-align:left;vertical-align:top}
+  th{width:84px;color:#6b7280;font-weight:500}
+  code{font-family:ui-monospace,Consolas,monospace;word-break:break-all;font-size:13px}
+  .msg{margin-top:12px;font-size:14px;color:#6b7280}
+  .verdict{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:14px;border:1px solid #e5e7eb;background:#f9fafb}
+  .verdict.ok{color:#15803d;border-color:#15803d;background:#f0fdf4}
+  .verdict.bad{color:#b91c1c;border-color:#b91c1c;background:#fef2f2}
+  input[type=text]{width:100%;padding:9px 11px;border:1px solid #e5e7eb;border-radius:9px;
+                   font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  progress{width:100%;height:10px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<h1>hashkit 浏览器最小示例</h1>
+<p>这个页面演示三件事：引入库、流式计算文件哈希、与期望值比对。
+   <strong>文件不会离开本机</strong>——本页没有任何网络请求代码，也不需要后端。</p>
+
+<div id="drop">把文件拖到这里，或点击选择</div>
+<input type="file" id="file" hidden>
+
+<p style="margin-top:16px"><label for="expect"><strong>期望哈希（可选）</strong></label></p>
+<input type="text" id="expect" placeholder="粘贴官方校验值：32 位=MD5，40 位=SHA-1，64 位=SHA-256，自动识别" spellcheck="false">
+
+<progress id="prog" max="100" value="0"></progress>
+<div class="msg" id="msg">尚未选择文件。</div>
+
+<table id="out" hidden>
+  <tbody>
+    <tr><th>SHA-256</th><td><code id="h-sha256">—</code></td></tr>
+    <tr><th>SHA-1</th><td><code id="h-sha1">—</code></td></tr>
+    <tr><th>MD5</th><td><code id="h-md5">—</code></td></tr>
+    <tr><th>原生互证</th><td><code id="h-native">—</code></td></tr>
+  </tbody>
+</table>
+
+<div class="verdict" id="verdict">未提供期望哈希，因此不进行比对（NOT CHECKED）。</div>
+
+<!-- 核心就是这一行：零依赖、ES5、无需构建 -->
+<script src="../src/hashkit.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var drop = document.getElementById('drop');
+  var input = document.getElementById('file');
+  var prog = document.getElementById('prog');
+  var msg = document.getElementById('msg');
+  var out = document.getElementById('out');
+  var expect = document.getElementById('expect');
+  var verdict = document.getElementById('verdict');
+  var ALGOS = ['sha256', 'sha1', 'md5'];
+  var current = null;
+
+  function say(t) { msg.textContent = t; }
+
+  function select(f) {
+    current = null;
+    prog.value = 0;
+    say('已选择：' + f.name + '（' + f.size.toLocaleString('en-US') + ' bytes），开始计算…');
+    out.hidden = false;
+
+    // 流式计算：内存占用 = chunkSize，与文件大小无关
+    HashKit.hashBlob(f, {
+      algorithms: ALGOS,
+      chunkSize: 4 * 1024 * 1024,
+      onProgress: function (loaded, total) {
+        prog.max = total || 1;
+        prog.value = loaded;
+        say('计算中… ' + (loaded / total * 100).toFixed(1) + '%');
+      }
+    }).then(function (r) {
+      current = r;
+      prog.value = prog.max;
+      ALGOS.forEach(function (a) { document.getElementById('h-' + a).textContent = r.hashes[a]; });
+      say('本地计算完成：' + r.chunks + ' 片，用时 ' + (r.ms / 1000).toFixed(2) + ' 秒。');
+
+      // 用浏览器原生 WebCrypto 独立算一次，交叉校验本库实现（仅支持 SHA-256 / SHA-1）
+      return HashKit.hashBlobNative(f, ['sha256', 'sha1']);
+    }).then(function (native) {
+      var cell = document.getElementById('h-native');
+      if (!native) {
+        // 非安全上下文（如 file:// 打开）会走到这里。不伪造结论。
+        cell.textContent = '不可用（需要 HTTPS 或 localhost）';
+      } else {
+        var parts = ALGOS.filter(function (a) { return native[a]; }).map(function (a) {
+          return a.toUpperCase() + (native[a] === current.hashes[a] ? ' 一致' : ' 不一致');
+        });
+        cell.textContent = parts.join(' · ') + '（WebCrypto 不提供 MD5）';
+      }
+      updateVerdict();
+    }).catch(function (e) {
+      say('计算失败：' + (e && e.message ? e.message : String(e)));
+    });
+  }
+
+  function updateVerdict() {
+    if (!current) {
+      verdict.className = 'verdict';
+      verdict.textContent = '尚未选择文件。';
+      return;
+    }
+    var c = HashKit.compare(current.hashes, expect.value);
+    if (c.status === 'MATCH') {
+      verdict.className = 'verdict ok';
+      verdict.textContent = 'MATCH — 本地 ' + c.algorithm.toUpperCase() + ' 值与期望值完全一致。';
+    } else if (c.status === 'MISMATCH') {
+      verdict.className = 'verdict bad';
+      verdict.textContent = 'MISMATCH — 期望 ' + c.expected + '，实际 ' + c.actual;
+    } else {
+      verdict.className = 'verdict';
+      verdict.textContent = c.status + ' — ' + c.note;
+    }
+  }
+
+  drop.addEventListener('click', function () { input.click(); });
+  input.addEventListener('change', function () { if (input.files[0]) select(input.files[0]); });
+
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('hot'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('hot'); });
+  });
+  drop.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files[0]) select(e.dataTransfer.files[0]);
+  });
+
+  expect.addEventListener('input', updateVerdict);
+})();
+</script>
+</body>
+</html>

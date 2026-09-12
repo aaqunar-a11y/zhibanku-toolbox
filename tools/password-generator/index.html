@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>密码生成器 — 在线生成高强度随机密码 | 知办库</title>
+<meta name="description" content="知办库免费在线密码生成器：使用浏览器加密级随机数生成高强度密码，可自定义长度与字符集、排除易混淆字符、评估强度。全程本地运行，密码不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/password-generator.html">
+<meta property="og:title" content="密码生成器 — 在线生成高强度随机密码">
+<meta property="og:description" content="浏览器加密级随机数生成高强度密码，可自定义长度与字符集，全程本地运行。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.zhibanku.com/tools/password-generator.html">
+<meta name="twitter:card" content="summary">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1f2430;--muted:#6b7280;--line:#e5e7eb;--acc:#2563eb;--ok:#15803d;--warn:#b45309;--bad:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:20px 16px 64px}
+header.top{border-bottom:1px solid var(--line);background:#fff}
+header.top .inner{max-width:840px;margin:0 auto;padding:14px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header.top a{color:var(--fg);text-decoration:none;font-weight:600}
+header.top nav a{font-weight:400;color:var(--muted);margin-right:14px}
+h1{font-size:26px;line-height:1.35;margin:26px 0 8px}
+.lead{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+label{font-weight:600}
+.out{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;font-size:18px;word-break:break-all;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px;min-height:64px;line-height:1.5}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{font:inherit;font-weight:600;border:1px solid transparent;border-radius:9px;padding:11px 18px;cursor:pointer;min-height:44px}
+button.primary{background:var(--acc);color:#fff}
+button.ghost{background:#fff;border-color:var(--line);color:var(--fg)}
+button:disabled{opacity:.55;cursor:not-allowed}
+input[type=range]{width:100%;min-height:32px}
+input[type=number]{font:inherit;padding:10px;border:1px solid var(--line);border-radius:9px;min-height:44px;width:110px}
+.chk{display:flex;align-items:center;gap:9px;min-height:40px;padding:2px 4px;border-radius:8px}
+.chk input{width:20px;height:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 18px}
+.meter{height:10px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:12px}
+.meter i{display:block;height:100%;width:0;background:var(--bad);transition:width .25s}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-size:14px}
+.list{margin:0;padding-left:20px}
+.list li{margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#f3f4f6}
+code{background:#f3f4f6;border-radius:5px;padding:2px 6px;font-size:14px}
+footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;color:var(--muted);font-size:14px}
+.note{font-size:14px;color:var(--muted);margin-top:10px}
+.bulk{width:100%;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:110px}
+#copyState{font-size:14px;color:var(--ok);min-height:22px}
+@media(max-width:520px){h1{font-size:22px}.out{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="inner">
+<a href="/">知办库</a>
+<nav><a href="/tools/">在线工具</a><a href="/dev-tools.html">开发者工具</a></nav>
+</div></header>
+
+<div class="wrap">
+<h1>密码生成器 — 在线生成高强度随机密码</h1>
+<p class="lead">使用浏览器内置的加密级随机数源生成密码，可自定义长度与字符集。所有计算在你的设备上完成，密码不会被发送到任何服务器。</p>
+
+<section class="card">
+  <div class="out" id="out" aria-live="polite" aria-label="生成的密码">点击下方按钮生成密码</div>
+  <div class="btns">
+    <button class="primary" id="gen" type="button">生成密码</button>
+    <button class="ghost" id="copy" type="button">复制</button>
+  </div>
+  <div id="copyState" role="status" aria-live="polite"></div>
+
+  <div class="meter" aria-hidden="true"><i id="bar"></i></div>
+  <div class="meta">
+    <span id="strength">强度：—</span>
+    <span id="entropy">熵：—</span>
+  </div>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 14px">生成选项</h2>
+
+  <div class="row" style="margin-bottom:14px">
+    <label for="len">密码长度</label>
+    <input type="range" id="len" min="6" max="128" value="20" step="1" style="flex:1;min-width:200px">
+    <output for="len" id="lenOut">20</output>
+  </div>
+
+  <div class="row" style="margin-bottom:14px">
+    <label for="count">生成数量</label>
+    <input type="number" id="count" min="1" max="50" value="1" inputmode="numeric">
+    <span class="note">一次最多 50 条</span>
+  </div>
+
+  <fieldset style="border:1px solid var(--line);border-radius:10px;padding:14px;margin:0">
+    <legend style="font-weight:600;padding:0 6px">字符集</legend>
+    <div class="grid">
+      <label class="chk"><input type="checkbox" id="upper" checked>大写字母 A-Z</label>
+      <label class="chk"><input type="checkbox" id="lower" checked>小写字母 a-z</label>
+      <label class="chk"><input type="checkbox" id="digit" checked>数字 0-9</label>
+      <label class="chk"><input type="checkbox" id="symbol" checked>符号 !@#$…</label>
+      <label class="chk"><input type="checkbox" id="nospace" checked>不使用空格</label>
+      <label class="chk"><input type="checkbox" id="noamb">排除易混淆字符 0O1lI</label>
+      <label class="chk"><input type="checkbox" id="nostart">首字符不用数字</label>
+      <label class="chk"><input type="checkbox" id="each" checked>每类至少一个</label>
+    </div>
+  </fieldset>
+
+  <div class="btns">
+    <button class="primary" id="bulkBtn" type="button">批量生成</button>
+    <button class="ghost" id="bulkCopy" type="button">复制全部</button>
+  </div>
+  <textarea class="bulk" id="bulk" readonly aria-label="批量生成结果" placeholder="点击“批量生成”后，结果会显示在这里"></textarea>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">它如何工作</h2>
+  <ol class="list">
+    <li>根据你勾选的字符集拼出候选字符表，并按选项剔除易混淆字符。</li>
+    <li>用 <code>crypto.getRandomValues()</code> 取随机字节，再用<strong>拒绝采样</strong>把它映射到字符表下标。这样每个字符出现概率严格相等，不会像 <code>Math.random()</code> 那样引入取模偏差。</li>
+    <li>若勾选“每类至少一个”，会先从每个已选类别各取一个字符，剩余位随机填充，最后整体洗牌，避免固定位置规律。</li>
+    <li>按字符表大小 log₂(N) × 长度 估算信息熵，给出强度参考。</li>
+  </ol>
+  <p class="note">本页不联网，不写 Cookie，不使用 localStorage。刷新即清空。</p>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">熵值与强度怎么读</h2>
+  <table>
+    <thead><tr><th>估算熵</th><th>强度</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>低于 40 bit</td><td>弱</td><td>不建议用于任何真实账号</td></tr>
+      <tr><td>40 – 59 bit</td><td>中</td><td>可临时使用，重要账号不建议</td></tr>
+      <tr><td>60 – 79 bit</td><td>强</td><td>多数在线账号可用</td></tr>
+      <tr><td>80 bit 及以上</td><td>很强</td><td>适合重要账号、密码管理器主密码</td></tr>
+    </tbody>
+  </table>
+  <p class="note">熵是“暴力猜解难度的理论上界”，不等于绝对安全。真正的风险通常来自复用密码、钓鱼与撞库，而不是密码本身不够随机。建议每个账号使用不同密码，并用密码管理器保存。</p>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
+  <dl>
+    <dt><strong>生成的密码会被记录吗？</strong></dt>
+    <dd>不会。页面没有任何网络请求，密码只存在于当前页面的内存与显示区域。你可以打开浏览器开发者工具的“网络”面板自行验证。</dd>
+    <dt><strong>为什么长度比复杂度更重要？</strong></dt>
+    <dd>熵随长度线性增长，而字符集每扩大一倍才增加 1 bit。把 12 位加到 20 位，通常比把字符集从 62 种扩到 95 种收益更大。</dd>
+    <dt><strong>“每类至少一个”会降低随机性吗？</strong></dt>
+    <dd>会轻微降低可选空间，但能避免生成出“全是小写字母”这类不合平台规则的结果。本页通过“先取每类一个 + 整体洗牌”把位置规律消除。</dd>
+    <dt><strong>为什么不用 Math.random()？</strong></dt>
+    <dd><code>Math.random()</code> 不是密码学安全的，输出可被预测，且直接取模会带来偏差。本页使用 <code>crypto.getRandomValues()</code> 加拒绝采样。</dd>
+    <dt><strong>符号导致某些网站不接受怎么办？</strong></dt>
+    <dd>取消勾选“符号”，改为增加长度来补偿熵值。</dd>
+  </dl>
+</section>
+
+<footer class="foot">
+  <p>纯前端工具，浏览器本地运行，不上传任何数据。密码强度判断为通用估算，不构成安全保证。</p>
+  <p><a href="/tools/">返回在线工具</a></p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var UPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ", LOWER="abcdefghijklmnopqrstuvwxyz",
+      DIGIT="0123456789", SYMBOL="!@#$%^&*()-_=+[]{};:,.?/", SPACE=" ",
+      AMBIG="0O1lI";
+  var $=function(id){return document.getElementById(id);};
+  var out=$("out"), bulk=$("bulk"), bar=$("bar"),
+      stTxt=$("strength"), enTxt=$("entropy"), copyState=$("copyState");
+
+  function randInt(n){
+    if(n<=0) return 0;
+    var limit=Math.floor(4294967296/n)*n, a=new Uint32Array(1);
+    for(var i=0;i<64;i++){
+      crypto.getRandomValues(a);
+      if(a[0]<limit) return a[0]%n;
+    }
+    return a[0]%n;
+  }
+  function pick(pool){ return pool.charAt(randInt(pool.length)); }
+
+  function buildSets(){
+    var sets=[];
+    if($("upper").checked) sets.push(UPPER);
+    if($("lower").checked) sets.push(LOWER);
+    if($("digit").checked) sets.push(DIGIT);
+    if($("symbol").checked) sets.push(SYMBOL);
+    if(!$("nospace").checked) sets.push(SPACE);
+    var noamb=$("noamb").checked;
+    if(noamb){
+      sets=sets.map(function(s){
+        var o="";
+        for(var i=0;i<s.length;i++) if(AMBIG.indexOf(s.charAt(i))<0) o+=s.charAt(i);
+        return o;
+      }).filter(function(s){return s.length>0;});
+    }
+    return sets;
+  }
+
+  function generate(len, sets){
+    var all=sets.join("");
+    if(!all.length) return null;
+    var chars=[], i;
+    if($("each").checked && sets.length>0 && len>=sets.length){
+      for(i=0;i<sets.length;i++) chars.push(pick(sets[i]));
+    }
+    while(chars.length<len) chars.push(pick(all));
+    // 洗牌
+    for(i=chars.length-1;i>0;i--){
+      var j=randInt(i+1), t=chars[i]; chars[i]=chars[j]; chars[j]=t;
+    }
+    // 首字符不用数字
+    if($("nostart").checked){
+      for(i=0;i<chars.length;i++){
+        if(DIGIT.indexOf(chars[i])>=0){
+          for(var k=0;k<chars.length;k++){
+            if(DIGIT.indexOf(chars[k])<0){
+              var tmp=chars[i]; chars[i]=chars[k]; chars[k]=tmp; break;
+            }
+          }
+          break;
+        }
+      }
+    }
+    return chars.join("");
+  }
+
+  function rate(len, sets){
+    var n=sets.join("").length;
+    if(!n||!len) return {bits:0,label:"—",color:"var(--bad)"};
+    var bits=Math.round(len*Math.log2(n));
+    var label,color;
+    if(bits<40){label="弱";color="var(--bad)";}
+    else if(bits<60){label="中";color="var(--warn)";}
+    else if(bits<80){label="强";color="var(--ok)";}
+    else {label="很强";color="var(--ok)";}
+    return {bits:bits,label:label,color:color};
+  }
+
+  function refreshMeta(pwd){
+    var sets=buildSets();
+    var len=pwd?pwd.length:parseInt($("len").value,10);
+    var r=rate(len,sets);
+    stTxt.textContent="强度："+r.label;
+    enTxt.textContent="熵：约 "+r.bits+" bit"+(sets.join("").length?"（字符表 "+sets.join("").length+" 种 × 长度 "+len+"）":"");
+    var pct=Math.max(0,Math.min(100,Math.round(r.bits/128*100)));
+    bar.style.width=pct+"%";
+    bar.style.background=r.color;
+  }
+
+  function doGen(){
+    var sets=buildSets();
+    var msg=copyState;
+    if(!sets.length){ out.textContent="请至少勾选一种字符集"; msg.textContent=""; refreshMeta(""); return; }
+    var len=parseInt($("len").value,10)||20;
+    var pwd=generate(len,sets);
+    if(!pwd){ out.textContent="无法生成：字符集为空（可能是排除了全部字符）"; refreshMeta(""); return; }
+    out.textContent=pwd;
+    msg.textContent="";
+    refreshMeta(pwd);
+  }
+
+  function copyText(t){
+    if(!t) return;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ copyState.textContent="已复制到剪贴板"; },
+        function(){ copyState.textContent="复制失败，请手动选中复制"; });
+    } else {
+      var ta=document.createElement("textarea");
+      ta.value=t; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); copyState.textContent="已复制到剪贴板"; }
+      catch(e){ copyState.textContent="复制失败，请手动选中复制"; }
+      document.body.removeChild(ta);
+    }
+  }
+
+  $("len").addEventListener("input",function(){
+    $("lenOut").textContent=$("len").value;
+    refreshMeta(null);
+  });
+  ["upper","lower","digit","symbol","nospace","noamb","each"].forEach(function(id){
+    $(id).addEventListener("change",function(){ refreshMeta(null); });
+  });
+  $("gen").addEventListener("click",doGen);
+  $("copy").addEventListener("click",function(){ copyText(out.textContent); });
+  $("bulkBtn").addEventListener("click",function(){
+    var sets=buildSets();
+    if(!sets.length){ bulk.value="请至少勾选一种字符集"; refreshMeta(""); return; }
+    var len=parseInt($("len").value,10)||20;
+    var n=Math.max(1,Math.min(50,parseInt($("count").value,10)||1));
+    var lines=[];
+    for(var i=0;i<n;i++){ lines.push(generate(len,sets)); }
+    bulk.value=lines.join("\n");
+    out.textContent=lines[0];
+    copyState.textContent="";
+    refreshMeta(lines[0]);
+  });
+  $("bulkCopy").addEventListener("click",function(){ copyText(bulk.value); });
+
+  refreshMeta(null);
+})();
+</script>
+</body>
+</html>

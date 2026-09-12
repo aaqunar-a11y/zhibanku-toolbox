@@ -1,0 +1,14 @@
+# 忽略构建与运行产物
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# 测试与浏览器测试的产物（每次运行都会重新生成）
+test/last-run.json
+browser-test/last-run.json
+browser-test/screenshots/
+
+# 临时目录
+tmp/
+.cache/

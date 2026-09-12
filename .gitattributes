@@ -1,0 +1,9 @@
+# 统一换行与二进制识别，避免 Windows/macOS 协作时出现"整文件改动"的假 diff
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.exe binary

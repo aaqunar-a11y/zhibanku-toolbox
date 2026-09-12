@@ -1,0 +1,46 @@
+{
+  "name": "zhibanku-toolbox",
+  "version": "1.0.0",
+  "description": "知办库工具箱 — 零依赖、可流式的小工具集合。首个模块 hashkit：SHA-256 / SHA-1 / MD5 纯 JS 实现，同一份源码在浏览器与 Node 通用。",
+  "license": "MIT",
+  "private": false,
+  "main": "src/hashkit.js",
+  "bin": {
+    "hashkit": "cli/hashkit-cli.js"
+  },
+  "files": [
+    "src/",
+    "cli/",
+    "examples/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/run.js",
+    "test:quick": "node test/run.js --quick",
+    "test:browser": "node browser-test/run-browser.js",
+    "build": "node tools/build-page.js"
+  },
+  "keywords": [
+    "hash",
+    "sha256",
+    "sha1",
+    "md5",
+    "checksum",
+    "verify-download",
+    "streaming",
+    "zero-dependency",
+    "browser",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhibanku/toolbox.git"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

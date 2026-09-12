@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>命名风格转换 — 驼峰/下划线/短横线互转 | 知办库</title>
+<meta name="description" content="知办库免费在线命名风格转换工具：一键在 camelCase、PascalCase、snake_case、kebab-case、CONSTANT_CASE 之间互转，支持中划线、空格与连续大写输入。纯前端运行，不上传数据。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/case-converter.html">
+<meta property="og:title" content="命名风格转换 — 驼峰/下划线/短横线互转">
+<meta property="og:description" content="一键在 camelCase、PascalCase、snake_case、kebab-case、CONSTANT_CASE 之间互转。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.zhibanku.com/tools/case-converter.html">
+<meta name="twitter:card" content="summary">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1f2430;--muted:#6b7280;--line:#e5e7eb;--acc:#2563eb;--ok:#15803d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 64px}
+header.top{border-bottom:1px solid var(--line);background:#fff}
+header.top .inner{max-width:900px;margin:0 auto;padding:14px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header.top a{color:var(--fg);text-decoration:none;font-weight:600}
+header.top nav a{font-weight:400;color:var(--muted);margin-right:14px}
+h1{font-size:26px;line-height:1.35;margin:26px 0 8px}
+.lead{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+input[type=text]{font:inherit;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;width:100%;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:48px}
+label{font-weight:600;display:block;margin-bottom:6px}
+button{font:inherit;font-weight:600;border:1px solid transparent;border-radius:9px;padding:11px 18px;cursor:pointer;min-height:44px}
+button.primary{background:var(--acc);color:#fff}
+button.ghost{background:#fff;border-color:var(--line);color:var(--fg)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.results{margin-top:6px}
+.res{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.res .k{flex:0 0 170px;font-size:13px;color:var(--muted)}
+.res .v{flex:1;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:15px;word-break:break-all}
+.res button{padding:7px 12px;min-height:36px;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:6px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#f3f4f6}
+code{background:#f3f4f6;border-radius:5px;padding:2px 6px;font-size:13px}
+.list{margin:0;padding-left:20px}.list li{margin:6px 0}
+footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;color:var(--muted);font-size:14px}
+.state{font-size:14px;min-height:22px;color:var(--ok);margin-top:8px}
+@media(max-width:640px){.res{flex-wrap:wrap}.res .k{flex-basis:100%}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="inner">
+<a href="/知办库">知办库</a>
+<nav><a href="/tools/">在线工具</a><a href="/dev-tools.html">开发者工具</a></nav>
+</div></header>
+
+<div class="wrap">
+<h1>命名风格转换 — 驼峰 / 下划线 / 短横线互转</h1>
+<p class="lead">把变量名、文件名、接口字段在常见命名约定之间互相转换。支持拆分 <code>camelCase</code>、<code>snake_case</code>、<code>kebab-case</code>、空格与连续大写缩写（如 <code>HTTPServer</code>）。纯前端运行。</p>
+
+<section class="card">
+  <label for="src">输入（可含空格、下划线、短横线或已有驼峰）</label>
+  <input type="text" id="src" value="user profile-Image_URL" spellcheck="false" autocomplete="off">
+  <div class="btns">
+    <button class="primary" id="clear" type="button">清空</button>
+  </div>
+  <div class="state" id="state" role="status" aria-live="polite"></div>
+
+  <div class="results" id="results"></div>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">它如何拆分单词</h2>
+  <ol class="list">
+    <li>先按空格、下划线、短横线、点号切分。</li>
+    <li>再对每一段做驼峰切分：在小写转大写处断开（<code>userName</code> → <code>user</code> + <code>Name</code>）。</li>
+    <li>连续大写缩写按“最后一个大写属于下一个词”处理（<code>HTTPServer</code> → <code>HTTP</code> + <code>Server</code>；<code>parseHTMLString</code> → <code>parse</code> + <code>HTML</code> + <code>String</code>）。</li>
+    <li>数字与字母边界也视为切分点（<code>utf8Decode</code> → <code>utf8</code> + <code>Decode</code>）。</li>
+  </ol>
+  <p class="note" style="font-size:14px;color:var(--muted)">切分结果取决于约定。英文缩写歧义无法 100% 自动判定（例如 <code>IDCard</code> 可能想表达 <code>id</code> + <code>card</code>）。若结果不符合预期，在输入里显式加上分隔符即可。</p>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">各风格对照</h2>
+  <table>
+    <thead><tr><th>风格</th><th>示例</th><th>常见场景</th></tr></thead>
+    <tbody>
+      <tr><td>camelCase</td><td><code>userProfileImage</code></td><td>JS / Java 变量与方法名</td></tr>
+      <tr><td>PascalCase</td><td><code>UserProfileImage</code></td><td>类名、React 组件、C# 属性</td></tr>
+      <tr><td>snake_case</td><td><code>user_profile_image</code></td><td>Python / Ruby 变量，SQL 列名</td></tr>
+      <tr><td>kebab-case</td><td><code>user-profile-image</code></td><td>CSS 类名、URL slug、文件名</td></tr>
+      <tr><td>CONSTANT_CASE</td><td><code>USER_PROFILE_IMAGE</code></td><td>常量、枚举成员</td></tr>
+      <tr><td>dot.case</td><td><code>user.profile.image</code></td><td>配置键、命名空间</td></tr>
+      <tr><td>Train-Case</td><td><code>User-Profile-Image</code></td><td>HTTP 头、部分文件命名</td></tr>
+      <tr><td>Title Case</td><td><code>User Profile Image</code></td><td>标题、展示文案</td></tr>
+      <tr><td>Sentence case</td><td><code>User profile image</code></td><td>句子、说明文字</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
+  <dl>
+    <dt><strong>为什么 URL slug 建议用 kebab-case？</strong></dt>
+    <dd>搜索引擎对短横线作为词分隔符的识别最明确，下划线在某些场景会被当作词内连接符。因此 <code>user-profile</code> 比 <code>user_profile</code> 更利于分词。</dd>
+    <dt><strong>中文输入会怎样？</strong></dt>
+    <dd>中文不区分大小写，转换会原样保留中文字符并只处理分隔符。用于生成 slug 时建议先自行替换或去掉中文。</dd>
+    <dt><strong>会不会改写我的原有缩写？</strong></dt>
+    <dd>会把连续大写缩写整体当作一个词保留（<code>HTTP</code> 保持 <code>HTTP</code>，不会被变成 <code>Http</code>）。这是刻意设计，避免破坏常见缩写的可读性。</dd>
+    <dt><strong>数据会上传吗？</strong></dt>
+    <dd>不会。整个转换在浏览器内完成，页面不发起任何网络请求。</dd>
+  </dl>
+</section>
+
+<footer class="foot">
+  <p>纯前端工具，浏览器本地运行，不上传任何数据。</p>
+  <p><a href="/tools/">返回在线工具</a></p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var src=$("src"), box=$("results"), state=$("state");
+
+  function splitWords(s){
+    if(!s) return [];
+    var parts=s.trim().split(/[\s_\-\.\/]+/).filter(Boolean), words=[];
+    parts.forEach(function(p){
+      // 驼峰切分：小写/数字 后接 大写
+      var seg=p.replace(/([a-z0-9])([A-Z])/g,"$1 $2")
+               // 连续大写后接 大写+小写
+               .replace(/([A-Z]+)([A-Z][a-z])/g,"$1 $2")
+               // 字母与数字边界
+               .replace(/([a-zA-Z])([0-9])/g,"$1 $2")
+               .replace(/([0-9])([a-zA-Z])/g,"$1 $2")
+               .split(/\s+/).filter(Boolean);
+      words=words.concat(seg);
+    });
+    return words;
+  }
+  function lower(w){ return w.toLowerCase(); }
+  function upper(w){ return w.toUpperCase(); }
+  function cap(w){ return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }
+
+  var GEN={
+    "camelCase":      function(w){ return w.map(function(x,i){ return i===0?lower(x):cap(x); }).join(""); },
+    "PascalCase":     function(w){ return w.map(cap).join(""); },
+    "snake_case":     function(w){ return w.map(lower).join("_"); },
+    "kebab-case":     function(w){ return w.map(lower).join("-"); },
+    "CONSTANT_CASE":  function(w){ return w.map(upper).join("_"); },
+    "dot.case":       function(w){ return w.map(lower).join("."); },
+    "Train-Case":     function(w){ return w.map(cap).join("-"); },
+    "Title Case":     function(w){ return w.map(cap).join(" "); },
+    "Sentence case":  function(w){ return w.length? cap(w[0])+" "+w.slice(1).map(lower).join(" ") : ""; }
+  };
+  var ORDER=["camelCase","PascalCase","snake_case","kebab-case","CONSTANT_CASE","dot.case","Train-Case","Title Case","Sentence case"];
+
+  function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ state.textContent="已复制："+t; },
+        function(){ state.textContent="复制失败，请手动选中"; });
+    }else{
+      var ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand("copy"); state.textContent="已复制："+t; }
+      catch(e){ state.textContent="复制失败，请手动选中"; }
+      document.body.removeChild(ta);
+    }
+  }
+
+  function render(){
+    var words=splitWords(src.value);
+    box.innerHTML="";
+    if(!words.length){
+      var d=document.createElement("p");
+      d.style.color="#6b7280"; d.style.fontSize="14px";
+      d.textContent="请输入内容后自动生成各种命名风格。";
+      box.appendChild(d); return;
+    }
+    ORDER.forEach(function(k){
+      var val=GEN[k](words);
+      var row=document.createElement("div"); row.className="res";
+      var kk=document.createElement("div"); kk.className="k"; kk.textContent=k;
+      var vv=document.createElement("div"); vv.className="v"; vv.textContent=val;
+      var b=document.createElement("button"); b.type="button"; b.className="ghost"; b.textContent="复制";
+      b.addEventListener("click",function(){ copyText(val); });
+      row.appendChild(kk); row.appendChild(vv); row.appendChild(b);
+      box.appendChild(row);
+    });
+  }
+
+  src.addEventListener("input",function(){ state.textContent=""; render(); });
+  $("clear").addEventListener("click",function(){ src.value=""; state.textContent=""; render(); src.focus(); });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL 编解码工具 — 在线 URL 编码与解码 | 知办库</title>
+<meta name="description" content="知办库免费在线 URL 编解码工具：支持 encodeURIComponent、encodeURI 与 decode 三种模式，实时转换，并附带保留字符与百分号编码对照表。纯前端运行，数据不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/url-encoder.html">
+<meta property="og:title" content="URL 编解码工具 — 在线 URL 编码与解码">
+<meta property="og:description" content="支持 encodeURIComponent、encodeURI 与 decode 三种模式，实时转换，附带保留字符对照表。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.zhibanku.com/tools/url-encoder.html">
+<meta name="twitter:card" content="summary">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1f2430;--muted:#6b7280;--line:#e5e7eb;--acc:#2563eb;--ok:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 64px}
+header.top{border-bottom:1px solid var(--line);background:#fff}
+header.top .inner{max-width:900px;margin:0 auto;padding:14px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header.top a{color:var(--fg);text-decoration:none;font-weight:600}
+header.top nav a{font-weight:400;color:var(--muted);margin-right:14px}
+h1{font-size:26px;line-height:1.35;margin:26px 0 8px}
+.lead{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+textarea,input[type=text]{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;font-size:14px;width:100%;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:130px;resize:vertical;line-height:1.6}
+label{font-weight:600;display:block;margin-bottom:6px}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.modes label{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;font-weight:500;cursor:pointer;background:#fff;margin:0}
+.modes input{width:18px;height:18px}
+button{font:inherit;font-weight:600;border:1px solid transparent;border-radius:9px;padding:11px 18px;cursor:pointer;min-height:44px}
+button.primary{background:var(--acc);color:#fff}
+button.ghost{background:#fff;border-color:var(--line);color:var(--fg)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.state{font-size:14px;min-height:22px;color:var(--ok);margin-top:8px}
+.state.err{color:var(--bad)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:6px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#f3f4f6}
+code{background:#f3f4f6;border-radius:5px;padding:2px 6px;font-size:14px;word-break:break-all}
+.list{margin:0;padding-left:20px}.list li{margin:6px 0}
+footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;color:var(--muted);font-size:14px}
+.note{font-size:14px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="inner">
+<a href="/">知办库</a>
+<nav><a href="/tools/">在线工具</a><a href="/dev-tools.html">开发者工具</a></nav>
+</div></header>
+
+<div class="wrap">
+<h1>URL 编解码工具 — 在线 URL 编码与解码</h1>
+<p class="lead">把中文、空格、特殊符号转换成百分号编码（percent-encoding），或把 URL 还原成可读文本。三种模式随时切换，输入即转换。所有处理在浏览器本地完成。</p>
+
+<section class="card">
+  <div class="modes" id="modes">
+    <label><input type="radio" name="mode" value="component" checked>encodeURIComponent（用于参数值）</label>
+    <label><input type="radio" name="mode" value="uri">encodeURI（用于完整 URL）</label>
+    <label><input type="radio" name="mode" value="decode">解码 decodeURIComponent</label>
+  </div>
+
+  <div class="cols">
+    <div>
+      <label for="in">输入</label>
+      <textarea id="in" placeholder="例如：https://example.com/搜索?q=知办库 在线工具" spellcheck="false"></textarea>
+    </div>
+    <div>
+      <label for="out">输出</label>
+      <textarea id="out" readonly spellcheck="false" aria-live="polite"></textarea>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="primary" id="run" type="button">转换</button>
+    <button class="ghost" id="swap" type="button">结果转回输入</button>
+    <button class="ghost" id="copy" type="button">复制结果</button>
+    <button class="ghost" id="clear" type="button">清空</button>
+  </div>
+  <div class="state" id="state" role="status" aria-live="polite"></div>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">三种模式的区别</h2>
+  <table>
+    <thead><tr><th>模式</th><th>不转义哪些字符</th><th>典型用途</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>encodeURIComponent</code></td>
+        <td>仅 <code>A-Z a-z 0-9 - _ . ! ~ * ' ( )</code></td>
+        <td>查询参数的值、路径片段。<strong>最常用</strong></td>
+      </tr>
+      <tr>
+        <td><code>encodeURI</code></td>
+        <td>上述字符 + <code>; , / ? : @ &amp; = + $ #</code></td>
+        <td>编码一整条 URL，保留其结构符号</td>
+      </tr>
+      <tr>
+        <td><code>decodeURIComponent</code></td>
+        <td>—</td>
+        <td>把 <code>%E4%B8%AD</code> 这类编码还原成原文</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note" style="margin-top:10px">最常见的误用：用 <code>encodeURI</code> 去编码参数值。因为它不转义 <code>&amp;</code> 和 <code>=</code>，参数值里含有这些符号时会破坏 URL 结构。参数值请一律使用 <code>encodeURIComponent</code>。</p>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">常见字符对照</h2>
+  <table>
+    <thead><tr><th>原字符</th><th>编码后</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>空格</td><td><code>%20</code></td><td>在查询串里也常被写成 <code>+</code>，但那是 <code>application/x-www-form-urlencoded</code> 的约定，不是 URL 标准本身</td></tr>
+      <tr><td>中</td><td><code>%E4%B8%AD</code></td><td>UTF-8 三个字节，每个字节一个百分号</td></tr>
+      <tr><td>&amp;</td><td><code>%26</code></td><td>参数分隔符，出现在值里必须转义</td></tr>
+      <tr><td>=</td><td><code>%3D</code></td><td>键值分隔符，出现在值里必须转义</td></tr>
+      <tr><td>?</td><td><code>%3F</code></td><td>查询串起始符</td></tr>
+      <tr><td>#</td><td><code>%23</code></td><td>片段标识符，不发给服务器</td></tr>
+      <tr><td>/</td><td><code>%2F</code></td><td>路径分隔符；在参数值里转义可避免被当作路径</td></tr>
+      <tr><td>+</td><td><code>%2B</code></td><td>本身是合法字符，但表单编码中代表空格，容易混淆</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
+  <dl>
+    <dt><strong>为什么解码时报 “URI malformed”？</strong></dt>
+    <dd>输入里存在孤立的 <code>%</code>，或百分号后不是两位十六进制（如 <code>%ZZ</code>、<code>%E4%B8</code> 被截断）。本工具会捕获该错误并在下方提示，而不会让页面崩掉。</dd>
+    <dt><strong>编码后大小会变大吗？</strong></dt>
+    <dd>会。UTF-8 下一个中文字符占 3 字节，编码后变成 <code>%XX%XX%XX</code>，即 9 个 ASCII 字符，长度约为原文的 3 倍。这也是查询串不宜塞入大段中文的原因。</dd>
+    <dt><strong>空格到底应该是 %20 还是 +？</strong></dt>
+    <dd>URL 标准（RFC 3986）里空格是 <code>%20</code>。<code>+</code> 表示空格只适用于表单提交（<code>application/x-www-form-urlencoded</code>）。本工具输出 <code>%20</code>，这是更安全的选择。</dd>
+    <dt><strong>应该对整个 URL 编码吗？</strong></dt>
+    <dd>通常不应该。整条 URL 编码会把 <code>://</code>、<code>/</code>、<code>?</code> 也转义掉，得到的字符串不再是可用链接。正确做法是只对参数值逐个编码。</dd>
+    <dt><strong>数据会被上传吗？</strong></dt>
+    <dd>不会。页面没有任何网络请求，转换完全由浏览器内置的 <code>encodeURIComponent</code> / <code>decodeURIComponent</code> 完成。</dd>
+  </dl>
+</section>
+
+<footer class="foot">
+  <p>纯前端工具，浏览器本地运行，不上传任何数据。</p>
+  <p><a href="/tools/">返回在线工具</a></p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var input=$("in"), out=$("out"), state=$("state");
+  function mode(){ var r=document.querySelector('input[name=mode]:checked'); return r?r.value:"component"; }
+
+  function convert(){
+    var s=input.value, m=mode(), r;
+    try{
+      if(m==="component") r=encodeURIComponent(s);
+      else if(m==="uri") r=encodeURI(s);
+      else r=decodeURIComponent(s.replace(/\+/g,"%20"));
+      out.value=r; state.textContent=""; state.className="state";
+    }catch(e){
+      out.value="";
+      state.textContent="转换失败："+e.message+"（检查是否存在孤立的 % 或截断的百分号编码）";
+      state.className="state err";
+    }
+  }
+  function copyText(t){
+    if(!t) return;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ state.textContent="已复制"; state.className="state"; },
+        function(){ state.textContent="复制失败，请手动选中"; state.className="state err"; });
+    }else{
+      out.select();
+      try{ document.execCommand("copy"); state.textContent="已复制"; state.className="state"; }
+      catch(e){ state.textContent="复制失败，请手动选中"; state.className="state err"; }
+    }
+  }
+
+  input.addEventListener("input",convert);
+  document.getElementById("modes").addEventListener("change",convert);
+  $("run").addEventListener("click",convert);
+  $("swap").addEventListener("click",function(){ input.value=out.value; out.value=""; convert(); });
+  $("copy").addEventListener("click",function(){ copyText(out.value); });
+  $("clear").addEventListener("click",function(){ input.value=""; out.value=""; state.textContent=""; });
+  convert();
+})();
+</script>
+</body>
+</html>
