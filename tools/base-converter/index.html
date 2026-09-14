@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>进制转换器 — 二进制/八进制/十进制/十六进制互转 - 知办库在线工具</title>
+<meta name="description" content="在线进制转换工具：2 到 36 任意进制互转，支持超大整数（BigInt 精确计算不丢精度）、大小写、带前缀输出与按位分组显示。纯浏览器本地运行。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/base-converter.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="进制转换器 — 二进制/八进制/十进制/十六进制互转">
+<meta property="og:description" content="2–36 任意进制互转，BigInt 精确无误差，支持大整数与分组显示。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/base-converter.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+label{display:block;font-size:14px;margin:12px 0 4px;font-weight:600}
+input[type=text]{width:100%;min-height:44px;padding:0 12px;border:1px solid #d7dbe3;border-radius:8px;font:14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#fcfcfd;color:#1f2430}
+select{min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+input:focus,select:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;align-items:end}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all;cursor:pointer}
+h2{font-size:17px;margin:30px 0 8px}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+</style>
+</head>
+<body>
+<header>
+  <h1>进制转换器</h1>
+  <p class="lead">2 到 36 任意进制互转。使用 BigInt 精确计算，超过 2⁵³ 的大整数也不会丢精度。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div>
+        <label for="val">输入数值</label>
+        <input type="text" id="val" value="255" spellcheck="false" autocomplete="off">
+      </div>
+      <div>
+        <label for="base">输入进制</label>
+        <select id="base">
+          <option value="2">2 二进制</option>
+          <option value="8">8 八进制</option>
+          <option value="10" selected>10 十进制</option>
+          <option value="16">16 十六进制</option>
+          <option value="32">32</option>
+          <option value="36">36</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <button class="primary" id="run">转换</button>
+      <button id="clear">清空</button>
+      <label class="chk"><input type="checkbox" id="upper"> 十六进制大写</label>
+      <label class="chk"><input type="checkbox" id="prefix"> 带前缀（0b/0o/0x）</label>
+      <label class="chk"><input type="checkbox" id="group"> 按位分组</label>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <table id="out"><tbody></tbody></table>
+  </div>
+
+  <section>
+    <h2>它如何工作</h2>
+    <p>解析时逐字符查表得到该位的数值，累加 <code>result = result × 进制 + 位值</code>。全程使用 <code>BigInt</code>，因此 64 位甚至几百位的整数都能<strong>精确</strong>转换——用普通 JavaScript 数字，超过 2⁵³−1 就会静默丢精度，这是解析 ID、哈希、时间戳时最隐蔽的 bug 来源。</p>
+    <p>输出时反复取余与整除，再把余数映射回字符。负数会保留符号，小数与科学计数法<strong>不支持</strong>（进制转换本身只对整数有明确定义）。</p>
+  </section>
+
+  <section>
+    <h2>常用参考值</h2>
+    <table>
+      <thead><tr><th>含义</th><th>十进制</th><th>十六进制</th><th>二进制</th></tr></thead>
+      <tbody>
+        <tr><td>1 字节最大值</td><td>255</td><td>FF</td><td>11111111</td></tr>
+        <tr><td>2 字节最大值</td><td>65535</td><td>FFFF</td><td>1111111111111111</td></tr>
+        <tr><td>4 字节最大值</td><td>4294967295</td><td>FFFFFFFF</td><td>32 个 1</td></tr>
+        <tr><td>2⁵³ − 1（JS 安全整数上限）</td><td>9007199254740991</td><td>1FFFFFFFFFFFFF</td><td>53 个 1</td></tr>
+        <tr><td>2⁶⁴ − 1</td><td>18446744073709551615</td><td>FFFFFFFFFFFFFFFF</td><td>64 个 1</td></tr>
+      </tbody>
+    </table>
+    <p>用二进制/十六进制表示网络掩码、权限位、颜色通道、哈希前缀时，本工具会同时给出分组形式，便于肉眼核对位数。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么输入超过 16 位数字时结果不对？</summary><p>这是 JavaScript 数字精度的限制（安全整数上限约 9×10¹⁵）。本工具用 BigInt 规避了这个问题，但请确保<strong>输入时不要包含小数点或指数记号</strong>，否则工具会拒绝并提示。</p></details>
+    <details><summary>支持负数吗？</summary><p>支持，会保留负号。但进制转换中的「补码」是另一种语义——如果你需要的是 32 位补码表示，请先用本工具算出无符号值，再自行按位数取反加一。</p></details>
+    <details><summary>结果如何复制？</summary><p>点击结果表格里的任意一行即可复制该行的值，适合直接粘进代码或配置里。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var val=document.getElementById('val'),base=document.getElementById('base'),
+      out=document.querySelector('#out tbody'),msg=document.getElementById('msg'),
+      upper=document.getElementById('upper'),prefix=document.getElementById('prefix'),
+      group=document.getElementById('group');
+  var D='0123456789abcdefghijklmnopqrstuvwxyz';
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function parseBig(s,b){
+    s=s.trim().toLowerCase();
+    var neg=false;
+    if(s.charAt(0)==='-'){neg=true;s=s.slice(1);}
+    if(s.charAt(0)==='+')s=s.slice(1);
+    if(b===16&&s.indexOf('0x')===0)s=s.slice(2);
+    if(b===2&&s.indexOf('0b')===0)s=s.slice(2);
+    if(b===8&&s.indexOf('0o')===0)s=s.slice(2);
+    if(!s)return {err:'没有可解析的数字'};
+    var r=BigInt(0),B=BigInt(b);
+    for(var i=0;i<s.length;i++){
+      var c=s.charAt(i);
+      if(c===' '||c===','||c==='_')continue;
+      var d=D.indexOf(c);
+      if(d<0||d>=b)return {err:'字符「'+c+'」不属于 '+b+' 进制'};
+      r=r*B+BigInt(d);
+    }
+    return {v:neg?-r:r};
+  }
+  function toBig(v,b,up){
+    var B=BigInt(b),r='';
+    if(v<BigInt(0)){r='-';v=-v;}
+    if(v===BigInt(0))return '0';
+    while(v>BigInt(0)){r+=D.charAt(Number(v%B));v=v/B;}
+    var body=r.charAt(0)==='-'?'-'+r.slice(1).split('').reverse().join(''):r.split('').reverse().join('');
+    if(up&&b===16)body=body.toUpperCase();
+    return body;
+  }
+  function grouped(s,b){
+    var sign='',t=s;
+    if(t.charAt(0)==='-'){sign='-';t=t.slice(1);}
+    var size=(b===2)?4:(b===16?4:3),parts=[];
+    while(t.length>size){parts.unshift(t.slice(-size));t=t.slice(0,-size);}
+    if(t)parts.unshift(t);
+    return sign+parts.join(' ');
+  }
+  function pf(v,b,body){
+    var p=(prefix.checked)?(b===2?'0b':b===8?'0o':b===16?'0x':''):'';
+    return p+body;
+  }
+  function row(k,v){var tr=document.createElement('tr');
+    var a=document.createElement('td');a.textContent=k;a.style.color='#5b6472';a.style.width='30%';
+    var b=document.createElement('td');b.className='v';b.textContent=v;b.title='点击复制';
+    b.onclick=function(){navigator.clipboard.writeText(v).then(function(){say('已复制 '+k+'。','ok');},
+      function(){say('复制失败，请手动选中。','bad');});};
+    tr.appendChild(a);tr.appendChild(b);out.appendChild(tr);}
+  document.getElementById('run').onclick=function(){
+    var b=parseInt(base.value,10);
+    var p=parseBig(val.value,b);
+    if(p.err){say('解析失败：'+p.err,'bad');out.innerHTML='';return;}
+    var v=p.v,bases=[2,8,10,16,32,36];
+    out.innerHTML='';
+    bases.forEach(function(t){
+      var body=toBig(v,t,upper.checked);
+      var txt=pf(v,t,group.checked?grouped(body,t):body);
+      row(t+' 进制',txt);
+    });
+    var bits=toBig(v,2,'').replace('-','').length;
+    row('二进制位数',bits+' 位');
+    row('字节数（向上取整）',Math.max(1,Math.ceil(bits/8))+' 字节');
+    say('转换完成（使用 BigInt 精确计算）。','ok');
+  };
+  document.getElementById('clear').onclick=function(){
+    val.value='';out.innerHTML='';say('');val.focus();
+  };
+  val.addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('run').click();});
+  ['change','input'].forEach(function(ev){
+    upper.addEventListener(ev,function(){if(out.children.length)document.getElementById('run').click();});
+    prefix.addEventListener(ev,function(){if(out.children.length)document.getElementById('run').click();});
+    group.addEventListener(ev,function(){if(out.children.length)document.getElementById('run').click();});
+    base.addEventListener(ev,function(){if(out.children.length)document.getElementById('run').click();});
+  });
+  document.getElementById('run').click();
+})();
+</script>
+</body>
+</html>

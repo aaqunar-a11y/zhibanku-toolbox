@@ -1,11 +1,11 @@
-# 密码生成器
+# 进制转换器
 
 
 
-- 在线使用：<https://www.zhibanku.com/tools/password-generator.html>
+- 在线使用：<https://www.zhibanku.com/tools/base-converter.html>
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`690a4464ba2a8caff994d54108c2301fd4bc1f18347b25dcf567968fa042faca`
-- 体积：15532 字节
+- SHA-256：`f8249472cd68e2772a4cd5fe768190b61b7b445ea16e55dd20971fd07f55c8cf`
+- 体积：10987 字节
 
 ## 说明
 
