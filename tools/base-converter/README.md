@@ -4,8 +4,8 @@
 
 - 在线使用：<https://www.zhibanku.com/tools/base-converter.html>
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`f8249472cd68e2772a4cd5fe768190b61b7b445ea16e55dd20971fd07f55c8cf`
-- 体积：10987 字节
+- SHA-256：`8fd68ea5a5f1c4ab8329268590f442dc15080f19e0d99c9bef0f2cb697c63f75`
+- 体积：12515 字节
 
 ## 说明
 

@@ -4,8 +4,8 @@
 
 - 在线使用：<https://www.zhibanku.com/tools/password-generator.html>
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`690a4464ba2a8caff994d54108c2301fd4bc1f18347b25dcf567968fa042faca`
-- 体积：15532 字节
+- SHA-256：`4bd6b4ddc1654d836b2ae2cca80d36ffc4c8b6fb7c2f5e01ae254b117807e320`
+- 体积：17068 字节
 
 ## 说明
 
