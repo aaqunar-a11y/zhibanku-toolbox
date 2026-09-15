@@ -20,11 +20,11 @@
 
 | 工具 | 在线地址 | 源码 |
 | --- | --- | --- |
-| 进制转换器 | [在线使用](https://www.zhibanku.com/tools/base-converter.html) | [`tools/base-converter/`](tools/base-converter/) |
-| 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [`tools/case-converter/`](tools/case-converter/) |
-| 颜色格式转换器 | [在线使用](https://www.zhibanku.com/tools/color-converter.html) | [`tools/color-converter/`](tools/color-converter/) |
-| 密码生成器 | [在线使用](https://www.zhibanku.com/tools/password-generator.html) | [`tools/password-generator/`](tools/password-generator/) |
-| URL 编解码工具 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [`tools/url-encoder/`](tools/url-encoder/) |
+| 进制转换器 | [在线使用](https://www.zhibanku.com/tools/base-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base-converter) |
+| 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/case-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/case-converter) |
+| 颜色格式转换器 | [在线使用](https://www.zhibanku.com/tools/color-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/color-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/color-converter) |
+| 密码生成器 | [在线使用](https://www.zhibanku.com/tools/password-generator.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/password-generator) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/password-generator) |
+| URL 编解码工具 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/url-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/url-encoder) |
 
 共 5 个工具，源码同步自 <https://www.zhibanku.com/tools/>（该站每日新增一个工具，本目录同步跟进）。
 
