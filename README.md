@@ -22,10 +22,11 @@
 | --- | --- | --- |
 | 进制转换器 | [在线使用](https://www.zhibanku.com/tools/base-converter.html) | [`tools/base-converter/`](tools/base-converter/) |
 | 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [`tools/case-converter/`](tools/case-converter/) |
+| 颜色格式转换器 | [在线使用](https://www.zhibanku.com/tools/color-converter.html) | [`tools/color-converter/`](tools/color-converter/) |
 | 密码生成器 | [在线使用](https://www.zhibanku.com/tools/password-generator.html) | [`tools/password-generator/`](tools/password-generator/) |
 | URL 编解码工具 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [`tools/url-encoder/`](tools/url-encoder/) |
 
-共 4 个工具，源码同步自 <https://www.zhibanku.com/tools/>（该站每日新增一个工具，本目录同步跟进）。
+共 5 个工具，源码同步自 <https://www.zhibanku.com/tools/>（该站每日新增一个工具，本目录同步跟进）。
 
 设计约定：
 

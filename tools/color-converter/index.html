@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>颜色格式转换器 — HEX / RGB / HSL 互转与对比度检测 - 知办库在线工具</title>
+<meta name="description" content="在线颜色转换工具：HEX、RGB、HSL、HSV 互转，实时取色、生成明暗色阶，并按 WCAG 计算前景背景对比度是否达到 AA / AAA 无障碍标准。纯浏览器本地运行。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/color-converter.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="颜色格式转换器 — HEX / RGB / HSL 互转与对比度检测">
+<meta property="og:description" content="HEX/RGB/HSL/HSV 互转 + WCAG 对比度检测 + 明暗色阶。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/color-converter.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+label{display:block;font-size:14px;margin:10px 0 4px;font-weight:600}
+input[type=text]{width:100%;min-height:44px;padding:0 12px;border:1px solid #d7dbe3;border-radius:8px;font:14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#fcfcfd;color:#1f2430}
+input:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+input[type=color]{width:100%;height:52px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;padding:4px;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.swatch{height:78px;border-radius:8px;border:1px solid #e3e6ec;margin-top:12px;display:flex;align-items:center;justify-content:center;font-weight:600}
+.scale{display:flex;margin-top:10px;border-radius:8px;overflow:hidden;border:1px solid #e3e6ec}
+.scale i{flex:1;height:42px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+h2{font-size:17px;margin:30px 0 8px}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+</style>
+</head>
+<body>
+<header>
+  <h1>颜色格式转换器</h1>
+  <p class="lead">HEX、RGB、HSL、HSV 互转，自动生成明暗色阶，并按 WCAG 标准算出文字与背景的对比度是否达标。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div>
+        <label for="pick">取色器</label>
+        <input type="color" id="pick" value="#2b6cb0">
+      </div>
+      <div>
+        <label for="hex">输入 HEX / rgb() / hsl()</label>
+        <input type="text" id="hex" value="#2b6cb0" spellcheck="false">
+      </div>
+    </div>
+    <div class="swatch" id="sw">#2b6cb0</div>
+    <div class="scale" id="scale" title="明暗色阶（点击任意一格可选中）"></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <table id="out"><tbody></tbody></table>
+  </div>
+
+  <section>
+    <h2>它如何工作</h2>
+    <p>任何输入都会被归一化成 <code>{r,g,b}</code> 三个 0–255 的通道值，再从这一份中间表示生成其余格式，所以四种写法永远一致。HEX 支持 <code>#abc</code> 简写与 <code>#aabbcc</code> 全写；<code>rgb()</code> / <code>hsl()</code> 用正则解析，兼容逗号与空格分隔。</p>
+    <p>对比度按 WCAG 2.1 的相对亮度公式计算：先把 sRGB 通道做伽马还原（<code>c/255</code> 后大于 0.03928 时取 <code>((c+0.055)/1.055)^2.4</code>），加权得到亮度 <code>L = 0.2126R + 0.7152G + 0.0722B</code>，再做 <code>(L1+0.05)/(L2+0.05)</code>。正文文字需达到 <strong>4.5:1（AA）</strong>，大号文字需 <strong>3:1</strong>。</p>
+  </section>
+
+  <section>
+    <h2>WCAG 达标门槛</h2>
+    <table>
+      <thead><tr><th>用途</th><th>AA（最低）</th><th>AAA（增强）</th></tr></thead>
+      <tbody>
+        <tr><td>正文文字（&lt; 18.66px 或非粗体）</td><td>4.5 : 1</td><td>7 : 1</td></tr>
+        <tr><td>大号文字（≥ 24px 或 ≥ 18.66px 粗体）</td><td>3 : 1</td><td>4.5 : 1</td></tr>
+        <tr><td>图形与界面控件边界</td><td>3 : 1</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>HSL 的 L 和 HSV 的 V 有什么区别？</summary><p>HSL 里 <code>L=50%</code> 是纯色，最亮最暗都趋近白黑；HSV 里 <code>V=100%</code> 已经是最亮，饱和度和明度是独立的两根轴。设计取色时用 HSL 更直观，调色板算法里常用 HSV。</p></details>
+    <details><summary>为什么两个颜色看起来差很多，对比度却不高？</summary><p>相对亮度是按人眼敏感度加权的（绿色权重最高 0.7152，蓝色最低 0.0722）。所以深蓝与深红的观感差异不小，亮度却接近，对比度自然偏低。</p></details>
+    <details><summary>色阶是干什么用的？</summary><p>给出同一色相从浅到深的 9 档，方便补齐 hover / active / 边框 / 背景等状态色。点击任意一格即可切换为当前颜色。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var pick=document.getElementById('pick'),hexIn=document.getElementById('hex'),
+      sw=document.getElementById('sw'),scale=document.getElementById('scale'),
+      msg=document.getElementById('msg'),tb=document.querySelector('#out tbody');
+  var cur={r:43,g:108,b:176};
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function h2(n){n=clamp(Math.round(n),0,255).toString(16);return n.length<2?'0'+n:n;}
+  function toHex(c){return '#'+h2(c.r)+h2(c.g)+h2(c.b);}
+  function rgbToHsl(c){
+    var r=c.r/255,g=c.g/255,b=c.b/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),h=0,s=0,l=(mx+mn)/2,d=mx-mn;
+    if(d){s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+      if(mx===r)h=((g-b)/d+(g<b?6:0));else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;}
+    return {h:Math.round(h),s:Math.round(s*100),l:Math.round(l*100)};
+  }
+  function rgbToHsv(c){
+    var r=c.r/255,g=c.g/255,b=c.b/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0,s=0;
+    if(d){if(mx===r)h=((g-b)/d+(g<b?6:0));else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;}
+    s=mx?d/mx:0;
+    return {h:Math.round(h),s:Math.round(s*100),v:Math.round(mx*100)};
+  }
+  function hslToRgb(h,s,l){
+    h=((h%360)+360)%360;s/=100;l/=100;
+    var c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;
+    if(h<60){r=c;g=x;}else if(h<120){r=x;g=c;}else if(h<180){g=c;b=x;}
+    else if(h<240){g=x;b=c;}else if(h<300){r=x;b=c;}else{r=c;b=x;}
+    return {r:Math.round((r+m)*255),g:Math.round((g+m)*255),b:Math.round((b+m)*255)};
+  }
+  function lum(c){
+    function f(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}
+    return 0.2126*f(c.r)+0.7152*f(c.g)+0.0722*f(c.b);
+  }
+  function contrast(a,b){var l1=lum(a),l2=lum(b);return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);}
+  function parse(txt){
+    txt=(txt||'').trim().toLowerCase();
+    var m;
+    if(m=/^#?([0-9a-f]{3})$/.exec(txt)){var s=m[1];
+      return {r:parseInt(s[0]+s[0],16),g:parseInt(s[1]+s[1],16),b:parseInt(s[2]+s[2],16)};}
+    if(m=/^#?([0-9a-f]{6})$/.exec(txt)){var s2=m[1];
+      return {r:parseInt(s2.slice(0,2),16),g:parseInt(s2.slice(2,4),16),b:parseInt(s2.slice(4,6),16)};}
+    if(m=/^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/.exec(txt))
+      return {r:clamp(+m[1],0,255),g:clamp(+m[2],0,255),b:clamp(+m[3],0,255)};
+    if(m=/^hsla?\(\s*(\d+(?:\.\d+)?)[\s,]+(\d+(?:\.\d+)?)%[\s,]+(\d+(?:\.\d+)?)%/.exec(txt))
+      return hslToRgb(+m[1],+m[2],+m[3]);
+    return null;
+  }
+  function row(k,v){var tr=document.createElement('tr');
+    var a=document.createElement('td');a.textContent=k;a.style.color='#5b6472';a.style.width='38%';
+    var b=document.createElement('td');b.textContent=v;tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr);}
+  function render(){
+    var hsl=rgbToHsl(cur),hsv=rgbToHsv(cur),hx=toHex(cur);
+    sw.style.background=hx;sw.style.color=lum(cur)>0.45?'#111':'#fff';sw.textContent=hx.toUpperCase();
+    pick.value=hx;
+    var sc=document.getElementById('scale');sc.innerHTML='';
+    [95,88,80,70,55,42,32,24,16].forEach(function(l){
+      var i=document.createElement('i');
+      var c=hslToRgb(hsl.h,Math.min(100,hsl.s),l);
+      i.style.background=toHex(c);i.title='HSL('+hsl.h+','+hsl.s+'%,'+l+'%) '+toHex(c);
+      i.style.cursor='pointer';
+      i.onclick=function(){cur=c;hexIn.value=toHex(c);render();say('已选中 '+toHex(c),'ok');};
+      sc.appendChild(i);});
+    tb.innerHTML='';
+    row('HEX',hx.toUpperCase());
+    row('HEX（带透明度常见写法）',hx.toLowerCase()+'ff');
+    row('RGB','rgb('+cur.r+', '+cur.g+', '+cur.b+')');
+    row('HSL','hsl('+hsl.h+', '+hsl.s+'%, '+hsl.l+'%)');
+    row('HSV / HSB','hsv('+hsv.h+', '+hsv.s+'%, '+hsv.v+'%)');
+    row('相对亮度 L',lum(cur).toFixed(4));
+    var w={r:255,g:255,b:255},bl={r:0,g:0,b:0};
+    var cw=contrast(cur,w),cb=contrast(cur,bl);
+    row('对白色文字对比度',cw.toFixed(2)+' : 1 '+(cw>=4.5?'✅ AA 正文达标':(cw>=3?'⚠️ 仅大号文字达标':'❌ 不达标')));
+    row('对黑色文字对比度',cb.toFixed(2)+' : 1 '+(cb>=4.5?'✅ AA 正文达标':(cb>=3?'⚠️ 仅大号文字达标':'❌ 不达标')));
+    row('建议前景色',cw>=cb?'白色 #ffffff':'黑色 #000000');
+  }
+  pick.oninput=function(){cur=parse(pick.value);hexIn.value=pick.value;render();say('已从取色器更新。','ok');};
+  hexIn.oninput=function(){
+    var c=parse(hexIn.value);
+    if(!c){say('无法识别，请输入 #2b6cb0 / rgb(43,108,176) / hsl(210,61%,43%) 之一。','bad');return;}
+    cur=c;say('已解析。','ok');render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>
