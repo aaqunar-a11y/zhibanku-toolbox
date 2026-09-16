@@ -1,14 +1,14 @@
-# 密码生成器
+# HTML 实体编解码
 
 
 
-- GitHub 开源仓库：<https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/password-generator>
-- Gitee 开源仓库（国内镜像）：<https://gitee.com/xie881018/go-go-go/tree/main/tools/password-generator>
-- 在线使用：<https://www.zhibanku.com/tools/password-generator.html>
+- GitHub 开源仓库：<https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-entity>
+- Gitee 开源仓库（国内镜像）：<https://gitee.com/xie881018/go-go-go/tree/main/tools/html-entity>
+- 在线使用：<https://www.zhibanku.com/tools/html-entity.html>
 
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`30caf8f198ba85935c2b6d23e1b671c6b7729ac63ecef550d988d8407eb2c532`
-- 体积：17252 字节
+- SHA-256：`399501e93671291b375d231e2973b2eacd51effe5778765c6f70541998d57e4d`
+- 体积：13638 字节
 
 ## 说明
 

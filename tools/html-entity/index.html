@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML 实体编解码 — 转义与反转义在线工具 - 知办库在线工具</title>
+<meta name="description" content="在线 HTML 实体编解码工具：把 < & > \" ' 等字符转义为实体、把实体还原为字符，支持命名实体与数字实体（&#39; / &#x27;）、提取纯文本、去除标签。本地运行不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/html-entity.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HTML 实体编解码 — 转义与反转义在线工具">
+<meta property="og:description" content="HTML 转义/反转义、实体还原、去标签提取纯文本，纯本地运行。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/html-entity.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+label{display:block;font-size:14px;margin:0 0 4px;font-weight:600}
+textarea{width:100%;min-height:150px;padding:12px;border:1px solid #d7dbe3;border-radius:8px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical;background:#fcfcfd;color:#1f2430}
+textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.preview{margin-top:12px;padding:12px;background:#fbfcfe;border:1px dashed #ccd4e0;border-radius:8px;min-height:42px;word-break:break-word}
+.preview .tag{font-size:12px;color:#8a93a3;display:block;margin-bottom:6px}
+pre.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:320px;overflow:auto}
+h2{font-size:17px;margin:30px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+</style>
+</head>
+<body>
+<header>
+  <h1>HTML 实体编解码</h1>
+  <p class="lead">转义特殊字符、把实体还原成字符、从 HTML 里提取纯文本，并提供实时预览确认效果。全部在浏览器本地完成。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="src">输入（HTML 或实体文本）</label>
+    <textarea id="src" spellcheck="false">&lt;div class="card"&gt;价格 &lt;b&gt;9.9&lt;/b&gt; 元 &amp;amp; 限时&lt;/div&gt;</textarea>
+    <div class="row">
+      <button class="primary" id="esc">转义 → 实体</button>
+      <button id="unesc">反转义 ← 实体</button>
+      <button id="text">提取纯文本</button>
+      <button id="strip">去除全部标签</button>
+      <button id="copy">复制结果</button>
+    </div>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="quote"> 同时转义引号 <code>"</code> 与 <code>'</code></label>
+      <label class="chk"><input type="checkbox" id="num"> 输出为数字实体 <code>&amp;#39;</code></label>
+      <label class="chk"><input type="checkbox" id="br"> 提取纯文本时把 <code>&lt;br&gt;</code> 换成换行</label>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <pre class="out" id="out" aria-live="polite"></pre>
+    <div class="preview"><span class="tag">渲染预览（下方内容按 HTML 真实渲染，用于确认转义是否正确）</span><div id="prev"></div></div>
+  </div>
+
+  <section>
+    <h2>它如何工作</h2>
+    <p>转义时用<strong>字符替换</strong>把 <code>&amp;</code>、<code>&lt;</code>、<code>&gt;</code> 换成实体，顺序上必须先处理 <code>&amp;</code>，否则会把刚生成的 <code>&amp;lt;</code> 再次转义成 <code>&amp;amp;lt;</code>——这是手写转义最常见的错误，顺序错了整段输出就全废。</p>
+    <p>反转义采用双阶段：先识别 <code>&amp;#39;</code> 这类<strong>数字实体</strong>并按十进制/十六进制还原成对应码点，再处理 <code>&amp;nbsp;</code> 这类命名实体。<strong>不</strong>使用 <code>innerHTML</code> 直接赋值——那样会把内容里的 <code>&lt;script&gt;</code> 一并执行，存在 XSS 风险。</p>
+    <p>「提取纯文本」先用 <code>DOMParser</code> 把 HTML 解析成文档树（<code>DOMParser</code> 不会执行脚本），再取 <code>textContent</code>，因此结果干净且安全。</p>
+  </section>
+
+  <section>
+    <h2>常用实体对照</h2>
+    <table>
+      <thead><tr><th>字符</th><th>命名实体</th><th>数字实体</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>&amp;</code></td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td>与号，必须最先转义</td></tr>
+        <tr><td><code>&lt;</code></td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td>左尖括号，防止被当作标签起始</td></tr>
+        <tr><td><code>&gt;</code></td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td>右尖括号</td></tr>
+        <tr><td><code>"</code></td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td><td>双引号，属性值内必须转义</td></tr>
+        <tr><td><code>'</code></td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td><td>单引号，HTML5 起才支持命名写法</td></tr>
+        <tr><td>空格</td><td><code>&amp;nbsp;</code></td><td><code>&amp;#160;</code></td><td>不换行空格，不是普通空格</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>转义后再反转义，能完全还原吗？</summary><p>对标准实体可以。但要注意 <code>&amp;nbsp;</code> 还原后得到的是 U+00A0（不换行空格），它<strong>看起来像空格但不是</strong>，在代码里比较字符串时会不相等——这是排版复制粘贴后排查不出问题的常见原因。</p></details>
+    <details><summary>为什么转义要勾选引号？</summary><p>只有在把内容放进 HTML <strong>属性值</strong>（如 <code>title="..."</code>）时才需要转义引号。放在元素文本内容里的话，转义引号反而会让页面上真的显示出 <code>&amp;quot;</code> 这种字符。</p></details>
+    <details><summary>「提取纯文本」和「去除标签」有什么区别？</summary><p>前者会解析实体、保留文字语义（例如 <code>&amp;lt;</code> 会变成真正的 <code>&lt;</code> 字符）；后者只是按正则粗暴地删掉尖括号之间的内容，速度快但遇到不规则 HTML 容易出错。推荐用前者。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var src=document.getElementById('src'),out=document.getElementById('out'),
+      msg=document.getElementById('msg'),prev=document.getElementById('prev'),
+      quote=document.getElementById('quote'),num=document.getElementById('num'),
+      br=document.getElementById('br');
+  var NAME={'nbsp':160,'amp':38,'lt':60,'gt':62,'quot':34,'apos':39,'copy':169,'reg':174,
+    'trade':8482,'hellip':8230,'mdash':8212,'ndash':8211,'ldquo':8220,'rdquo':8221,
+    'lsquo':8216,'rsquo':8217,'times':215,'divide':247,'deg':176,'middot':183,
+    'laquo':171,'raquo':187,'euro':8364,'pound':163,'yen':165,'sect':167,'para':182,
+    'dagger':8224,'bull':8226,'prime':8242,'permil':8240,'infin':8734,'ne':8800,
+    'le':8804,'ge':8805,'alpha':945,'beta':946,'gamma':947,'pi':960,'omega':969};
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function esc(s){
+    var r=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if(quote.checked)r=r.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    if(num.checked)r=r.replace(/&amp;/g,'&#38;').replace(/&lt;/g,'&#60;').replace(/&gt;/g,'&#62;')
+      .replace(/&quot;/g,'&#34;').replace(/&#39;/g,'&#39;');
+    return r;
+  }
+  function unesc(s){
+    var r=s.replace(/&#x([0-9a-f]+);/gi,function(m,h){
+      try{return String.fromCodePoint(parseInt(h,16));}catch(e){return m;}
+    });
+    r=r.replace(/&#(\d+);/g,function(m,d){
+      try{return String.fromCodePoint(parseInt(d,10));}catch(e){return m;}
+    });
+    return r.replace(/&([a-z][a-z0-9]*);/gi,function(m,n){
+      var c=NAME[n.toLowerCase()];
+      return (c===undefined)?m:String.fromCodePoint(c);
+    });
+  }
+  function toText(html){
+    var h=html;
+    if(br.checked)h=h.replace(/<br\s*\/?>/gi,'\n');
+    h=h.replace(/<\/(p|div|li|h[1-6]|tr)>/gi,'\n');
+    try{
+      var doc=new DOMParser().parseFromString(h,'text/html');
+      var t=doc.body?doc.body.textContent:'';
+      return t.replace(/\n{3,}/g,'\n\n').replace(/^\s+|\s+$/g,'');
+    }catch(e){return null;}
+  }
+  function show(v){out.textContent=v;}
+  document.getElementById('esc').onclick=function(){
+    show(esc(src.value));say('已转义。','ok');
+  };
+  document.getElementById('unesc').onclick=function(){
+    var r=unesc(src.value);show(r);
+    say('已反转义。','ok');
+  };
+  document.getElementById('text').onclick=function(){
+    var t=toText(src.value);
+    if(t===null){say('解析失败，请检查 HTML 结构。','bad');return;}
+    show(t);say('已提取纯文本（原标签未渲染，实体已还原）。','ok');
+  };
+  document.getElementById('strip').onclick=function(){
+    var r=unesc(src.value).replace(/<[^>]*>/g,'');
+    r=r.replace(/[ \t]{2,}/g,' ').replace(/\n{3,}/g,'\n\n').replace(/^\s+|\s+$/g,'');
+    show(r);say('已去除全部标签并还原实体。','ok');
+  };
+  document.getElementById('copy').onclick=function(){
+    if(!out.textContent){say('还没有结果可复制。','bad');return;}
+    navigator.clipboard.writeText(out.textContent).then(function(){say('已复制结果。','ok');},
+      function(){say('复制失败，请手动选中。','bad');});
+  };
+  // 预览：默认展示「转义后」的渲染效果（安全，不用 innerHTML 直接吃原始输入）
+  function refresh(){
+    prev.textContent=unesc(src.value);
+  }
+  src.addEventListener('input',refresh);
+  refresh();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-entity" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/html-entity" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/fda19826342d" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1X3m2V5F51qN6WJX1fwde3A" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>3339</b> ｜ 百度提取码：<b>u0cz</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/html-entity-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

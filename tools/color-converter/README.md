@@ -7,8 +7,8 @@
 - 在线使用：<https://www.zhibanku.com/tools/color-converter.html>
 
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`466bc294e381dadb41f1b8c9b9596204491a3dcde8276b7cae5efaf7e52c35e4`
-- 体积：12312 字节
+- SHA-256：`3dd625ff26409f98056b72ae88596dc65ed7d7e23ec1ce6961bcb58ba997d4dd`
+- 体积：12496 字节
 
 ## 说明
 

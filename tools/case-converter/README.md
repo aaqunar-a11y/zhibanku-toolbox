@@ -7,8 +7,8 @@
 - 在线使用：<https://www.zhibanku.com/tools/case-converter.html>
 
 - 本目录源码：[`index.html`](index.html)（单文件、零依赖，双击即可离线使用）
-- SHA-256：`13a8e27ff3147ed444b4c29b6528f083d28f71fd848da57ae35fd100c6058233`
-- 体积：13158 字节
+- SHA-256：`1f74b363922add3cb389aeecac812733b47ed5c747249c337f96d20d09d5b4e6`
+- 体积：13342 字节
 
 ## 说明
 
