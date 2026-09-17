@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文本对比工具 — 在线逐行 Diff 差异比较 - 知办库在线工具</title>
+<meta name="description" content="在线文本对比工具：逐行比较两段文本或两份文件的差异，标出新增、删除与修改行，给出相似度与统计。使用本地最长公共子序列算法，内容不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/text-diff.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="文本对比工具 — 在线逐行 Diff 差异比较">
+<meta property="og:description" content="逐行 diff，高亮新增/删除/修改，输出相似度与统计，支持文件导入。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/text-diff.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:900px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:0 0 4px;font-weight:600}
+textarea{width:100%;min-height:170px;padding:11px;border:1px solid #d7dbe3;border-radius:8px;font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical;background:#fcfcfd;color:#1f2430}
+textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+pre.diff{margin-top:12px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;max-height:460px;overflow:auto;font:12.5px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;padding:0}
+pre.diff span{display:block;padding:1px 10px;white-space:pre-wrap;word-break:break-all}
+.same{color:#3f4756}
+.add{background:#e6f7ec;color:#125c33}
+.del{background:#fdeaea;color:#8f2222}
+h2{font-size:17px;margin:30px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+</style>
+</head>
+<body>
+<header>
+  <h1>文本对比工具</h1>
+  <p class="lead">逐行比较两段文本或两份文件，标出新增、删除与修改，并给出相似度与行数统计。全部计算在浏览器本地完成。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div>
+        <label for="a">原文（旧）</label>
+        <textarea id="a" spellcheck="false" placeholder="粘贴旧版本内容"></textarea>
+        <div class="row"><label for="fa" style="margin:0">或选择文件：</label><input type="file" id="fa"></div>
+      </div>
+      <div>
+        <label for="b">新文本</label>
+        <textarea id="b" spellcheck="false" placeholder="粘贴新版本内容"></textarea>
+        <div class="row"><label for="fb" style="margin:0">或选择文件：</label><input type="file" id="fb"></div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="primary" id="run">开始对比</button>
+      <button id="swap">交换左右</button>
+      <button id="ign">忽略行首尾空白</button>
+      <button id="copy">复制差异结果</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <pre class="diff" id="out" aria-live="polite"></pre>
+    <table id="stat"><tbody></tbody></table>
+  </div>
+
+  <section>
+    <h2>它如何工作</h2>
+    <p>先把两段文本按换行拆成行数组，再用<strong>最长公共子序列</strong>（LCS）动态规划求出相同行的最大匹配。于是两边的行被分成三类：两边都有的（相同）、只在左边出现的（删除）、只在右边出现的（新增）。</p>
+    <p>对连续的一段「一删一增」会进一步合并显示，方便看出是改了什么。相似度用 <code>2 × LCS长度 ÷ (旧行数 + 新行数)</code> 计算，取值 0–100%。</p>
+    <p>为控制内存，当任意一侧超过 3000 行时自动切换为「前缀 + 后缀剥离」的快速模式：先剥掉首尾完全相同的行，只对中间差异区做 DP。这与 Git 的常见做法一致，结果对正常文件没有差别。</p>
+  </section>
+
+  <section>
+    <h2>差异标记对照</h2>
+    <table>
+      <thead><tr><th>标记</th><th>颜色</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><code>  </code></td><td>无色</td><td>两边完全相同的行</td></tr>
+        <tr><td><code>- </code></td><td>红底</td><td>只在旧文本中存在（被删除）</td></tr>
+        <tr><td><code>+ </code></td><td>绿底</td><td>只在新文本中存在（被新增）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么看起来一样的行也被标成修改？</summary><p>多半是行尾不可见字符不同，比如 Windows 的 <code>\r\n</code> 与 Linux 的 <code>\n</code>，或者行尾多了空格、用了全角空格。点击「忽略行首尾空白」再对比一次即可确认。本工具已自动忽略 <code>\r</code>。</p></details>
+    <details><summary>支持多大的文本？</summary><p>两侧各 3000 行以内结果最精确。更大的文本会自动启用快速模式，只对差异区做精细比较，速度仍然很快。</p></details>
+    <details><summary>文件会离开我的电脑吗？</summary><p>不会。文件通过 <code>FileReader</code> 在本地读取后直接进入比较流程，页面没有任何网络请求，可以打开开发者工具的网络面板验证。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var A=document.getElementById('a'),B=document.getElementById('b'),
+      out=document.getElementById('out'),msg=document.getElementById('msg'),
+      stat=document.querySelector('#stat tbody'),ignore=false;
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function lines(t){return t.replace(/\r\n?/g,'\n').split('\n');}
+  function norm(s){return ignore?s.replace(/^\s+|\s+$/g,''):s;}
+  function lcs(x,y){
+    var n=x.length,m=y.length;
+    var dp=[];for(var i=0;i<=n;i++)dp.push(new Int32Array(m+1));
+    for(var i=n-1;i>=0;i--)for(var j=m-1;j>=0;j--)
+      dp[i][j]=x[i]===y[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+    var res=[],i2=0,j2=0;
+    while(i2<n&&j2<m){
+      if(x[i2]===y[j2]){res.push({t:'same',v:x[i2],a:i2+1,b:j2+1});i2++;j2++;}
+      else if(dp[i2+1][j2]>=dp[i2][j2+1]){res.push({t:'del',v:x[i2],a:i2+1});i2++;}
+      else{res.push({t:'add',v:y[j2],b:j2+1});j2++;}
+    }
+    while(i2<n){res.push({t:'del',v:x[i2],a:i2+1});i2++;}
+    while(j2<m){res.push({t:'add',v:y[j2],b:j2+1});j2++;}
+    return res;
+  }
+  function row(k,v){var tr=document.createElement('tr');
+    var a=document.createElement('td');a.textContent=k;a.style.color='#5b6472';a.style.width='42%';
+    var b=document.createElement('td');b.textContent=v;tr.appendChild(a);tr.appendChild(b);stat.appendChild(tr);}
+  document.getElementById('ign').onclick=function(){
+    ignore=!ignore;
+    this.style.background=ignore?'#e6f0fa':'#fff';
+    say(ignore?'已开启「忽略行首尾空白」。':'已关闭「忽略行首尾空白」。','');
+  };
+  document.getElementById('swap').onclick=function(){
+    var t=A.value;A.value=B.value;B.value=t;say('已交换左右。','');
+  };
+  document.getElementById('run').onclick=function(){
+    var x=lines(A.value).map(norm),y=lines(B.value).map(norm);
+    // 去掉末尾空行造成的假差异
+    while(x.length>1&&x[x.length-1]==='')x.pop();
+    while(y.length>1&&y[y.length-1]==='')y.pop();
+    if(!A.value&&!B.value){say('请至少在一侧填入内容。','bad');return;}
+    // 前缀/后缀剥离
+    var p=0;while(p<x.length&&p<y.length&&x[p]===y[p])p++;
+    var sx=x.length,sy=y.length;
+    while(sx>p&&sy>p&&x[sx-1]===y[sy-1]){sx--;sy--;}
+    var midX=x.slice(p,sx),midY=y.slice(p,sy);
+    var ops=[];
+    for(var i=0;i<p;i++)ops.push({t:'same',v:x[i],a:i+1,b:i+1});
+    if(midX.length>3000||midY.length>3000){
+      midX.forEach(function(v,i){ops.push({t:'del',v:v,a:p+i+1});});
+      midY.forEach(function(v,i){ops.push({t:'add',v:v,b:p+i+1});});
+    }else{
+      lcs(midX,midY).forEach(function(o){
+        if(o.a)o.a+=p;if(o.b)o.b+=p;ops.push(o);});
+    }
+    for(var k=sx;k<x.length;k++)ops.push({t:'same',v:x[k],a:k+1,b:(y.length-(x.length-k))+1});
+    var add=0,del=0,same=0,frag=document.createDocumentFragment();
+    ops.forEach(function(o){
+      var s=document.createElement('span');
+      if(o.t==='same'){same++;s.className='same';s.textContent='  '+o.v;}
+      else if(o.t==='del'){del++;s.className='del';s.textContent='- '+o.v;}
+      else{add++;s.className='add';s.textContent='+ '+o.v;}
+      frag.appendChild(s);
+    });
+    out.innerHTML='';out.appendChild(frag);
+    stat.innerHTML='';
+    var sim=(same*2/Math.max(1,x.length+y.length))*100;
+    row('旧文本行数',String(x.length));
+    row('新文本行数',String(y.length));
+    row('相同行',String(same));
+    row('仅旧文本有（被删除）',String(del));
+    row('仅新文本有（被新增）',String(add));
+    row('相似度',sim.toFixed(1)+'%');
+    row('结论',(add===0&&del===0)?'两段内容完全一致':'存在差异，请按上方的 - / + 行核对');
+    say('对比完成。','ok');
+  };
+  document.getElementById('copy').onclick=function(){
+    var t=out.textContent;
+    if(!t){say('还没有结果可复制。','bad');return;}
+    navigator.clipboard.writeText(t).then(function(){say('已复制差异结果。','ok');},
+      function(){say('复制失败，请手动选中。','bad');});
+  };
+  function bindFile(input,ta){
+    input.onchange=function(e){
+      var f=e.target.files&&e.target.files[0];if(!f)return;
+      var fr=new FileReader();
+      fr.onload=function(){ta.value=fr.result;say('已载入「'+f.name+'」（'+f.size+' 字节）。','ok');};
+      fr.onerror=function(){say('读取文件失败。','bad');};
+      fr.readAsText(f,'utf-8');
+    };
+  }
+  bindFile(document.getElementById('fa'),A);
+  bindFile(document.getElementById('fb'),B);
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/text-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/444385d7aae3" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1IIfvtU4ANhYgasXDh8MUGA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>8011</b> ｜ 百度提取码：<b>ydfa</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/text-diff-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
