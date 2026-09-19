@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UUID 批量生成器 — v4 随机 / v7 时间有序 - 知办库在线工具</title>
+<meta name="description" content="在线 UUID 生成器：批量生成 UUID v4（随机）与 v7（时间有序，适合做主键），支持大写、去连字符、加前后缀、单引号 CSV 等格式导出。使用浏览器加密级随机数，结果不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/uuid-generator.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UUID 批量生成器 — v4 随机 / v7 时间有序">
+<meta property="og:description" content="批量生成 UUID v4 / v7，格式化导出为 SQL / JSON / CSV，加密级随机数，本地运行。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/uuid-generator.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],select{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+input:focus,select:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:380px;overflow:auto}
+h2{font-size:17px;margin:30px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+</style>
+</head>
+<body>
+<header>
+  <h1>UUID 批量生成器</h1>
+  <p class="lead">一次生成成百上千个 UUID，支持 v4（纯随机）与 v7（时间有序），并可导出为 SQL、JSON、CSV 等格式。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div>
+        <label for="ver">版本</label>
+        <select id="ver">
+          <option value="v4">v4（随机，最通用）</option>
+          <option value="v7">v7（时间有序，适合主键）</option>
+        </select>
+      </div>
+      <div>
+        <label for="n">数量（1–2000）</label>
+        <input type="number" id="n" value="10" min="1" max="2000">
+      </div>
+      <div>
+        <label for="fmt">导出格式</label>
+        <select id="fmt">
+          <option value="plain">纯列表（每行一个）</option>
+          <option value="csv">CSV 一列</option>
+          <option value="sql">SQL VALUES 片段</option>
+          <option value="json">JSON 数组</option>
+          <option value="quoted">每行加单引号</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <button class="primary" id="gen">生成</button>
+      <button id="copy">复制全部</button>
+      <label class="chk"><input type="checkbox" id="upper"> 大写</label>
+      <label class="chk"><input type="checkbox" id="nodash"> 去掉连字符</label>
+      <label class="chk"><input type="checkbox" id="braces"> 加花括号 {}</label>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section>
+    <h2>它如何工作</h2>
+    <p>随机源是 <code>crypto.getRandomValues()</code>，与浏览器生成会话密钥用的是同一个加密级随机数发生器，<strong>不是</strong> <code>Math.random()</code>。这样得到的 v4 不可预测，适合做不可猜测的标识符。</p>
+    <p>格式化时把版本位（第 7 个十六进制位固定为 <code>4</code>）和变体位（第 9 个十六进制位固定为 <code>8/9/a/b</code>）写死，这是 RFC 4122 的硬性要求——少了这两步，得到的只是「长得像 UUID 的随机串」，很多数据库与校验库会拒收。</p>
+    <p>v7 的前 48 位是毫秒级 Unix 时间戳，其余为随机位，因此<strong>按字典序排序即近似按时间排序</strong>，对 B+ 树主键非常友好，能显著减少随机写入带来的页分裂。同一毫秒内生成的多个 UUID 由计数器保证递增。</p>
+  </section>
+
+  <section>
+    <h2>v4 与 v7 怎么选</h2>
+    <table>
+      <thead><tr><th>对比项</th><th>UUID v4</th><th>UUID v7</th></tr></thead>
+      <tbody>
+        <tr><td>结构</td><td>122 位全随机</td><td>48 位时间戳 + 74 位随机</td></tr>
+        <tr><td>有序性</td><td>无序</td><td>按时间有序</td></tr>
+        <tr><td>数据库主键</td><td>随机写入，索引易碎片化</td><td>顺序写入，索引友好</td></tr>
+        <tr><td>是否泄露时间</td><td>不泄露</td><td>可从 ID 推出生成时间</td></tr>
+        <tr><td>适用</td><td>对外暴露的不可猜 ID、会话 token</td><td>内部主键、日志 ID、事件 ID</td></tr>
+      </tbody>
+    </table>
+    <p>若 ID 会暴露给外部且生成时间属于敏感信息，优先 v4；若纯粹用作数据库主键且写入量大，优先 v7。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>生成的 UUID 会重复吗？</summary><p>v4 的碰撞概率极低：需要生成约 2.7×10¹⁸ 个才有 50% 概率出现一次碰撞。实践中可以忽略，但数据库层面仍建议保留唯一索引。</p></details>
+    <details><summary>结果会被记录或上传吗？</summary><p>不会。页面没有网络请求，也不写 Cookie 或 localStorage，刷新即消失。你可以打开开发者工具的网络面板验证。</p></details>
+    <details><summary>为什么有的库说我的 UUID 不合法？</summary><p>多半是版本位或变体位不对。手写的随机串常常只是「32 位十六进制」，缺少第 13 位固定为 4、第 17 位为 8/9/a/b 的约束。用本工具生成的一定符合 RFC 4122 / RFC 9562。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var n=document.getElementById('n'),ver=document.getElementById('ver'),fmt=document.getElementById('fmt'),
+      out=document.getElementById('out'),msg=document.getElementById('msg'),
+      upper=document.getElementById('upper'),nodash=document.getElementById('nodash'),
+      braces=document.getElementById('braces');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  var HEX='0123456789abcdef'.split('');
+  function rnd(){
+    var a=new Uint8Array(16);crypto.getRandomValues(a);return a;
+  }
+  function uuidV4(){
+    var b=rnd();
+    b[6]=(b[6]&0x0f)|0x40;
+    b[8]=(b[8]&0x3f)|0x80;
+    return fmtBytes(b);
+  }
+  function uuidV7(seq){
+    var b=new Uint8Array(16);
+    var t=Date.now();
+    b[0]=(t/1099511627776)&0xff;b[1]=(t/4294967296)&0xff;b[2]=(t/16777216)&0xff;
+    b[3]=(t/65536)&0xff;b[4]=(t/256)&0xff;b[5]=t&0xff;
+    var r=new Uint8Array(10);crypto.getRandomValues(r);
+    for(var i=0;i<10;i++)b[6+i]=r[i];
+    b[6]=(b[6]&0x0f)|0x70;
+    b[8]=(b[8]&0x3f)|0x80;
+    // 同毫秒内保证递增：用序号写入最后 2 字节的低位
+    b[14]=seq&0xff;b[15]=(seq>>8)&0xff;
+    return fmtBytes(b);
+  }
+  function fmtBytes(b){
+    var h='';
+    for(var i=0;i<16;i++){h+=HEX[(b[i]>>4)&0xf]+HEX[b[i]&0xf];}
+    return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+  }
+  function decorate(s){
+    if(nodash.checked)s=s.replace(/-/g,'');
+    if(braces.checked)s='{'+s+'}';
+    if(upper.checked)s=s.toUpperCase();
+    return s;
+  }
+  function build(list){
+    var f=fmt.value;
+    if(f==='csv')return 'id\n'+list.join('\n');
+    if(f==='json')return JSON.stringify(list,null,2);
+    if(f==='quoted')return list.map(function(s){return "'"+s+"'";}).join(',\n');
+    if(f==='sql')return 'INSERT INTO t (id) VALUES\n  '+list.map(function(s){return "('"+s+"')";}).join(',\n  ')+';';
+    return list.join('\n');
+  }
+  document.getElementById('gen').onclick=function(){
+    var cnt=parseInt(n.value,10);
+    if(!cnt||cnt<1||cnt>2000){say('数量需在 1–2000 之间。','bad');return;}
+    var list=[],seq=0,lastMs=0;
+    for(var i=0;i<cnt;i++){
+      var u;
+      if(ver.value==='v7'){
+        var ms=Date.now();
+        if(ms===lastMs)seq++;else{seq=0;lastMs=ms;}
+        u=uuidV7(seq);
+      }else{u=uuidV4();}
+      list.push(decorate(u));
+    }
+    out.textContent=build(list);
+    say('已生成 '+cnt+' 个 UUID（'+ver.value+'）。','ok');
+  };
+  document.getElementById('copy').onclick=function(){
+    if(!out.textContent){say('还没有结果可复制。','bad');return;}
+    navigator.clipboard.writeText(out.textContent).then(function(){say('已复制全部内容。','ok');},
+      function(){say('复制失败，请手动选中。','bad');});
+  };
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/uuid-generator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/uuid-generator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/845a7d8456d2" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/139i3RK1NuiSqALJ8h5jIRw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7279</b> ｜ 百度提取码：<b>82m0</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/uuid-generator-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
