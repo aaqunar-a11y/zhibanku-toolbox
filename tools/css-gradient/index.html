@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSS 渐变生成器 — 可视化制作 linear/radial 渐变 - 知办库在线工具</title>
+<meta name="description" content="在线 CSS 渐变生成器：可视化调整渐变类型、角度与色标，实时预览并一键复制 background 代码。支持线性与径向渐变、多色标与位置调整，纯前端运行，无需注册。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/css-gradient.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CSS 渐变生成器">
+<meta property="og:description" content="在线 CSS 渐变生成器：可视化调整渐变类型、角度与色标，实时预览并一键复制 background 代码。支持线性与径向渐变、多色标与位置调整，纯前端运行，无需注册。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/css-gradient.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSS 渐变生成器</h1>
+  <p class="lead">调整类型、角度与颜色，实时预览渐变效果并复制可直接使用的 CSS 代码。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div><label for="type">渐变类型</label><select id="type"><option value="linear">线性 linear-gradient</option><option value="radial">径向 radial-gradient</option></select></div>
+      <div><label for="ang">角度：<span id="angv">135deg</span></label><input type="range" id="ang" min="0" max="360" value="135" style="width:100%;min-height:44px"></div>
+      <div><label for="p2">色标 2 位置：<span id="p2v">50%</span></label><input type="range" id="p2" min="0" max="100" value="50" style="width:100%;min-height:44px"></div>
+    </div>
+    <div class="grid" style="margin-top:8px">
+      <div><label for="c1">颜色 1</label><input type="color" id="c1" value="#2563eb" style="width:100%;height:44px"></div>
+      <div><label for="c2">颜色 2</label><input type="color" id="c2" value="#22c55e" style="width:100%;height:44px"></div>
+      <div><label for="c3">颜色 3</label><input type="color" id="c3" value="#f59e0b" style="width:100%;height:44px"></div>
+    </div>
+    <div class="row"><label class="chk"><input type="checkbox" id="use3"> 使用第三个颜色</label></div>
+    <div class="preview" id="prev"></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+    <div class="row"><button class="primary" id="copy">复制 CSS</button></div>
+  </div>
+  <section>
+    <h2>linear 与 radial 的区别</h2>
+    <p><strong>linear-gradient</strong> 沿一条直线过渡，通过角度控制方向：<code>0deg</code> 向上，<code>90deg</code> 向右，<code>180deg</code> 向下。写成 <code>to right</code> 也能表达方向，但角度更灵活。</p>
+    <p><strong>radial-gradient</strong> 从中心向外辐射，适合做光晕、圆形卡片底色。它可以用 <code>circle at 50% 50%</code> 指定形状与圆心位置。</p>
+    <p>色标可指定位置，如 <code>#22c55e 50%</code>，让过渡在指定处发生；只写颜色则自动均分。渐变是 CSS 原生能力，不产生任何图片请求，性能优于背景图。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么预览好看，页面里却不一样？</summary><p>预览区是固定尺寸的方块。真实元素的长宽比不同，同一角度会呈现不同观感。建议在目标元素上实测，必要时配合 <code>background-size</code> 调整。</p></details>
+    <details><summary>能叠加多个渐变吗？</summary><p>可以。把多个 <code>linear-gradient</code> 用逗号分隔即可叠加，前一个在上层。本工具生成单层代码，多层可据此手动组合。</p></details>
+    <details><summary>复制的代码怎么用？</summary><p>直接把 <code>background: …;</code> 粘贴到 CSS 规则里即可。<code>linear-gradient(...)</code> 也能用于 <code>border-image</code>、文字渐变（配合 <code>background-clip:text</code>）等场景。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function build(){
+    var t=$('type').value,ang=$('ang').value,p2=$('p2').value;
+    var stops=[$('c1').value];
+    stops.push($('c2').value+' '+p2+'%');
+    if($('use3').checked)stops.push($('c3').value);
+    var css=(t==='radial')
+      ? 'radial-gradient(circle at 50% 50%, '+stops.join(', ')+')'
+      : 'linear-gradient('+ang+'deg, '+stops.join(', ')+')';
+    $('angv').textContent=ang+'deg';$('p2v').textContent=p2+'%';
+    $('prev').style.background=css;
+    $('out').textContent='background: '+css+';';
+    $('msg').textContent='已更新，可复制下方代码。';$('msg').className='msg ok';
+  }
+  ['type','ang','p2','c1','c2','c3','use3'].forEach(function(id){
+    $(id).addEventListener('input',build);$(id).addEventListener('change',build);
+  });
+  $('copy').onclick=function(){
+    navigator.clipboard.writeText($('out').textContent).then(function(){$('msg').textContent='已复制 CSS 代码。';$('msg').className='msg ok';},
+      function(){$('msg').textContent='复制失败，请手动选中。';$('msg').className='msg bad';});
+  };
+  build();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/css-gradient" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/css-gradient" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/5c4eb47dc9ff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0772</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/css-gradient-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
