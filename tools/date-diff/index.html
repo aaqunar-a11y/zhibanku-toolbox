@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>日期差计算器 — 相差天数与工作日在线计算 - 知办库在线工具</title>
+<meta name="description" content="在线日期计算器：输入两个日期，算出相差的天数、周数、月数与工作日天数（自动排除周六周日），并给出目标日期加减若干天后的日期。适合工期、倒计时与请假天数估算。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/date-diff.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="日期差计算">
+<meta property="og:description" content="在线日期计算器：输入两个日期，算出相差的天数、周数、月数与工作日天数（自动排除周六周日），并给出目标日期加减若干天后的日期。适合工期、倒计时与请假天数估算。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/date-diff.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>日期差计算</h1>
+  <p class="lead">选择两个日期，算出相差天数、周数、月数与工作日天数；下方还可做日期的加减。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid2">
+      <div><label for="d1">开始日期</label><input type="date" id="d1"></div>
+      <div><label for="d2">结束日期</label><input type="date" id="d2"></div>
+    </div>
+    <div class="row"><button class="primary" id="go">计算</button><button class="sm" id="today">结束日期设为今天</button><button class="sm" id="swap">交换</button></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <div class="grid2">
+      <div><label for="base">基准日期</label><input type="date" id="base"></div>
+      <div><label for="off">加减天数（可为负）</label><input type="number" id="off" value="30"></div>
+    </div>
+    <div class="row"><button id="go2">计算目标日期</button></div>
+    <div class="msg" id="msg2" aria-live="polite"></div>
+    <div class="kv" id="kv2"></div>
+  </div>
+  <section>
+    <h2>工作日怎么算</h2>
+    <p>本工具按「自然日」计算两个日期之间的天数，并按<strong>周一至周五</strong>统计工作日，<strong>自动排除周六、周日</strong>。区间口径为「含开始日期、不含结束日期」，这与很多考勤、工期的算法一致。</p>
+    <p>需要留意：<strong>法定节假日与调休没有计入</strong>。中国的节假日每年由国务院另行公布，且存在调休上班的周六日，因此涉及请假日、工期结算时，请以单位口径或官方日历为准。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>「含开始不含结束」是什么意思？</summary><p>例如 3 月 1 日到 3 月 10 日，相差 9 天。如果你要的是「头尾都算」的天数，在此基础上加 1 即可。</p></details>
+    <details><summary>月数和年数为什么是「约合」？</summary><p>每月天数不同（28–31 天），跨月天数无法精确换算。工具按平均每月 30.4375 天估算，仅用于粗略表达，不做精确结算。</p></details>
+    <details><summary>日期加减能算到期日吗？</summary><p>可以。把「基准日期」设为起始日，「加减天数」填上期限天数（如 90 天），即可得到到期日；填负数就是往前推。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function pad(n){return (n<10?'0':'')+n;}
+  function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function parse(s){if(!s)return null;var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d.getTime())?null:d;}
+  var today=new Date();today.setHours(0,0,0,0);
+  $('d2').value=iso(today);$('d1').value=iso(new Date(today.getTime()-7*86400000));$('base').value=iso(today);
+  function biz(a,b){
+    var s=Math.min(a.getTime(),b.getTime()),e=Math.max(a.getTime(),b.getTime()),cnt=0,d=new Date(s);
+    while(d.getTime()<e){var w=d.getDay();if(w!==0&&w!==6)cnt++;d=new Date(d.getTime()+86400000);}
+    return cnt;
+  }
+  function run(){
+    var a=parse($('d1').value),b=parse($('d2').value),kv=$('kv'),msg=$('msg');
+    if(!a||!b){msg.textContent='请选择两个有效日期。';msg.className='msg bad';kv.innerHTML='';return;}
+    var days=Math.round(Math.abs(b.getTime()-a.getTime())/86400000);
+    var wd=biz(a,b),dir=b.getTime()>=a.getTime()?'之后':'之前';
+    kv.innerHTML='<b>相差天数</b><span>'+days+' 天</span>'
+      +'<b>相差周数</b><span>'+(days/7).toFixed(2)+' 周</span>'
+      +'<b>约合月数</b><span>'+Math.round(days/30.4375)+' 个月</span>'
+      +'<b>约合年数</b><span>'+(days/365.2425).toFixed(2)+' 年</span>'
+      +'<b>工作日天数</b><span>'+wd+' 天（排除周末，含开始不含结束）</span>'
+      +'<b>周末天数</b><span>'+(days-wd)+' 天</span>'
+      +'<b>方向</b><span>结束日期在开始日期'+dir+'</span>';
+    msg.textContent='已计算。';msg.className='msg ok';
+  }
+  function run2(){
+    var b=parse($('base').value),off=parseInt($('off').value,10),kv=$('kv2'),msg=$('msg2');
+    if(!b||isNaN(off)){msg.textContent='请输入有效基准日期与天数。';msg.className='msg bad';kv.innerHTML='';return;}
+    var t=new Date(b.getTime()+off*86400000);
+    kv.innerHTML='<b>目标日期</b><span style="font-weight:700">'+iso(t)+'（'+['周日','周一','周二','周三','周四','周五','周六'][t.getDay()]+'）</span>'
+      +'<b>相对基准</b><span>'+(off>=0?'+':'')+off+' 天</span>';
+    msg.textContent='已计算。';msg.className='msg ok';
+  }
+  $('go').onclick=run;$('go2').onclick=run2;
+  ['d1','d2'].forEach(function(id){$(id).addEventListener('change',run);});
+  ['base','off'].forEach(function(id){$(id).addEventListener('input',run2);});
+  $('today').onclick=function(){$('d2').value=iso(today);run();};
+  $('swap').onclick=function(){var t=$('d1').value;$('d1').value=$('d2').value;$('d2').value=t;run();};
+  run();run2();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/date-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/date-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/5e34d142adf0" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>6156</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/date-diff-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
