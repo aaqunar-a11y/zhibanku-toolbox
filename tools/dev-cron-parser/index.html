@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cron 表达式解析器 — 在线计算下次运行时间 - 知办库在线工具</title>
+<meta name="description" content="在线 Cron 表达式解析工具：输入标准 5 段 cron 表达式，实时解析每个字段取值范围，并算出接下来若干次运行时间。支持 *、范围、步长、列表与英文简写，纯本地计算不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/dev-cron-parser.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cron 表达式解析器">
+<meta property="og:description" content="在线 Cron 表达式解析工具：输入标准 5 段 cron 表达式，实时解析每个字段取值范围，并算出接下来若干次运行时间。支持 *、范围、步长、列表与英文简写，纯本地计算不上传。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/dev-cron-parser.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>Cron 表达式解析器</h1>
+  <p class="lead">输入标准 5 段 cron 表达式（分 时 日 月 周），立即解析各字段含义，并列出接下来的运行时间。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid2">
+      <div>
+        <label for="expr">Cron 表达式（5 段：分 时 日 月 周）</label>
+        <input type="text" id="expr" value="0 9 * * 1-5" spellcheck="false" autocomplete="off">
+      </div>
+      <div>
+        <label for="cnt">显示次数</label>
+        <input type="number" id="cnt" value="6" min="1" max="20">
+      </div>
+    </div>
+    <div class="row">
+      <button class="primary" id="go">解析并计算</button>
+      <button class="sm" id="d1">*/5 * * * *</button>
+      <button class="sm" id="d2">0 9 * * 1-5</button>
+      <button class="sm" id="d3">0 0 1 * *</button>
+      <button class="sm" id="d4">30 2 * * 0</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+  <section>
+    <h2>字段含义</h2>
+    <table>
+      <thead><tr><th>字段</th><th>取值</th><th>可用符号</th></tr></thead>
+      <tbody>
+        <tr><td>分钟</td><td>0–59</td><td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td></tr>
+        <tr><td>小时</td><td>0–23</td><td>同上</td></tr>
+        <tr><td>日</td><td>1–31</td><td>同上</td></tr>
+        <tr><td>月</td><td>1–12</td><td>同上，也支持 <code>JAN</code>–<code>DEC</code></td></tr>
+        <tr><td>星期</td><td>0–6（0 为周日）</td><td>同上，也支持 <code>SUN</code>–<code>SAT</code></td></tr>
+      </tbody>
+    </table>
+    <p><code>*/5</code> 表示每 5 个单位；<code>1-5</code> 表示范围；<code>1,15</code> 表示列举。当「日」和「星期」都不是 <code>*</code> 时，按 cron 惯例取两者的<strong>并集</strong>。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么「日」和「星期」同时限定时结果变多了？</summary><p>这是标准 cron 的语义：只要两者都不为 <code>*</code>，任意一个匹配即触发，相当于「或」。想表达「每月 1 号且是周一」这种「且」，需要把判断放到应用逻辑里。</p></details>
+    <details><summary>Linux 的 cron 有 5 段，为什么有些系统有 6 段？</summary><p>Quartz 等调度器在前面多一段「秒」，共 6 段。本工具按 Linux crontab 的 5 段标准解析；若你用的是 6 段表达式，请先去掉秒字段。</p></details>
+    <details><summary>计算的时间和系统时区有关吗？</summary><p>有关。本工具按你浏览器所在时区计算；服务器上 crontab 的时间以服务器时区为准，跨地域部署时要留意差异。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var expr=$('expr'),cnt=$('cnt'),out=$('out'),msg=$('msg'),kv=$('kv');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  var MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  var DOW={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+  var WK=['周日','周一','周二','周三','周四','周五','周六'];
+  function num(tok,mode){
+    tok=String(tok).toLowerCase();
+    if(mode==='mon'&&MON[tok]!=null)return MON[tok];
+    if(mode==='dow'&&DOW[tok]!=null)return DOW[tok];
+    if(!/^\d+$/.test(tok))return null;
+    return parseInt(tok,10);
+  }
+  function parseField(s,min,max,mode){
+    var set={};
+    s=String(s).trim();
+    if(s==='*'||s==='?'){for(var i=min;i<=max;i++)set[i]=1;return {set:set,any:true};}
+    s.split(',').forEach(function(part){
+      part=part.trim(); if(!part)return;
+      var step=1,rng=part,sl=part.split('/');
+      if(sl.length===2){step=parseInt(sl[1],10);rng=sl[0];if(!(step>0))throw new Error('步长无效：'+part);}
+      else if(sl.length>2){throw new Error('格式无效：'+part);}
+      var vals=[],i;
+      if(rng==='*'||rng==='?'){for(i=min;i<=max;i++)vals.push(i);}
+      else{
+        var dr=rng.split('-');
+        if(dr.length===2){
+          var a=num(dr[0],mode),b=num(dr[1],mode);
+          if(a==null||b==null)throw new Error('范围无效：'+part);
+          if(a>b){var t2=a;a=b;b=t2;}
+          for(i=a;i<=b;i++)vals.push(i);
+        }else{
+          var v=num(rng,mode);
+          if(v==null)throw new Error('取值无效：'+part);
+          vals.push(v);
+        }
+      }
+      vals.forEach(function(v,idx){
+        if(idx%step!==0)return;
+        if(v<min||v>max)throw new Error('超出取值范围：'+part);
+        set[v]=1;
+      });
+    });
+    if(!Object.keys(set).length)throw new Error('字段为空');
+    return {set:set,any:false};
+  }
+  function pad(n){return (n<10?'0':'')+n;}
+  function listSet(o){if(o.any)return '*';return Object.keys(o.set).map(Number).sort(function(x,y){return x-y;}).join(',');}
+  function run(){
+    var f=expr.value.trim().replace(/\s+/g,' ').split(' ');
+    if(f.length!==5){say('需要 5 段（分 时 日 月 周），当前 '+f.length+' 段。','bad');kv.innerHTML='';out.textContent='';return;}
+    var M,H,D,Mo,W;
+    try{
+      M=parseField(f[0],0,59,'');H=parseField(f[1],0,23,'');
+      D=parseField(f[2],1,31,'');Mo=parseField(f[3],1,12,'mon');W=parseField(f[4],0,6,'dow');
+    }catch(e){say('解析失败：'+e.message,'bad');kv.innerHTML='';out.textContent='';return;}
+    if(W.set[7]){W.set[0]=1;delete W.set[7];}
+    var minA=Object.keys(M.set).map(Number).sort(function(a,b){return a-b;});
+    var hrA=Object.keys(H.set).map(Number).sort(function(a,b){return a-b;});
+    var want=Math.max(1,Math.min(20,parseInt(cnt.value,10)||6));
+    var start=new Date();start.setSeconds(0,0);start=new Date(start.getTime()+60000);
+    var res=[];
+    for(var dd=0;dd<1600&&res.length<want;dd++){
+      var day=new Date(start.getFullYear(),start.getMonth(),start.getDate()+dd);
+      if(!Mo.set[day.getMonth()+1])continue;
+      var domOk=D.set[day.getDate()]?1:0,dowOk=W.set[day.getDay()]?1:0,ok;
+      if(!D.any&&!W.any)ok=(domOk||dowOk);else ok=(domOk&&dowOk);
+      if(!ok)continue;
+      for(var hi=0;hi<hrA.length&&res.length<want;hi++){
+        for(var mi=0;mi<minA.length&&res.length<want;mi++){
+          var c=new Date(day.getFullYear(),day.getMonth(),day.getDate(),hrA[hi],minA[mi],0,0);
+          if(c.getTime()<start.getTime())continue;
+          res.push(c);
+        }
+      }
+    }
+    kv.innerHTML='<b>分钟</b><span>'+listSet(M)+'</span><b>小时</b><span>'+listSet(H)+'</span>'
+      +'<b>日</b><span>'+listSet(D)+'</span><b>月</b><span>'+listSet(Mo)+'</span>'
+      +'<b>星期</b><span>'+(W.any?'*':Object.keys(W.set).map(Number).sort(function(a,b){return a-b;}).map(function(d){return WK[d];}).join('、'))+'</span>';
+    if(!res.length){say('在 1600 天范围内没有匹配时间，请检查表达式。','bad');out.textContent='';return;}
+    out.textContent='接下来 '+res.length+' 次运行：\n'+res.map(function(d,i){
+      return (i+1)+'.  '+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '
+        +pad(d.getHours())+':'+pad(d.getMinutes())+'  ('+WK[d.getDay()]+')';
+    }).join('\n');
+    say('解析成功。','ok');
+  }
+  $('go').onclick=run;expr.addEventListener('input',run);
+  [['d1','*/5 * * * *'],['d2','0 9 * * 1-5'],['d3','0 0 1 * *'],['d4','30 2 * * 0']].forEach(function(p){
+    $(p[0]).onclick=function(){expr.value=p[1];run();};
+  });
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-cron-parser" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-cron-parser" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/bfdb37bcea4d" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>9966</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/dev-cron-parser-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
