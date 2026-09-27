@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JWT 解析工具 — 在线解码 Header 与 Payload - 知办库在线工具</title>
+<meta name="description" content="在线 JWT（JSON Web Token）解码工具：粘贴令牌即可解析头部 Header 与载荷 Payload，自动把 exp/iat/nbf 时间戳转换为可读时间。纯浏览器本地解码，令牌不会上传，签名不做验证。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/dev-jwt-decoder.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JWT 解码">
+<meta property="og:description" content="在线 JWT（JSON Web Token）解码工具：粘贴令牌即可解析头部 Header 与载荷 Payload，自动把 exp/iat/nbf 时间戳转换为可读时间。纯浏览器本地解码，令牌不会上传，签名不做验证。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/dev-jwt-decoder.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>JWT 解码</h1>
+  <p class="lead">粘贴 JWT，立即查看 Header 与 Payload 的 JSON 内容，并把时间戳字段转成可读时间。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="tok">JWT 令牌</label>
+    <textarea id="tok" spellcheck="false" placeholder="粘贴形如 xxxxx.yyyyy.zzzzz 的 JWT">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlpoaWJhbmt1IiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE5MDAwMDAwMDB9.abc123signature</textarea>
+    <div class="row"><button class="primary" id="go">解码</button><button id="clear">清空</button><button class="sm" id="demo">填入示例</button></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+  </div>
+  <section>
+    <h2>JWT 由什么组成</h2>
+    <p>一个 JWT 用两个点号分成三段：<strong>Header</strong>（算法与类型）、<strong>Payload</strong>（声明，如用户标识、过期时间）、<strong>Signature</strong>（签名）。前两段是 Base64URL 编码的 JSON，所以<strong>任何人都能解开查看</strong>——JWT 默认只保证「未被篡改」，并不保证「内容保密」。</p>
+    <table>
+      <thead><tr><th>字段</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><code>iss</code></td><td>签发者</td></tr>
+        <tr><td><code>sub</code></td><td>主体（通常是用户 ID）</td></tr>
+        <tr><td><code>aud</code></td><td>接收方</td></tr>
+        <tr><td><code>exp</code></td><td>过期时间（Unix 秒）</td></tr>
+        <tr><td><code>iat</code></td><td>签发时间</td></tr>
+        <tr><td><code>nbf</code></td><td>生效时间（不早于）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>这里会验证签名吗？</summary><p>不会。本工具只做解码，用于查看内容与排查问题。签名验证需要密钥（HS256）或公钥（RS256），必须在服务端完成，浏览器里验证没有安全意义。</p></details>
+    <details><summary>因此能把敏感数据放进 Payload 吗？</summary><p>不能。Payload 是明文可解的。手机号、身份证、密码等敏感信息不应直接写入 JWT，确需携带时应先加密（JWE）。</p></details>
+    <details><summary>令牌会上传吗？</summary><p>不会。解码全部在本地完成，页面没有任何网络请求。但仍建议不要在公共电脑上粘贴生产环境令牌。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var tok=$('tok'),out=$('out'),kv=$('kv'),msg=$('msg');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function b64u(s){
+    s=String(s).replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length%4)s+='=';
+    var bin=atob(s),bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  var T=['exp','iat','nbf'];
+  function tsRows(obj){
+    var rows=[];
+    T.forEach(function(k){
+      if(obj&&typeof obj[k]==='number'){
+        var d=new Date(obj[k]*1000),now=Date.now()/1000;
+        var tag=k==='exp'?(obj[k]<now?'（已过期）':'（有效）'):'';
+        rows.push('<b>'+k+'</b><span>'+obj[k]+' → '+d.toLocaleString('zh-CN')+' '+tag+'</span>');
+      }
+    });
+    return rows.join('');
+  }
+  function run(){
+    var t=tok.value.trim().replace(/\s+/g,'');
+    if(!t){say('请粘贴 JWT 令牌。','bad');out.textContent='';kv.innerHTML='';return;}
+    var parts=t.split('.');
+    if(parts.length!==3){say('JWT 应由 3 段（以 . 分隔）组成，当前 '+parts.length+' 段。','bad');out.textContent='';kv.innerHTML='';return;}
+    var head,pay;
+    try{head=JSON.parse(b64u(parts[0]));}catch(e){say('Header 解码失败：'+e.message,'bad');return;}
+    try{pay=JSON.parse(b64u(parts[1]));}catch(e){say('Payload 解码失败：'+e.message,'bad');return;}
+    out.textContent='Header:\n'+JSON.stringify(head,null,2)+'\n\nPayload:\n'+JSON.stringify(pay,null,2)+'\n\nSignature（未验证）:\n'+parts[2];
+    kv.innerHTML=tsRows(head)+tsRows(pay);
+    say('解码完成（未验证签名）。','ok');
+  }
+  $('go').onclick=run;tok.addEventListener('input',run);
+  $('clear').onclick=function(){tok.value='';run();};
+  $('demo').onclick=function(){tok.value='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlpoaWJhbmt1IiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE5MDAwMDAwMDB9.abc123signature';run();};
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-jwt-decoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-jwt-decoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/7a90827ace60" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7677</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/dev-jwt-decoder-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
