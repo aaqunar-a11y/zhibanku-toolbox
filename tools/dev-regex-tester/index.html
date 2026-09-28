@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>正则表达式在线测试 — 匹配高亮与分组查看 - 知办库在线工具</title>
+<meta name="description" content="在线正则表达式测试工具：输入正则与文本，实时高亮所有匹配项，并列出每处匹配的位置、内容与捕获分组。支持 g/i/m/s/u/y 标志，使用浏览器原生引擎，本地运行不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/dev-regex-tester.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="正则表达式测试">
+<meta property="og:description" content="在线正则表达式测试工具：输入正则与文本，实时高亮所有匹配项，并列出每处匹配的位置、内容与捕获分组。支持 g/i/m/s/u/y 标志，使用浏览器原生引擎，本地运行不上传。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/dev-regex-tester.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>正则表达式测试</h1>
+  <p class="lead">粘贴正则与测试文本，实时查看匹配高亮、匹配位置与捕获分组。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="pat">正则表达式（不含两边的斜杠）</label>
+    <input type="text" id="pat" value="\b\w+@\w+\.\w{2,}\b" spellcheck="false" autocomplete="off">
+    <div class="row">
+      <label for="fl" style="margin:0">标志</label>
+      <input type="text" id="fl" value="g" style="max-width:120px" spellcheck="false" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="hl" checked> 高亮匹配</label>
+    </div>
+    <label for="txt">测试文本</label>
+    <textarea id="txt" spellcheck="false">联系我：hi@zhibanku.com 或 support@example.org，也可发到 admin@test.cn。</textarea>
+    <div class="row"><button class="primary" id="go">执行匹配</button><button id="clear">清空</button></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="out light" id="hlbox"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+  <section>
+    <h2>标志（flags）说明</h2>
+    <table>
+      <thead><tr><th>标志</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><code>g</code></td><td>全局匹配，找出所有结果而非只找第一个（本工具默认加上）</td></tr>
+        <tr><td><code>i</code></td><td>忽略大小写</td></tr>
+        <tr><td><code>m</code></td><td>多行模式，<code>^</code> 与 <code>$</code> 匹配每行的开头与结尾</td></tr>
+        <tr><td><code>s</code></td><td>点号 <code>.</code> 也匹配换行符</td></tr>
+        <tr><td><code>u</code></td><td>Unicode 模式，按码点处理，适合中文与 emoji</td></tr>
+      </tbody>
+    </table>
+    <p>注意：JavaScript 的正则与 PCRE、Python <code>re</code> 存在差异，例如没有 <code>(?&lt;name&gt;)</code> 之外的某些高级语法、<code>\d</code> 默认不匹配全角数字。跨语言移植时请以目标语言的实测为准。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么会「卡住」或匹配为空？</summary><p>像 <code>a*</code> 这类可以匹配空字符串的表达式，会对每个位置产生一次零长度匹配。工具已对零长度匹配做前进保护，不会死循环；若结果过多，会截断到 2 万条。</p></details>
+    <details><summary>捕获分组和整体匹配有什么区别？</summary><p>整体匹配（<code>$0</code>）是整段命中的文本；圆括号包起来的部分是捕获分组（<code>$1</code>、<code>$2</code>…）。<code>(?:…)</code> 是「非捕获分组」，只分组不单独抓取。</p></details>
+    <details><summary>文本会被上传吗？</summary><p>不会。匹配由浏览器原生正则引擎在本地完成，页面没有任何网络请求。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var pat=$('pat'),fl=$('fl'),txt=$('txt'),hl=$('hl'),out=$('out'),hlbox=$('hlbox'),msg=$('msg');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return c==='&'?'&amp;':(c==='<'?'&lt;':'&gt;');});}
+  function run(){
+    var p=pat.value,t=txt.value,flags=(fl.value||'').replace(/[^gimsuy]/g,'');
+    if(flags.indexOf('g')<0)flags+='g';
+    if(!p){say('请输入正则表达式。','bad');out.textContent='';hlbox.textContent='';return;}
+    var re;
+    try{re=new RegExp(p,flags);}catch(e){say('正则语法错误：'+e.message,'bad');out.textContent='';hlbox.textContent='';return;}
+    var ms=[],m,guard=0;
+    while((m=re.exec(t))!==null){
+      ms.push({i:m.index,s:m[0],g:Array.prototype.slice.call(m,1)});
+      if(m.index===re.lastIndex)re.lastIndex++;
+      if(++guard>20000)break;
+    }
+    if(!ms.length){say('没有匹配到任何内容。','bad');out.textContent='（无匹配）';hlbox.textContent=t;return;}
+    var html='',last=0;
+    ms.forEach(function(mm){
+      html+=esc(t.slice(last,mm.i))+'<mark>'+esc(mm.s)+'</mark>';
+      last=mm.i+mm.s.length;
+    });
+    html+=esc(t.slice(last));
+    hlbox.innerHTML=hl.checked?html:esc(t);
+    out.textContent='共 '+ms.length+' 处匹配\n'+ms.map(function(mm,k){
+      var g=mm.g.length?('  分组：'+mm.g.map(function(x,j){return '$'+(j+1)+'='+(x==null?'(未匹配)':JSON.stringify(x));}).join(', ')):'';
+      return (k+1)+'. 位置 '+mm.i+'  匹配 '+JSON.stringify(mm.s)+g;
+    }).join('\n');
+    say('共匹配 '+ms.length+' 处。','ok');
+  }
+  $('go').onclick=run;
+  pat.addEventListener('input',run);fl.addEventListener('input',run);txt.addEventListener('input',run);hl.addEventListener('change',run);
+  $('clear').onclick=function(){txt.value='';run();};
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-regex-tester" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-regex-tester" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/06aa4377b223" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7102</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/dev-regex-tester-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
