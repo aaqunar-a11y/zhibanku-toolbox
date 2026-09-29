@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML 转纯文本 — 在线去标签、保留换行 - 知办库在线工具</title>
+<meta name="description" content="在线 HTML 转纯文本工具：粘贴 HTML 源码，自动去掉标签、脚本与注释，解码 &nbsp; 等实体并保留段落换行，输出干净的纯文本。适合清洗网页内容与富文本，全程本地处理。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/html-to-text.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HTML 转纯文本">
+<meta property="og:description" content="在线 HTML 转纯文本工具：粘贴 HTML 源码，自动去掉标签、脚本与注释，解码 &nbsp; 等实体并保留段落换行，输出干净的纯文本。适合清洗网页内容与富文本，全程本地处理。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/html-to-text.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>HTML 转纯文本</h1>
+  <p class="lead">粘贴 HTML 源码，一键剥离标签与脚本、解码实体，输出可直接使用的纯文本。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="src">HTML 源码</label>
+    <textarea id="src" style="min-height:170px" spellcheck="false">&lt;h2&gt;小标题&lt;/h2&gt;
+&lt;p&gt;这是一段&lt;b&gt;加粗&lt;/b&gt;文字，含实体 &amp;amp; 与链接 &lt;a href="#"&gt;示例&lt;/a&gt;。&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;条目一&lt;/li&gt;&lt;li&gt;条目二&lt;/li&gt;&lt;/ul&gt;</textarea>
+    <div class="row">
+      <button class="primary" id="go">转换</button>
+      <label class="chk"><input type="checkbox" id="br" checked> 保留段落换行</label>
+      <label class="chk"><input type="checkbox" id="li" checked> 列表加前缀</label>
+      <button id="copy">复制结果</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+  <section>
+    <h2>转换都做了哪些处理</h2>
+    <ul>
+      <li>删除 <code>&lt;script&gt;</code>、<code>&lt;style&gt;</code> 与注释，避免把代码当正文。</li>
+      <li>把 <code>&lt;br&gt;</code> 与块级标签的结尾当作换行；关闭「保留段落换行」则合并为一行。</li>
+      <li>可选给 <code>&lt;li&gt;</code> 加 <code>- </code> 前缀，让列表在纯文本里也清晰。</li>
+      <li>解码 <code>&amp;nbsp;</code>、<code>&amp;amp;</code>、<code>&amp;#39;</code> 等 HTML 实体。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>转换结果里的多余空格能去掉吗？</summary><p>开启「保留段落换行」时，工具会顺手压缩行尾空白并把连续空行合并为一行空行；关闭时则把全部空白折叠成单空格，得到一行连续文本。</p></details>
+    <details><summary>能处理整页 HTML 吗？</summary><p>可以，但请先粘贴源码而不是网址——本工具不联网抓取，只处理你粘贴进来的内容。整页抓下来的源码通常包含大量导航与脚本，转换后需自行取舍。</p></details>
+    <details><summary>为什么结果里出现了 &lt; 这样的字符？</summary><p>那是被转义后的文本（原文是 <code>&amp;lt;</code>）。工具解码实体后，若结果本身包含尖括号，会按纯文本原样输出，这是正确行为，不会被执行。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var src=$('src'),out=$('out'),msg=$('msg'),br=$('br'),li=$('li');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function decode(s){var ta=document.createElement('textarea');ta.innerHTML=s;return ta.value;}
+  function run(){
+    var s=src.value;
+    s=s.replace(/<!--[\s\S]*?-->/g,'');
+    s=s.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi,'');
+    if(li.checked){
+      s=s.replace(/<li[^>]*>/gi,'\n- ');
+      s=s.replace(/<\/(ul|ol)>/gi,'\n');
+    }
+    s=s.replace(/<br\s*\/?>/gi,'\n');
+    if(br.checked){s=s.replace(/<\/(p|div|h[1-6]|section|article|blockquote|tr|li)>/gi,'\n');}
+    s=s.replace(/<[^>]+>/g,'');
+    s=decode(s);
+    if(br.checked){
+      s=s.replace(/[ \t]+\n/g,'\n').replace(/\n[ \t]+/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/^\s+|\s+$/g,'');
+    }else{
+      s=s.replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'');
+    }
+    out.textContent=s;
+    say(s?('已转换：'+s.length+' 个字符。'):'结果为空。',s?'ok':'bad');
+  }
+  $('go').onclick=run;src.addEventListener('input',run);br.addEventListener('change',run);li.addEventListener('change',run);
+  $('copy').onclick=function(){
+    if(!out.textContent){say('没有可复制的结果。','bad');return;}
+    navigator.clipboard.writeText(out.textContent).then(function(){say('已复制。','ok');},function(){say('复制失败，请手动选中。','bad');});
+  };
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-to-text" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/html-to-text" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/39c02f407636" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>5323</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/html-to-text-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
