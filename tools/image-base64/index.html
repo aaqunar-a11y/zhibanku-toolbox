@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>图片转 Base64 — 在线生成 Data URI - 知办库在线工具</title>
+<meta name="description" content="在线图片转 Base64 工具：选择本地图片即可生成 Base64 编码与 data:image 的 Data URI，并显示原始大小与编码后长度。图片不会上传，全部在浏览器本地转换，适合前端内联小图标与调试。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/image-base64.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="图片转 Base64">
+<meta property="og:description" content="在线图片转 Base64 工具：选择本地图片即可生成 Base64 编码与 data:image 的 Data URI，并显示原始大小与编码后长度。图片不会上传，全部在浏览器本地转换，适合前端内联小图标与调试。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/image-base64.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>图片转 Base64</h1>
+  <p class="lead">选择本地图片，生成 Base64 编码与可直接用于 CSS/HTML 的 Data URI。图片不上传。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="file">选择图片</label>
+    <input type="file" id="file" accept="image/*">
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="prefix" checked> 包含 data URI 前缀</label>
+      <button id="copy">复制结果</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div id="prev"></div>
+    <div class="kv" id="kv"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+  <section>
+    <h2>Base64 与 Data URI 怎么用</h2>
+    <p>Base64 把二进制图片编码成纯文本，好处是可以直接嵌进 HTML、CSS 或 JSON，省去一次网络请求。加上前缀就得到完整的 Data URI：</p>
+    <p><code>background-image:url("data:image/png;base64,iVBORw0KGgo…")</code></p>
+    <p>注意编码后体积约增大 <strong>1/3</strong>，且无法被浏览器单独缓存，因此<strong>只适合小图标、雪碧图或临时调试</strong>；大图仍应使用独立文件。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么编码后的字符串比原图大？</summary><p>Base64 用 4 个可打印字符表示 3 个字节，理论膨胀率约 33%。若图片本身已是压缩格式（JPG/WebP），编码不会二次压缩，只会变大。</p></details>
+    <details><summary>图片会上传到服务器吗？</summary><p>不会。文件通过浏览器的 FileReader 在本地读取，页面没有任何上传请求。可以在开发者工具的网络面板确认。</p></details>
+    <details><summary>支持 SVG 和 GIF 吗？</summary><p>支持。选择任意 <code>image/*</code> 文件都会按 MIME 类型生成对应前缀，例如 <code>data:image/svg+xml;base64,…</code>。SVG 若为纯文本，也可以直接内联而无需 Base64。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var file=$('file'),out=$('out'),kv=$('kv'),msg=$('msg'),prev=$('prev'),prefix=$('prefix'),full='';
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function fmt(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB';}
+  function render(){ if(!full){out.textContent='';return;} out.textContent=prefix.checked?full:full.replace(/^data:[^,]*,/,''); }
+  file.addEventListener('change',function(){
+    var f=file.files&&file.files[0];
+    if(!f)return;
+    var r=new FileReader();
+    r.onload=function(){
+      full=String(r.result);
+      var b64=full.replace(/^data:[^,]*,/,'');
+      prev.innerHTML='<img alt="预览" style="max-width:100%;max-height:200px;border:1px solid #e3e6ec;border-radius:8px;margin-top:10px" src="'+full+'">';
+      kv.innerHTML='<b>文件名</b><span>'+f.name.replace(/[<>&]/g,'')+'</span>'
+        +'<b>类型</b><span>'+(f.type||'未知')+'</span>'
+        +'<b>原始大小</b><span>'+fmt(f.size)+'</span>'
+        +'<b>Base64 长度</b><span>'+b64.length+' 字符（约 '+fmt(b64.length)+'）</span>';
+      render();
+      say('转换完成。','ok');
+    };
+    r.onerror=function(){say('读取失败，请换一张图片。','bad');};
+    r.readAsDataURL(f);
+  });
+  prefix.addEventListener('change',render);
+  $('copy').onclick=function(){
+    if(!out.textContent){say('还没有结果。','bad');return;}
+    navigator.clipboard.writeText(out.textContent).then(function(){say('已复制。','ok');},function(){say('复制失败，请手动选中。','bad');});
+  };
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/image-base64" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/image-base64" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/507462558a86" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>2583</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/image-base64-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
