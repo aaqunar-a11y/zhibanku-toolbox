@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>贷款月供计算器 — 等额本息/等额本金在线计算 - 知办库在线工具</title>
+<meta name="description" content="在线房贷车贷月供计算器：输入贷款金额、年利率与期限，自动算出等额本息与等额本金的月供、总利息与还款总额，并给出前若干期还款计划表。纯本地计算，不上传任何数据。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/loan-calc.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="贷款月供计算器">
+<meta property="og:description" content="在线房贷车贷月供计算器：输入贷款金额、年利率与期限，自动算出等额本息与等额本金的月供、总利息与还款总额，并给出前若干期还款计划表。纯本地计算，不上传任何数据。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/loan-calc.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>贷款月供计算器</h1>
+  <p class="lead">输入金额、年利率与期限，对比等额本息与等额本金的月供、总利息与还款总额。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid">
+      <div><label for="p">贷款金额（元）</label><input type="number" id="p" value="1000000" min="1"></div>
+      <div><label for="r">年利率（%）</label><input type="number" id="r" value="3.85" step="0.01" min="0"></div>
+      <div><label for="y">期限（年）</label><input type="number" id="y" value="30" min="1" max="50"></div>
+    </div>
+    <div class="row"><button class="primary" id="go">计算</button>
+      <button class="sm" id="d1">100万 / 3.85% / 30年</button>
+      <button class="sm" id="d2">30万 / 4.9% / 10年</button>
+      <button class="sm" id="d3">15万 / 0% / 3年</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+    <div id="tbl"></div>
+  </div>
+  <section>
+    <h2>等额本息与等额本金怎么选</h2>
+    <table>
+      <thead><tr><th>对比项</th><th>等额本息</th><th>等额本金</th></tr></thead>
+      <tbody>
+        <tr><td>每月还款</td><td>固定不变</td><td>逐月递减</td></tr>
+        <tr><td>本金 / 利息构成</td><td>前期利息多、本金少</td><td>每月本金固定</td></tr>
+        <tr><td>总利息</td><td>较多</td><td>较少</td></tr>
+        <tr><td>前期压力</td><td>较小</td><td>较大</td></tr>
+        <tr><td>适合</td><td>收入稳定、想控制月供</td><td>前期还款能力强、想省利息</td></tr>
+      </tbody>
+    </table>
+    <p>等额本金的月供从高到低递减，因为每月偿还的本金固定，而未还本金减少后利息也随之下降；等额本息则用公式把总还款摊平成固定月供，因此前期还的利息占比更高。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>计算结果和银行的一样吗？</summary><p>公式一致，结果应基本吻合。实际差异通常来自银行按「实际天数」计息、提前还款、利率浮动或四舍五入规则。本工具按标准公式计算，仅供预算参考。</p></details>
+    <details><summary>为什么利率填 0 也能算？</summary><p>零利率时退化为「本金 ÷ 期数」，常用于亲友借款或免息分期。工具对这种情况做了单独处理，不会出现除零。</p></details>
+    <details><summary>还款计划表为什么只显示前 12 期？</summary><p>30 年房贷有 360 期，全部列出会很长。工具固定展示前 12 期以作节奏参考；等额本息每期金额相同，等额本金每期递减，规律清晰。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var P=$('p'),R=$('r'),Y=$('y'),kv=$('kv'),msg=$('msg'),tbl=$('tbl');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  function money(n){return n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function run(){
+    var P0=parseFloat(P.value),rate=parseFloat(R.value),years=parseFloat(Y.value);
+    if(!(P0>0)){say('贷款金额需大于 0。','bad');kv.innerHTML='';tbl.innerHTML='';return;}
+    if(!(rate>=0)){say('年利率不能为负。','bad');return;}
+    if(!(years>0)){say('期限需大于 0。','bad');return;}
+    var n=Math.round(years*12),mr=rate/100/12;
+    var m,total,interest;
+    if(mr===0){m=P0/n;total=P0;interest=0;}
+    else{var f=Math.pow(1+mr,n);m=P0*mr*f/(f-1);total=m*n;interest=total-P0;}
+    var base=P0/n,first=base+P0*mr,last=base+base*mr,totalB=P0*mr*(n+1)/2+P0,interestB=totalB-P0;
+    kv.innerHTML='<b>还款期数</b><span>'+n+' 期</span>'
+      +'<b>等额本息 · 月供</b><span>'+money(m)+' 元 / 月</span>'
+      +'<b>等额本息 · 总利息</b><span>'+money(interest)+' 元</span>'
+      +'<b>等额本息 · 还款总额</b><span>'+money(total)+' 元</span>'
+      +'<b>等额本金 · 首月</b><span>'+money(first)+' 元（每月递减 '+money(base*mr)+' 元）</span>'
+      +'<b>等额本金 · 末月</b><span>'+money(last)+' 元</span>'
+      +'<b>等额本金 · 总利息</b><span>'+money(interestB)+' 元</span>'
+      +'<b>等额本金 · 还款总额</b><span>'+money(totalB)+' 元</span>';
+    var show=Math.min(n,12),rows='<table><thead><tr><th>期数</th><th>等额本息月供（元）</th><th>等额本金月供（元）</th></tr></thead><tbody>',bal=P0;
+    for(var i=1;i<=show;i++){
+      var bm=base+bal*mr;bal-=base;
+      rows+='<tr><td>第 '+i+' 期</td><td class="v">'+money(m)+'</td><td class="v">'+money(bm)+'</td></tr>';
+    }
+    if(n>show)rows+='<tr><td>…</td><td class="v">…</td><td class="v">…</td></tr>';
+    rows+='</tbody></table><p style="font-size:13px;color:#6b7280;margin-top:8px">仅展示前 '+show+' 期；等额本金按月递减。</p>';
+    tbl.innerHTML=rows;
+    say('计算完成（结果仅供参考，以银行实际为准）。','ok');
+  }
+  $('go').onclick=run;[P,R,Y].forEach(function(el){el.addEventListener('input',run);});
+  [['d1',['1000000','3.85','30']],['d2',['300000','4.9','10']],['d3',['150000','0','3']]].forEach(function(x){
+    $(x[0]).onclick=function(){P.value=x[1][0];R.value=x[1][1];Y.value=x[1][2];run();};
+  });
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/loan-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/loan-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/6a21d7fdbbba" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>4112</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/loan-calc-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
