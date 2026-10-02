@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEO Meta 标签生成器 — 在线生成 title/OG/Card - 知办库在线工具</title>
+<meta name="description" content="在线 SEO Meta 标签生成器：填写标题、描述与网址，一键生成 title、description、canonical 以及 Open Graph 与 Twitter Card 标签，并给出标题与描述的长度校验。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/meta-tags.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SEO Meta 标签生成器">
+<meta property="og:description" content="在线 SEO Meta 标签生成器：填写标题、描述与网址，一键生成 title、description、canonical 以及 Open Graph 与 Twitter Card 标签，并给出标题与描述的长度校验。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/meta-tags.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>SEO Meta 标签生成器</h1>
+  <p class="lead">填入页面信息，一键生成基础 SEO、Open Graph 与 Twitter Card 标签，并校验长度。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="grid2">
+      <div><label for="title">页面标题</label><input type="text" id="title" value="在线工具合集 - 知办库" autocomplete="off"></div>
+      <div><label for="site">站点名称</label><input type="text" id="site" value="知办库" autocomplete="off"></div>
+    </div>
+    <label for="desc">页面描述</label>
+    <textarea id="desc" style="min-height:80px" spellcheck="false">免费在线小工具合集，全部在浏览器本地运行，不上传数据、无需注册，涵盖编码转换、文本处理与开发辅助。</textarea>
+    <div class="grid2">
+      <div><label for="url">页面网址（canonical）</label><input type="text" id="url" value="https://www.zhibanku.com/tools/" autocomplete="off"></div>
+      <div><label for="img">分享图片 URL（可选）</label><input type="text" id="img" value="" autocomplete="off"></div>
+    </div>
+    <div class="row"><button class="primary" id="go">生成</button><button id="copy">复制全部</button></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+  <section>
+    <h2>各标签的作用</h2>
+    <table>
+      <thead><tr><th>标签</th><th>作用</th><th>建议长度</th></tr></thead>
+      <tbody>
+        <tr><td><code>title</code></td><td>搜索结果标题、浏览器标签</td><td>30–60 字符</td></tr>
+        <tr><td><code>description</code></td><td>搜索结果摘要，影响点击率</td><td>80–160 字符</td></tr>
+        <tr><td><code>canonical</code></td><td>声明规范网址，避免重复内容</td><td>完整绝对 URL</td></tr>
+        <tr><td><code>og:*</code></td><td>微信、Facebook 等分享卡片</td><td>标题/描述同上</td></tr>
+        <tr><td><code>twitter:card</code></td><td>Twitter/X 分享样式</td><td>有图用 summary_large_image</td></tr>
+      </tbody>
+    </table>
+    <p>长度只是经验值：搜索引擎会按像素宽度截断，中文字符通常比英文字母更「宽」，因此中文页面可适当取短一些。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>description 会影响排名吗？</summary><p>它不直接作为排名因素，但会显著影响点击率——一段准确、有吸引力的描述能提升点击，间接有利于流量与排名。</p></details>
+    <details><summary>canonical 必须填吗？</summary><p>当同一内容存在多个可访问网址（带参、www 与非 www、分页）时建议填写，指向你希望被收录的那个版本。工具会原样输出你填写的地址。</p></details>
+    <details><summary>生成的代码放哪里？</summary><p>放在网页 <code>&lt;head&gt;</code> 中靠前的位置，确保 title、description、canonical 先于脚本加载，便于爬虫尽早读取。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function note(n,a,b){
+    var cls=(n>=a&&n<=b)?'ok':'bad';
+    var t=n<a?('偏短，建议 '+a+'–'+b):(n>b?'偏长，可能被截断':'长度合适');
+    return '<span class="'+cls+'">'+n+' 字符（'+t+'）</span>';
+  }
+  function run(){
+    var title=$('title').value.trim(),desc=$('desc').value.trim(),url=$('url').value.trim(),
+        site=$('site').value.trim(),img=$('img').value.trim();
+    if(!title){$('msg').textContent='请填写页面标题。';$('msg').className='msg bad';$('out').textContent='';$('kv').innerHTML='';return;}
+    var L=['<!-- 基础 SEO -->','<title>'+esc(title)+'</title>','<meta name="description" content="'+esc(desc)+'">'];
+    if(url)L.push('<link rel="canonical" href="'+esc(url)+'">');
+    L.push('<meta name="robots" content="index, follow">','','<!-- Open Graph -->',
+      '<meta property="og:type" content="website">','<meta property="og:title" content="'+esc(title)+'">',
+      '<meta property="og:description" content="'+esc(desc)+'">');
+    if(url)L.push('<meta property="og:url" content="'+esc(url)+'">');
+    if(img)L.push('<meta property="og:image" content="'+esc(img)+'">');
+    if(site)L.push('<meta property="og:site_name" content="'+esc(site)+'">');
+    L.push('','<!-- Twitter Card -->','<meta name="twitter:card" content="'+(img?'summary_large_image':'summary')+'">',
+      '<meta name="twitter:title" content="'+esc(title)+'">','<meta name="twitter:description" content="'+esc(desc)+'">');
+    if(img)L.push('<meta name="twitter:image" content="'+esc(img)+'">');
+    $('out').textContent=L.join('\n');
+    $('kv').innerHTML='<b>标题长度</b>'+note(title.length,30,60)+'<b>描述长度</b>'+note(desc.length,80,160);
+    $('msg').textContent='已生成。';$('msg').className='msg ok';
+  }
+  $('go').onclick=run;
+  ['title','desc','url','site','img'].forEach(function(id){$(id).addEventListener('input',run);});
+  $('copy').onclick=function(){
+    if(!$('out').textContent){$('msg').textContent='还没有结果。';$('msg').className='msg bad';return;}
+    navigator.clipboard.writeText($('out').textContent).then(function(){$('msg').textContent='已复制。';$('msg').className='msg ok';},
+      function(){$('msg').textContent='复制失败，请手动选中。';$('msg').className='msg bad';});
+  };
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/meta-tags" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/meta-tags" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/meta-tags-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
