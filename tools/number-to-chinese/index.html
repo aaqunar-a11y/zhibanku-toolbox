@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>数字转中文大写 — 人民币金额大写在线转换 - 知办库在线工具</title>
+<meta name="description" content="在线数字转中文工具：把阿拉伯数字转换为中文小写读法与财务规范的人民币大写金额，例如 1234.56 转成壹仟贰佰叁拾肆元伍角陆分。适合报销、合同、发票与支票填写，纯本地计算。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/number-to-chinese.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="数字转中文大写">
+<meta property="og:description" content="在线数字转中文工具：把阿拉伯数字转换为中文小写读法与财务规范的人民币大写金额，例如 1234.56 转成壹仟贰佰叁拾肆元伍角陆分。适合报销、合同、发票与支票填写，纯本地计算。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/number-to-chinese.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>数字转中文大写</h1>
+  <p class="lead">输入数字，立即得到中文小写读法与财务规范的人民币大写金额。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="num">数字（最多两位小数）</label>
+    <input type="text" id="num" value="1234.56" spellcheck="false" autocomplete="off">
+    <div class="row">
+      <button class="primary" id="go">转换</button>
+      <button class="sm" id="d1">10086</button>
+      <button class="sm" id="d2">100000000</button>
+      <button class="sm" id="d3">0.05</button>
+      <button class="sm" id="d4">9000000000000.07</button>
+    </div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+  </div>
+  <section>
+    <h2>财务大写为什么必须这么写</h2>
+    <p>发票、支票、报销单上的金额通常要求使用<strong>中文大写数字</strong>（壹贰叁肆伍陆柒捌玖拾佰仟万亿元角分整），目的是防止篡改——大写笔画复杂，很难在不留痕迹的情况下把「壹」改成「贰」。</p>
+    <p>规则上有几个易错点：金额到「元」为止且无角分时要写「整」（如 100 元 → 壹佰元整）；元后面接角或分时，若其中一位是零，需要补「零」（如 1.05 → 壹元零伍分）；有时也要处理前导「壹拾」简写成「拾」。</p>
+    <table>
+      <thead><tr><th>阿拉伯数字</th><th>中文小写</th><th>人民币大写</th></tr></thead>
+      <tbody>
+        <tr><td>10086</td><td>一万零八十六</td><td>壹万零捌拾陆元整</td></tr>
+        <tr><td>1234.56</td><td>一千二百三十四点五六</td><td>壹仟贰佰叁拾肆元伍角陆分</td></tr>
+        <tr><td>0.05</td><td>零点零五</td><td>伍分</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么 0.05 的大写是「伍分」而不是「零元伍分」？</summary><p>按财务惯例，金额不足一元时可省略「零元」，直接写角分。本工具遵循这一写法；若你的单据要求保留「零元」，手动补上即可。</p></details>
+    <details><summary>支持多大的数字？</summary><p>整数位最多 16 位，可覆盖到「亿亿」量级，日常报销、合同、发票完全够用。超出范围会提示而非给出错误结果。</p></details>
+    <details><summary>小数超过两位怎么办？</summary><p>金额最小到「分」，因此只保留两位小数。若你要转换的是科学数据而非金额，请先自行四舍五入到两位再输入。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var num=$('num'),kv=$('kv'),msg=$('msg');
+  function say(t,c){msg.textContent=t;msg.className='msg '+(c||'');}
+  var D=['零','一','二','三','四','五','六','七','八','九'];
+  var U=['','十','百','千'],G=['','万','亿','万亿','亿亿'];
+  var RD=['零','壹','贰','叁','肆','伍','陆','柒','捌','玖'];
+  var RU=['','拾','佰','仟'],RG=['','万','亿','万亿','亿亿'];
+  function group(s,dig,unit,gname){
+    s=String(s).replace(/^0+/,'');
+    if(!s)return '';
+    if(s.length>16)return null;
+    var groups=[];
+    while(s.length){groups.push(s.slice(-4));s=s.slice(0,-4);}
+    var out='';
+    for(var g=groups.length-1;g>=0;g--){
+      var grp=groups[g],gs='',zero=false;
+      for(var i=0;i<grp.length;i++){
+        var d=+grp[i],pos=grp.length-1-i;
+        if(d===0){zero=true;}
+        else{if(zero){if(gs!==''||out!=='')gs+='零';}zero=false;gs+=dig[d]+unit[pos];}
+      }
+      if(gs){out+=gs+gname[g];}
+      else{if(out&&out.charAt(out.length-1)!=='零')out+='零';}
+    }
+    return out.replace(/零+$/,'');
+  }
+  function intCn(s){var o=group(s,D,U,G);if(o===null)return null;if(o==='')return '零';return o.replace(/^一十/,'十');}
+  function rmbInt(s){return group(s,RD,RU,RG);}
+  function rmbUpper(s){
+    var neg=(s.charAt(0)==='-');if(neg)s=s.slice(1);
+    var parts=s.split('.'),ip=parts[0]||'0',fp=((parts[1]||'')+'00').slice(0,2);
+    var jiao=+fp.charAt(0),fen=+fp.charAt(1),ipStr=rmbInt(ip);
+    if(ipStr===null)return null;
+    if(jiao===0&&fen===0)return (neg?'负':'')+((ipStr?ipStr:'零')+'元整');
+    var res=ipStr?(ipStr+'元'):'';
+    if(jiao>0){res+=RD[jiao]+'角';}
+    else if(ipStr&&fen>0){res+='零';}
+    if(fen>0){res+=RD[fen]+'分';}
+    if(!res)res='零元整';
+    return (neg?'负':'')+res;
+  }
+  function run(){
+    var s=num.value.trim().replace(/,/g,'');
+    if(!/^-?\d+(\.\d+)?$/.test(s)){say('请输入有效数字。','bad');kv.innerHTML='';return;}
+    var parts=s.split('.');
+    if(parts[1]&&parts[1].length>2){say('金额小数最多两位（到分）。','bad');kv.innerHTML='';return;}
+    var low=intCn(parts[0]);
+    if(low===null){say('整数位过长（最多 16 位）。','bad');kv.innerHTML='';return;}
+    var lowFull=(parts[0].charAt(0)==='-'?'负':'')+low;
+    if(parts[1]){lowFull+='点'+parts[1].split('').map(function(d){return D[+d];}).join('');}
+    var up=rmbUpper(s);
+    if(up===null){say('整数位过长（最多 16 位）。','bad');kv.innerHTML='';return;}
+    kv.innerHTML='<b>中文小写</b><span>'+lowFull+'</span>'
+      +'<b>人民币大写</b><span style="color:#b45309;font-weight:700;font-size:16px">'+up+'</span>';
+    say('转换完成。','ok');
+  }
+  $('go').onclick=run;num.addEventListener('input',run);
+  [['d1','10086'],['d2','100000000'],['d3','0.05'],['d4','9000000000000.07']].forEach(function(p){
+    $(p[0]).onclick=function(){num.value=p[1];run();};
+  });
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/number-to-chinese" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/number-to-chinese" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/number-to-chinese-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
