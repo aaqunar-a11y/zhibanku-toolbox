@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>百分比计算器 — 折扣、涨跌幅在线计算 - 知办库在线工具</title>
+<meta name="description" content="在线百分比计算器：一站算清四种常见场景——X 的百分之几、X 占 Y 的比例、从 A 到 B 的涨跌幅，以及折扣后的价格与节省金额。输入即时出结果，纯本地计算。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/percentage-calc.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="百分比计算器">
+<meta property="og:description" content="在线百分比计算器：一站算清四种常见场景——X 的百分之几、X 占 Y 的比例、从 A 到 B 的涨跌幅，以及折扣后的价格与节省金额。输入即时出结果，纯本地计算。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/percentage-calc.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>百分比计算器</h1>
+  <p class="lead">四种最常见的百分比计算：求部分、求占比、求涨跌、算折扣，输入即出结果。</p>
+</header>
+<main>
+  <div class="panel">
+    <h3 style="margin-top:0">① 求某个数的百分之几</h3>
+    <div class="grid2">
+      <div><label for="a1">百分数（%）</label><input type="number" id="a1" value="15" step="any"></div>
+      <div><label for="a2">数值</label><input type="number" id="a2" value="200" step="any"></div>
+    </div>
+    <div class="kv" id="k1"></div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <h3 style="margin-top:0">② 求一个数是另一个数的百分之几</h3>
+    <div class="grid2">
+      <div><label for="b1">部分 X</label><input type="number" id="b1" value="45" step="any"></div>
+      <div><label for="b2">总量 Y</label><input type="number" id="b2" value="180" step="any"></div>
+    </div>
+    <div class="kv" id="k2"></div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <h3 style="margin-top:0">③ 涨跌幅（变化率）</h3>
+    <div class="grid2">
+      <div><label for="c1">原值 A</label><input type="number" id="c1" value="100" step="any"></div>
+      <div><label for="c2">新值 B</label><input type="number" id="c2" value="120" step="any"></div>
+    </div>
+    <div class="kv" id="k3"></div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <h3 style="margin-top:0">④ 折扣计算</h3>
+    <div class="grid2">
+      <div><label for="e1">原价（元）</label><input type="number" id="e1" value="299" step="any"></div>
+      <div><label for="e2">折扣（8 表示八折）</label><input type="number" id="e2" value="8" step="any"></div>
+    </div>
+    <div class="kv" id="k4"></div>
+  </div>
+  <section>
+    <h2>公式速查</h2>
+    <table>
+      <thead><tr><th>场景</th><th>公式</th></tr></thead>
+      <tbody>
+        <tr><td>X 的 P% 是多少</td><td>结果 = X × P ÷ 100</td></tr>
+        <tr><td>X 占 Y 的百分之几</td><td>占 = X ÷ Y × 100%</td></tr>
+        <tr><td>从 A 变到 B 的涨跌幅</td><td>变化率 = (B − A) ÷ A × 100%</td></tr>
+        <tr><td>打 D 折后的价格</td><td>折后价 = 原价 × D ÷ 10</td></tr>
+      </tbody>
+    </table>
+    <p>注意区分「打八折」与「降 8%」：打八折是原价的 80%，降 8% 是原价的 92%，两者完全不同。价格标签上的「8 折」是前者。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>涨跌幅里原值为 0 怎么办？</summary><p>原值为 0 时变化率在数学上没有定义（分母为零），工具会给出提示而不会输出无限大。此时更适合直接报绝对变化量。</p></details>
+    <details><summary>涨 100% 再跌 100% 为什么不是回到原点？</summary><p>因为基数变了。100 涨 100% 变成 200，再从 200 跌 100% 就变成 0。所以「涨跌百分比」不能简单相加。</p></details>
+    <details><summary>折扣填 8.5 是什么含义？</summary><p>表示 8.5 折，即原价的 85%。工具按「原价 × 折扣 ÷ 10」计算，支持小数折扣。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function num(id){var v=parseFloat($(id).value);return isNaN(v)?null:v;}
+  function fmt(n){if(!isFinite(n))return '—';return (Math.abs(n)>=1e-6)?n.toFixed(4).replace(/\.?0+$/,''):'0';}
+  function run1(){var a=num('a1'),b=num('a2'),k=$('k1');if(a==null||b==null){k.innerHTML='<b>结果</b><span>—</span>';return;}
+    k.innerHTML='<b>结果</b><span>'+fmt(a)+'% × '+fmt(b)+' = <strong>'+fmt(a*b/100)+'</strong></span>';}
+  function run2(){var a=num('b1'),b=num('b2'),k=$('k2');if(a==null||b==null){k.innerHTML='<b>结果</b><span>—</span>';return;}
+    if(b===0){k.innerHTML='<b>结果</b><span>总量不能为 0</span>';return;}
+    k.innerHTML='<b>占比</b><span>'+fmt(a)+' ÷ '+fmt(b)+' = <strong>'+fmt(a/b*100)+'%</strong></span>'
+      +'<b>补充</b><span>'+(b-a>=0?('距满额还差 '+fmt(b-a)):('已超出 '+fmt(a-b)))+'</span>';}
+  function run3(){var a=num('c1'),b=num('c2'),k=$('k3');if(a==null||b==null){k.innerHTML='<b>结果</b><span>—</span>';return;}
+    if(a===0){k.innerHTML='<b>结果</b><span>原值不能为 0，变化率无定义</span>';return;}
+    var ch=(b-a)/a*100,up=ch>=0;
+    k.innerHTML='<b>变化率</b><span style="font-weight:700;font-size:16px;color:'+(up?'#c0392b':'#1a7f4b')+'">'+(up?'涨 ':'跌 ')+fmt(Math.abs(ch))+'%</span>'
+      +'<b>差值</b><span>'+(b-a>=0?'+':'')+fmt(b-a)+'</span>';}
+  function run4(){var p=num('e1'),d=num('e2'),k=$('k4');if(p==null||d==null){k.innerHTML='<b>结果</b><span>—</span>';return;}
+    var pay=p*d/10,save=p-pay;
+    k.innerHTML='<b>折后价</b><span><strong>'+fmt(pay)+'</strong> 元</span>'
+      +'<b>节省</b><span>'+fmt(save)+' 元（相当于 '+(d*10)+'% 的价格）</span>';}
+  [['a1',run1],['a2',run1],['b1',run2],['b2',run2],['c1',run3],['c2',run3],['e1',run4],['e2',run4]].forEach(function(p){
+    $(p[0]).addEventListener('input',p[1]);});
+  run1();run2();run3();run4();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/percentage-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/percentage-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/percentage-calc-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
