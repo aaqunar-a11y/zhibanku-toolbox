@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>单位换算工具 — 长度面积重量温度在线换算 - 知办库在线工具</title>
+<meta name="description" content="在线单位换算工具：覆盖长度、面积、重量、体积、速度、数据存储与时间，输入数值即可在常用单位间即时换算，包含市斤、亩、加仑、英里、节等常用单位。纯本地计算。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/unit-converter.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="常用单位换算">
+<meta property="og:description" content="在线单位换算工具：覆盖长度、面积、重量、体积、速度、数据存储与时间，输入数值即可在常用单位间即时换算，包含市斤、亩、加仑、英里、节等常用单位。纯本地计算。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/unit-converter.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>常用单位换算</h1>
+  <p class="lead">选择类别与单位，输入数值即刻换算，并一次列出该类别下所有单位的对应值。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="cat">类别</label>
+    <select id="cat"></select>
+    <div class="grid">
+      <div><label for="val">数值</label><input type="text" id="val" value="1" autocomplete="off"></div>
+      <div><label for="from">从</label><select id="from"></select></div>
+      <div><label for="to">到</label><select id="to"></select></div>
+    </div>
+    <div class="row"><button class="primary" id="go">换算</button><button class="sm" id="swap">交换单位</button></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="kv" id="kv"></div>
+    <div id="all"></div>
+  </div>
+  <section>
+    <h2>换算依据</h2>
+    <p>长度、重量等采用国际单位制与常用市制/英制的标准换算系数，例如 1 英寸 = 25.4 毫米、1 磅 = 0.45359237 千克、1 亩 ≈ 666.67 平方米、1 斤 = 500 克。温度使用公式换算而非系数，因此单独处理。</p>
+    <table>
+      <thead><tr><th>类别</th><th>包含单位（部分）</th></tr></thead>
+      <tbody>
+        <tr><td>长度</td><td>千米、米、厘米、毫米、英里、码、英尺、英寸、海里</td></tr>
+        <tr><td>面积</td><td>平方千米、公顷、亩、平方米、英亩、平方英尺</td></tr>
+        <tr><td>重量</td><td>吨、千克、克、斤、两、磅、盎司</td></tr>
+        <tr><td>体积</td><td>立方米、升、毫升、美/英制加仑、品脱</td></tr>
+        <tr><td>数据存储</td><td>位、字节、KB、MB、GB、TB（按 1024 进制）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>KB 到底按 1000 还是 1024？</summary><p>本工具按计算机常用口径使用 1024 进制（1 KB = 1024 B）。硬盘厂商有时按 1000 进制标注容量，这正是「512GB 硬盘只有 476GB」的原因之一。</p></details>
+    <details><summary>「亩」「斤」「两」用的是什么标准？</summary><p>采用中国大陆市制：1 亩 ≈ 666.67 平方米，1 斤 = 500 克，1 两 = 50 克。港澳台及部分地区的「斤」定义不同，跨地区交易需另行确认。</p></details>
+    <details><summary>温标之间的公式是什么？</summary><p>摄氏与华氏满足 <code>°F = °C × 9/5 + 32</code>，开尔文为 <code>K = °C + 273.15</code>。工具内置这些公式，输入任一温标即可换算其余两个。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var U={
+    '长度':{u:{'千米(km)':1000,'米(m)':1,'分米(dm)':0.1,'厘米(cm)':0.01,'毫米(mm)':0.001,'微米(μm)':1e-6,'纳米(nm)':1e-9,'英里(mi)':1609.344,'码(yd)':0.9144,'英尺(ft)':0.3048,'英寸(in)':0.0254,'海里(nmi)':1852}},
+    '面积':{u:{'平方千米(km²)':1e6,'公顷(ha)':10000,'亩':666.6666667,'平方米(m²)':1,'平方分米(dm²)':0.01,'平方厘米(cm²)':0.0001,'英亩(ac)':4046.8564224,'平方英里':2589988.110336,'平方英尺(ft²)':0.09290304,'平方英寸(in²)':0.00064516}},
+    '重量':{u:{'吨(t)':1000,'千克(kg)':1,'克(g)':0.001,'毫克(mg)':1e-6,'斤':0.5,'两':0.05,'磅(lb)':0.45359237,'盎司(oz)':0.028349523125}},
+    '体积':{u:{'立方米(m³)':1000,'升(L)':1,'毫升(mL)':0.001,'立方厘米(cm³)':0.001,'美制加仑':3.785411784,'英制加仑':4.54609,'美制品脱':0.473176473}},
+    '速度':{u:{'米/秒(m/s)':1,'千米/时(km/h)':1/3.6,'英里/时(mph)':0.44704,'节(kn)':0.5144444,'英尺/秒(ft/s)':0.3048}},
+    '数据存储':{u:{'位(bit)':1/8,'字节(B)':1,'千字节(KB)':1024,'兆字节(MB)':1048576,'吉字节(GB)':1073741824,'太字节(TB)':1099511627776}},
+    '时间':{u:{'毫秒(ms)':0.001,'秒(s)':1,'分钟(min)':60,'小时(h)':3600,'天(d)':86400,'周(week)':604800}}
+  };
+  var TEMP={'摄氏度(°C)':'C','华氏度(°F)':'F','开尔文(K)':'K'};
+  function opts(sel,list){sel.innerHTML=list.map(function(x){return '<option>'+x+'</option>';}).join('');}
+  function fmt(r){if(!isFinite(r))return '—';var a=Math.abs(r);return (a>0&&(a<1e-4||a>=1e12))?r.toExponential(6):r.toFixed(6).replace(/\.?0+$/,'');}
+  opts($('cat'),Object.keys(U).concat(['温度']));
+  function fill(){
+    var c=$('cat').value,list=(c==='温度')?Object.keys(TEMP):Object.keys(U[c].u);
+    opts($('from'),list);opts($('to'),list);
+    if(list.length>1)$('to').selectedIndex=1;
+    run();
+  }
+  function cT(v,f,t){var c=(f==='C')?v:(f==='F'?(v-32)*5/9:v-273.15);return (t==='C')?c:(t==='F'?c*9/5+32:c+273.15);}
+  function run(){
+    var c=$('cat').value,v=parseFloat($('val').value),msg=$('msg'),kv=$('kv'),all=$('all');
+    if(isNaN(v)){msg.textContent='请输入数字。';msg.className='msg bad';kv.innerHTML='';all.innerHTML='';return;}
+    var f=$('from').value,t=$('to').value,res,rows='<table><thead><tr><th>单位</th><th>数值</th></tr></thead><tbody>';
+    if(c==='温度'){
+      res=cT(v,TEMP[f],TEMP[t]);
+      Object.keys(TEMP).forEach(function(k){rows+='<tr><td>'+k+'</td><td class="v">'+fmt(cT(v,TEMP[f],TEMP[k]))+'</td></tr>';});
+    }else{
+      var base=v*U[c].u[f];
+      res=base/U[c].u[t];
+      Object.keys(U[c].u).forEach(function(k){rows+='<tr><td>'+k+'</td><td class="v">'+fmt(base/U[c].u[k])+'</td></tr>';});
+    }
+    rows+='</tbody></table>';
+    kv.innerHTML='<b>换算结果</b><span>'+v+' '+f+' = <strong style="color:#2b6cb0;font-size:17px">'+fmt(res)+'</strong> '+t+'</span>';
+    all.innerHTML=rows;
+    msg.textContent='已换算，下表列出该类别全部单位。';msg.className='msg ok';
+  }
+  $('cat').addEventListener('change',fill);
+  $('go').onclick=run;
+  ['val','from','to'].forEach(function(id){$(id).addEventListener('input',run);$(id).addEventListener('change',run);});
+  $('swap').onclick=function(){var a=$('from').value;$('from').value=$('to').value;$('to').value=a;run();};
+  fill();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/unit-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/unit-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/8f558014cdb7" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1ECgjxMzasn5vWoQa65tt0w" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>3496</b> ｜ 百度提取码：<b>bfm5</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/unit-converter-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
