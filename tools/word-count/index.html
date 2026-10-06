@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>字数统计工具 — 中英文字数、段落与阅读时长 - 知办库在线工具</title>
+<meta name="description" content="在线字数统计工具：实时统计字符数（含/不含空格）、中文字符数、英文单词数、段落数、行数与句子数，并估算阅读时长。适合公众号、论文、文案与自媒体写作，文本仅在本地统计。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/word-count.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="字数统计">
+<meta property="og:description" content="在线字数统计工具：实时统计字符数（含/不含空格）、中文字符数、英文单词数、段落数、行数与句子数，并估算阅读时长。适合公众号、论文、文案与自媒体写作，文本仅在本地统计。">
+<meta property="og:url" content="https://www.zhibanku.com/tools/word-count.html">
+<meta name="twitter:card" content="summary">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1f2430;background:#f6f7f9}
+header,main,footer{max-width:860px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:23px;margin:0 0 6px}
+.lead{color:#5b6472;margin:0 0 18px}
+.panel{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;margin:6px 0 4px;font-weight:600}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:0 10px;border:1px solid #d7dbe3;border-radius:8px;font-size:14px;background:#fcfcfd;color:#1f2430}
+textarea{min-height:120px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #2b6cb0;outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+button{min-height:44px;padding:0 16px;border:1px solid #d7dbe3;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#1f2430}
+button:hover{background:#f0f3f8}
+button.primary{background:#2b6cb0;border-color:#2b6cb0;color:#fff}
+button.primary:hover{background:#245c96}
+button.sm{min-height:36px;padding:0 12px;font-size:13px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;min-height:44px;margin:0}
+.msg{margin-top:10px;font-size:14px;min-height:22px}
+.ok{color:#1a7f4b}.bad{color:#c0392b}
+.out{margin-top:12px;padding:12px;background:#0f172a;color:#e6edf3;border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto}
+.out.light{background:#fff;color:#1f2430;border:1px solid #e3e6ec}
+h2{font-size:17px;margin:30px 0 8px}
+h3{font-size:15px;margin:18px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border:1px solid #e3e6ec;border-radius:8px;overflow:hidden;margin-top:12px}
+th,td{padding:9px 12px;border-bottom:1px solid #eef1f5;text-align:left;vertical-align:top}
+th{background:#f2f4f8;font-weight:600}
+tr:last-child td{border-bottom:0}
+td.v{font:12.5px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all}
+code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:13px}
+details{background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 12px;margin-top:12px;font-size:14px;align-items:baseline}
+.kv b{color:#374151}
+.kv span{word-break:break-all}
+footer{margin-top:36px;padding:18px 16px 34px;color:#6b7280;font-size:13px;text-align:center}
+footer a{color:#2b6cb0}
+mark{background:#fde68a;padding:0 1px}
+.preview{margin-top:12px;height:110px;border:1px solid #e3e6ec;border-radius:8px;background:#fff}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:5px;border:1px solid #d7dbe3;vertical-align:middle;margin-left:6px}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+@media(max-width:620px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#fff;border:1px solid #e3e6ec;border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;color:#2b6cb0;line-height:1.4}
+.stat i{font-style:normal;font-size:12.5px;color:#6b7280}
+</style>
+</head>
+<body>
+<header>
+  <h1>字数统计</h1>
+  <p class="lead">粘贴或输入文本，实时统计字数、段落与预计阅读时长，支持中英文混排。</p>
+</header>
+<main>
+  <div class="panel">
+    <label for="txt">文本内容</label>
+    <textarea id="txt" style="min-height:200px" spellcheck="false" placeholder="在此输入或粘贴文本，统计会实时更新……">知办库（zhibanku.com）是一个分享 AI 工具、办公模板与效率资源的平台，所有在线工具都在浏览器本地运行，数据不会上传。
+
+This tool counts Chinese characters and English words at the same time. It runs entirely in your browser, so your text never leaves your device.</textarea>
+    <div class="row"><button class="sm" id="clear">清空</button><button class="sm" id="demo">填入示例</button></div>
+    <div class="stat" id="stat"></div>
+    <div class="kv" id="kv"></div>
+  </div>
+  <section>
+    <h2>统计口径说明</h2>
+    <p>不同平台的「字数」口径并不一致，投稿前先弄清规则能少走弯路。本工具同时给出几组数据，供你按需取用：</p>
+    <table>
+      <thead><tr><th>指标</th><th>口径</th><th>常见用途</th></tr></thead>
+      <tbody>
+        <tr><td>字符（含空格）</td><td>所有字符</td><td>短文案、短信</td></tr>
+        <tr><td>中文字符</td><td>仅统计中日韩汉字</td><td>公众号、论文「字数」</td></tr>
+        <tr><td>英文单词</td><td>以空白分隔的字母数字串</td><td>英文写作、翻译计价</td></tr>
+        <tr><td>段落数</td><td>以空行分段</td><td>排版检查</td></tr>
+      </tbody>
+    </table>
+    <p>阅读时长按「中文 300 字/分钟、英文 200 词/分钟」估算，是一个粗略参考值。</p>
+  </section>
+
+  <section>
+    <h2>常见问题</h2>
+    <details><summary>为什么 Word 的字数和这里不一样？</summary><p>Word 的「字数」通常把连续中文按「字符」计，同时把英文按「单词」计，再加起来；且标点是否计入各版本有差异。以投稿平台的要求为准，用本工具的中文/英文分项数据对照即可。</p></details>
+    <details><summary>emoji 和标点算不算？</summary><p>「字符（含空格）」计入全部可见字符；「中文字符」只计汉字，不含标点与 emoji。这样设计是为了贴合以「汉字数」计价或限字的场景。</p></details>
+    <details><summary>文本会被保存或上传吗？</summary><p>不会。统计全部在浏览器本地完成，刷新即清空，页面没有任何网络请求。</p></details>
+  </section>
+</main>
+<footer>
+  <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
+  <p>本地运行 · 免安装 · 无上传 · 源码开放</p>
+</footer>
+<script>
+(function(){
+  var txt=document.getElementById('txt'),stat=document.getElementById('stat'),kv=document.getElementById('kv');
+  var CJK=/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g;
+  function cjk(s){var m=s.match(CJK);return m?m.length:0;}
+  function words(s){
+    var en=s.replace(CJK,' ');
+    var m=en.match(/[A-Za-z0-9_']+/g);
+    return m?m.length:0;
+  }
+  function run(){
+    var s=txt.value,total=s.length,c=cjk(s),w=words(s);
+    var noSpace=s.replace(/\s/g,'').length;
+    var paras=s.split(/\n\s*\n/).filter(function(x){return x.trim();}).length;
+    var lines=s.length?s.split('\n').length:0;
+    var sents=(s.match(/[。！？!?…]+/g)||[]).length;
+    var readMin=Math.round(c/300+w/200);
+    stat.innerHTML='<div><b>'+total+'</b><i>字符（含空格）</i></div>'
+      +'<div><b>'+noSpace+'</b><i>字符（不含空格）</i></div>'
+      +'<div><b>'+c+'</b><i>中文字符</i></div>'
+      +'<div><b>'+w+'</b><i>英文单词</i></div>';
+    kv.innerHTML='<b>段落数</b><span>'+paras+'</span>'
+      +'<b>行数</b><span>'+lines+'</span>'
+      +'<b>句子数</b><span>'+sents+'</span>'
+      +'<b>预计阅读</b><span>'+(s.trim()?((readMin<1?1:readMin)+' 分钟'):'0 分钟')+'</span>';
+  }
+  txt.addEventListener('input',run);
+  document.getElementById('clear').onclick=function(){txt.value='';run();};
+  document.getElementById('demo').onclick=function(){txt.value='知办库（zhibanku.com）是一个分享 AI 工具、办公模板与效率资源的平台。\n\nThis tool counts Chinese characters and English words at the same time. It runs entirely in your browser, so your text never leaves the device.';run();};
+  run();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/word-count" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/word-count" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/b33669554b98" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1fWQOYyN87GoVytD4AJzxCQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7953</b> ｜ 百度提取码：<b>yjgi</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/word-count-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
