@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Base64 文件编码器 - 文件转 Data URI / Base64 在线工具</title>
+<meta name="description" content="本地将任意文件编码为 Base64 字符串或 Data URI，支持拖拽选择、一键复制与导出，文件不上传服务器。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/base64-file-encoder.html">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f8;color:#1f2430;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:900px;margin:0 auto;padding:28px 16px 40px}
+h1{font-size:24px;margin:0 0 6px}
+.sub{color:#6b7280;margin:0 0 22px;font-size:14px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;margin-bottom:16px}
+#drop{border:2px dashed #c3c9d4;border-radius:10px;padding:34px 16px;text-align:center;color:#6b7280;cursor:pointer;transition:.15s;background:#fafbfc}
+#drop:hover,#drop.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+#drop b{display:block;font-size:16px;color:#1f2430;margin-bottom:6px}
+#drop.on b{color:#1d4ed8}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+label.btn,button{display:inline-block;border:1px solid #d1d5db;background:#fff;color:#1f2430;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
+label.btn:hover,button:hover{border-color:#2563eb;color:#1d4ed8}
+button.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.primary:hover{background:#1d4ed8;color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed;border-color:#d1d5db;color:#6b7280;background:#fff}
+#fileInput{display:none}
+.modes{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.modes label{cursor:pointer;user-select:none}
+h2{font-size:16px;margin:0 0 10px}
+.meta{font-size:13px;color:#6b7280;background:#f9fafb;border:1px solid #eceef1;border-radius:8px;padding:10px 12px;margin-bottom:12px;word-break:break-all}
+textarea{width:100%;min-height:230px;padding:12px;border:1px solid #d1d5db;border-radius:8px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical;background:#fcfcfd}
+textarea:focus{outline:2px solid #bfdbfe;border-color:#2563eb}
+#err{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:14px}
+#ok{color:#15803d;font-size:14px}
+.hint{font-size:13px;color:#6b7280;margin-top:10px}
+footer{border-top:1px solid #e5e7eb;padding:20px 16px 34px;text-align:center;font-size:14px;color:#6b7280}
+footer a{color:#2563eb;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer p{margin:6px 0 0;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>Base64 文件编码器</h1>
+<p class="sub">把文件拖入即得 Data URI / Base64 字符串，可复制或下载。全部在浏览器本地完成。</p>
+
+<div class="card">
+  <div id="drop" tabindex="0" role="button" aria-label="选择或拖入文件">
+    <b>点击选择文件，或将文件拖到此处</b>
+    支持图片、文本、压缩包等任意格式
+  </div>
+  <input type="file" id="fileInput">
+  <div class="row">
+    <label class="btn" for="fileInput">选择文件</label>
+    <button type="button" id="clearBtn">清空</button>
+    <span id="ok" hidden>已复制到剪贴板</span>
+  </div>
+</div>
+
+<div class="card">
+  <div id="err" hidden></div>
+  <div class="meta" id="meta">尚未选择文件</div>
+  <div class="row" style="margin-top:0;margin-bottom:12px">
+    <h2 style="margin:0 6px 0 0">输出格式</h2>
+    <span class="modes">
+      <label><input type="radio" name="mode" value="b64" checked> 纯 Base64</label>
+      <label><input type="radio" name="mode" value="uri"> Data URI</label>
+    </span>
+  </div>
+  <textarea id="out" readonly spellcheck="false" placeholder="编码结果将显示在这里"></textarea>
+  <div class="row">
+    <button type="button" class="primary" id="copyBtn" disabled>复制结果</button>
+    <button type="button" id="dlBtn" disabled>下载为文本</button>
+    <span class="hint" id="stat"></span>
+  </div>
+  <p class="hint">提示：Data URI 可直接写入 HTML 的 img src 或 CSS 的 url() 中；纯 Base64 适合接口传输或存库。</p>
+</div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <p>本工具完全在本地浏览器中运行，文件不会上传到任何服务器。</p>
+</footer>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+var drop=$("#drop"),input=$("#fileInput"),out=$("#out"),err=$("#err"),meta=$("#meta"),stat=$("#stat"),
+    copyBtn=$("#copyBtn"),dlBtn=$("#dlBtn"),ok=$("#ok"),cur=null,timer=null;
+function fail(m){err.textContent=m;err.hidden=false}
+function hideErr(){err.hidden=true;err.textContent=""}
+function fmt(n){if(n<1024)return n+" B";if(n<1048576)return (n/1024).toFixed(2)+" KB";if(n<1073741824)return (n/1048576).toFixed(2)+" MB";return (n/1073741824).toFixed(2)+" GB"}
+function mode(){return document.querySelector('input[name=mode]:checked').value}
+function render(){
+  if(!cur){out.value="";stat.textContent="";copyBtn.disabled=dlBtn.disabled=true;return}
+  out.value=mode()==="uri"?cur.uri:cur.b64;
+  stat.textContent="结果长度 "+out.value.length.toLocaleString()+" 字符";
+  copyBtn.disabled=dlBtn.disabled=false;
+}
+function load(f){
+  hideErr();ok.hidden=true;
+  if(!f)return;
+  if(f.size>60*1024*1024){fail("文件过大（"+fmt(f.size)+"），本工具单文件上限 60 MB。");return}
+  meta.textContent="正在读取："+f.name+" …";
+  var r=new FileReader();
+  r.onerror=function(){fail("文件读取失败，可能已被占用或格式不受支持。");meta.textContent="尚未选择文件"};
+  r.onload=function(){
+    var uri=r.result,i=uri.indexOf(",");
+    cur={name:f.name,size:f.size,uri:uri,b64:i>-1?uri.slice(i+1):uri};
+    meta.innerHTML="文件名："+cur.name+" ｜ 类型："+(f.type||"未知")+" ｜ 大小："+fmt(cur.size)+" ｜ Base64 约 "+fmt(Math.ceil(cur.b64.length*0.75));
+    render();
+  };
+  try{r.readAsDataURL(f)}catch(e){fail("无法读取该文件："+e.message)}
+}
+["dragenter","dragover"].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add("on")})});
+["dragleave","drop"].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove("on")})});
+drop.addEventListener("drop",function(e){var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)load(f)});
+drop.addEventListener("click",function(){input.click()});
+drop.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}});
+input.addEventListener("change",function(){if(input.files[0])load(input.files[0])});
+document.querySelectorAll('input[name=mode]').forEach(function(r){r.addEventListener("change",render)});
+$("#clearBtn").addEventListener("click",function(){cur=null;input.value="";meta.textContent="尚未选择文件";hideErr();ok.hidden=true;render()});
+copyBtn.addEventListener("click",function(){
+  if(!cur)return;
+  var t=out.value;
+  var done=function(){ok.hidden=false;clearTimeout(timer);timer=setTimeout(function(){ok.hidden=true},1800)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){out.select();document.execCommand("copy");done()})}
+  else{out.select();try{document.execCommand("copy");done()}catch(e){fail("复制失败，请手动全选复制。")}}
+});
+dlBtn.addEventListener("click",function(){
+  if(!cur)return;
+  var ext=mode()==="uri"?".txt":".b64.txt";
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([out.value],{type:"text/plain;charset=utf-8"}));
+  a.download=cur.name.replace(/\.[^.]*$/,"")+ext;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+});
+render();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-file-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-file-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/5425592ea87f" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1C04fQfylbJZxjbugTITHhQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>9031</b> ｜ 百度提取码：<b>0qa0</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/base64-file-encoder-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
