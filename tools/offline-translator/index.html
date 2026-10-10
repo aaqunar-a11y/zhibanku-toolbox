@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>离线中英翻译 — 不联网的简明互译对照工具 | 知办库</title>
+<meta name="description" content="输入中文或英文，点击翻译按钮即可离线完成中英互译，显示整句译文与逐词对照。简明词典内置在网页中，全程不联网、不上传任何文字，适合断网、内网与隐私敏感场景。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/offline-translator.html">
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#171b22;--muted:#5c6675;--line:#e2e7ef;--brand:#1a5fe0;--brand-d:#1449b0;--brand-soft:#eaf1ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.75;font-size:16px}
+main{max-width:920px;margin:0 auto;padding:28px 18px 60px}
+a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:28px;margin:4px 0 14px}
+h2{font-size:21px;margin:40px 0 12px;padding-left:12px;border-left:5px solid var(--brand)}
+.crumbs{font-size:13px;color:var(--muted);margin:0}
+.lead{font-size:16.5px;color:#39414f;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px;margin-bottom:8px}
+label{display:block;font-size:14px;font-weight:600;margin:12px 0 6px}
+textarea{width:100%;padding:12px;border:1px solid #cfd6e2;border-radius:10px;font-size:15.5px;font-family:inherit;resize:vertical}
+textarea:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.chip{border:1px solid var(--brand);background:#fff;color:var(--brand-d);border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;font-family:inherit}
+.chip:hover{background:var(--brand-soft)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{border:0;border-radius:10px;padding:11px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-d)}
+.btn-ghost{background:#fff;color:#33404f;border:1px solid #cfd6e2}.btn-ghost:hover{background:#f1f4f9}
+.hint{font-size:13.5px;color:var(--muted);margin-top:10px;min-height:20px}
+.out{background:#f4f8ff;border:1px solid #cddffa;border-radius:10px;padding:14px 16px;font-size:16.5px;white-space:pre-wrap;word-break:break-word}
+.words{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.wd{font-size:13px;background:#eef2f7;border-radius:6px;padding:3px 8px;color:#33404f}
+.wd.miss{background:#fdf1e7;color:#a8590a}
+ul{padding-left:22px}li{margin:5px 0}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0}
+summary{font-weight:600;cursor:pointer}
+.rel{list-style:none;padding-left:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.rel li a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+footer{margin-top:44px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<p class="crumbs">位置：<a href="https://www.zhibanku.com/tools/">在线工具</a> › 离线翻译</p>
+<h1>离线中英翻译工具</h1>
+<p class="lead">本工具把一本简明中英词典直接内置在网页文件里：在输入框输入中文或英文文字，点击「立即翻译」按钮，下方的结果区会立刻显示整句译文和逐词对照。全程在你的浏览器内完成，不联网、不上传任何文字，断网电脑、内网办公机上也能照常使用。</p>
+
+<div class="card">
+  <button id="btnDir" class="btn btn-ghost" type="button">方向：自动识别（点击切换）</button>
+  <label for="src">输入要翻译的文本</label>
+  <textarea id="src" rows="4" placeholder="在这里输入中文或英文，可一次输入多句。例如：你好，很高兴认识你 / Where is the station?"></textarea>
+  <div class="presets">
+    <button class="chip" type="button" data-p="你好，很高兴认识你。谢谢！">例句：打招呼</button>
+    <button class="chip" type="button" data-p="Where is the station? How much is this?">例句：问路问价</button>
+    <button class="chip" type="button" data-p="Good morning. See you tomorrow.">例句：日常寒暄</button>
+  </div>
+  <div class="actions">
+    <button id="btnGo" class="btn btn-primary" type="button">立即翻译</button>
+    <button id="btnCopy" class="btn btn-ghost" type="button">复制结果</button>
+    <button id="btnClear" class="btn btn-ghost" type="button">清空重填</button>
+  </div>
+  <div id="live" class="hint">词典规模：约 400 个常用词与短句。</div>
+  <div id="outBox" hidden>
+    <label>翻译结果</label>
+    <div id="out" class="out"></div>
+    <div id="words" class="words"></div>
+  </div>
+</div>
+
+<h2>怎么用</h2>
+<ol>
+  <li>在上方输入框粘贴或输入一段中文或英文文本（默认自动识别语言方向，也可以点「方向」按钮强制指定）。</li>
+  <li>点击蓝色的「立即翻译」按钮，结果区会立刻显示译文，不需要等待网络请求。</li>
+  <li>译文下方的词卡是逐词对照，橙色词卡表示词典暂未收录、保留原文。</li>
+  <li>点击「复制结果」把译文复制到剪贴板，点击「清空重填」重新开始。</li>
+</ol>
+
+<h2>注意事项</h2>
+<ul>
+  <li>本工具是<strong>离线简明词典翻译</strong>，覆盖日常高频词与短句（问候、问路、购物、时间、数字等），不是机器深度学习翻译，长难句只能给出逐词对照。</li>
+  <li>词典暂未收录专业术语、人名地名和网络新词，这类词会保留原文并标橙色，方便你另行查证。</li>
+  <li>英文动词的时态变化（ing、ed、s 等）会自动回退到词根查找，但译文不区分时态，仅供理解参考。</li>
+  <li>中文译英文按词逐一对应，语序不重排，复杂句子建议结合逐词对照人工整理。</li>
+  <li>工具完全在浏览器本地运行，输入的<b>任何文字都不会被发送或保存</b>；保存本页面为 html 文件即可长期离线使用。</li>
+  <li>手机端同样可用，页面无需登录、无广告、无弹窗。</li>
+</ul>
+
+<h2>常见问题</h2>
+<details><summary>真的完全不需要联网吗？</summary><p>完全不需要。词典数据直接写在本网页文件内部，打开页面后翻译过程不发起任何网络请求。你可以在断网环境（飞行模式、内网机）打开本页验证：照样能翻译。</p></details>
+<details><summary>翻译准确吗？能替代正规翻译软件吗？</summary><p>日常短句（问候、问路、购物、致谢）可达意；长句、专业内容只能逐词对照，属于「看懂大意」级别。需要高质量全文翻译时请使用专业翻译服务，本工具的定位是断网可用与隐私安全。</p></details>
+<details><summary>输入的文字会被上传到服务器吗？</summary><p>不会。整个翻译在你打开网页后于浏览器内存中完成，本页没有任何表单提交、接口请求或统计埋点参与翻译流程。</p></details>
+<details><summary>怎么把这个工具长期留在电脑上？</summary><p>浏览器菜单选择「网页另存为」保存本 html 文件，或下载下方压缩包解压后双击打开，之后随时离线使用，双击即可，不需要安装。</p></details>
+
+<h2>相关工具推荐</h2>
+<ul class="rel">
+  <li><a href="https://www.zhibanku.com/tools/word-count.html">中英文字数统计</a></li>
+  <li><a href="https://www.zhibanku.com/tools/case-converter.html">英文大小写转换</a></li>
+  <li><a href="https://www.zhibanku.com/tools/url-encoder.html">网址编码与解码</a></li>
+  <li><a href="https://www.zhibanku.com/tools/base64-encoder.html">Base64 编码解码</a></li>
+  <li><a href="https://www.zhibanku.com/tools/html-entity.html">HTML 实体转义</a></li>
+</ul>
+
+<footer>知办库在线工具 · 纯浏览器本地运行 · 无需安装</footer>
+</main>
+<script>
+var E2Z={"i":"我","you":"你","he":"他","she":"她","we":"我们","they":"他们","this":"这","that":"那","is":"是","am":"是","are":"是","not":"不","and":"和","or":"或者","but":"但是","my":"我的","your":"你的","to":"到","of":"的","in":"在","on":"在","at":"在","for":"为了","with":"和…一起","meet":"认识","thank":"谢谢","very":"非常","much":"很","good":"好","bad":"坏","big":"大","small":"小","new":"新","old":"旧","hot":"热","cold":"冷","water":"水","food":"饭","tea":"茶","coffee":"咖啡","book":"书","time":"时间","day":"白天","night":"夜晚","today":"今天","tomorrow":"明天","yesterday":"昨天","morning":"早上","evening":"晚上","year":"年","month":"月","week":"周","hour":"小时","minute":"分钟","money":"钱","price":"价格","station":"车站","airport":"机场","hotel":"酒店","room":"房间","phone":"手机","computer":"电脑","network":"网络","person":"人","people":"人们","man":"男人","woman":"女人","friend":"朋友","family":"家人","work":"工作","study":"学习","speak":"说","eat":"吃","drink":"喝","go":"去","come":"来","see":"看见","want":"想要","need":"需要","like":"喜欢","know":"知道","help":"帮助","open":"打开","close":"关闭","where":"哪里","when":"什么时候","what":"什么","who":"谁","how":"怎么","why":"为什么","yes":"是的","no":"不","please":"请","thanks":"谢谢","sorry":"对不起","hello":"你好","welcome":"欢迎","buy":"买","sell":"卖","left":"左边","right":"右边","here":"这里","there":"那里","now":"现在","again":"再","many":"很多","few":"少","one":"一","two":"二","three":"三","four":"四","five":"五","six":"六","seven":"七","eight":"八","nine":"九","ten":"十","hundred":"百","thousand":"千","name":"名字","doctor":"医生","hospital":"医院","school":"学校","street":"街道","bus":"公交车","train":"火车","taxi":"出租车","ticket":"票","toilet":"洗手间","breakfast":"早餐","lunch":"午餐","dinner":"晚餐","weather":"天气","rain":"雨","sunny":"晴","tired":"累","happy":"开心","busy":"忙","easy":"容易","difficult":"难","cheap":"便宜","expensive":"贵","beautiful":"漂亮","important":"重要"};
+var P2Z={"good morning":"早上好","good night":"晚安","goodbye":"再见","see you":"再见","thank you":"谢谢你","thank you very much":"非常感谢","how are you":"你好吗","how much":"多少钱","how many":"多少个","where is":"…在哪里","how do i get to":"怎么去","i love you":"我爱你","i don't know":"我不知道","i don't understand":"我听不懂","excuse me":"打扰一下","take care":"保重","good luck":"祝好运","what is this":"这是什么","my name is":"我的名字是","what time":"几点了","how old":"多大了","can you help me":"你能帮我吗","no problem":"没问题","of course":"当然","it doesn't matter":"没关系","long time no see":"好久不见"};
+var Z2P={"你好":"hello","很高兴认识你":"nice to meet you","谢谢":"thank you","谢谢你":"thank you","请问":"please","在哪里":"where is","怎么读":"how to read","多少钱":"how much","几点了":"what time","对不起":"sorry","非常感谢":"thanks a lot","再见":"goodbye","早上好":"good morning","晚上好":"good evening","晚安":"good night","没关系":"it doesn't matter","多少钱":"how much","打扰一下":"excuse me","我不知道":"i don't know","我听不懂":"i don't understand","你能帮我吗":"can you help me","我爱你":"i love you","这个":"this","那个":"that","车站":"station","火车站":"train station","机场":"airport","酒店":"hotel","洗手间":"toilet","太贵了":"too expensive","便宜一点":"cheaper please","打包":"take away","买单":"check please","祝好运":"good luck","一路顺风":"have a good trip","没问题":"no problem","当然":"of course","好久不见":"long time no see","保重":"take care"};
+var Z2W={},phs=Object.keys(Z2P).sort(function(a,b){return b.length-a.length;});
+for(var k in E2Z){if(!Z2W[E2Z[k]])Z2W[E2Z[k]]=k;}
+function lk(w){w=w.toLowerCase();if(E2Z[w])return E2Z[w];var t=w.replace(/(ings|ing|ed|es|s)$/,"");if(E2Z[t])return E2Z[t];return null;}
+function trEn(t){var wds=[];var pk=Object.keys(P2Z).sort(function(a,b){return b.length-a.length;});
+for(var j=0;j<pk.length;j++){var ph=pk[j];t=t.replace(new RegExp("\\b"+ph+"\\b","ig"),function(m){wds.push(ph+"="+P2Z[ph]);return " "+P2Z[ph]+" ";});}
+var r=t.replace(/[A-Za-z']+/g,function(w){var m=lk(w);if(m){wds.push(w+"="+m);return m;}wds.push(w+"=?");return w;});return{txt:r.replace(/\s+/g," ").trim(),words:wds};}
+function trZh(t){var wds=[],un=0,out="";var i=0;
+var PM={"，":", ","。":". ","！":"! ","？":"? ","；":"; ","：":": ","、":", ","（":" ( ","）":" ) ","“":'"',"”":'"',"‘":"'","’":"'"};
+while(i<t.length){var hit=0;
+for(var j=0;j<phs.length;j++){var p=phs[j];if(t.substr(i,p.length)===p){out+=" "+Z2P[p];wds.push(p+"="+Z2P[p]);i+=p.length;hit=1;break;}}
+if(hit)continue;var ch=t.charAt(i);
+if(PM[ch]){out+=PM[ch];i++;}
+else if(/[\u4e00-\u9fff]/.test(ch)){var m=Z2W[ch];if(m){out+=" "+m;wds.push(ch+"="+m);}else{out+=ch;un++;}i++;}
+else{out+=ch;i++;}}
+out=out.replace(/\s+([,.!?;:)])/g,"$1").replace(/\(\s+/g,"(").replace(/\s+/g," ").trim();
+out=out.charAt(0).toUpperCase()+out.slice(1);
+return{txt:out||"（没有可翻译的内容）",words:wds,un:un};}
+var dir="auto",last="";
+function detect(t){return /[\u4e00-\u9fff]/.test(t)?"zz":"ez";}
+function run(){var t=document.getElementById("src").value.trim();
+if(!t){document.getElementById("live").textContent="请先在输入框输入要翻译的文字，再点按钮。";return;}
+var d=dir==="auto"?detect(t):dir;
+var r=d==="zz"?trZh(t):trEn(t);last=r.txt;
+document.getElementById("outBox").hidden=false;
+document.getElementById("out").textContent=r.txt;
+var box=document.getElementById("words");box.innerHTML="";
+r.words.slice(0,40).forEach(function(w){var s=document.createElement("span");s.className="wd"+(w.slice(-1)==="?"?" miss":"");s.textContent=w.replace("=?","（未收录）");box.appendChild(s);});
+var msg=d==="zz"?"中文 → 英文":"英文 → 中文";
+if(r.un)msg+="，有 "+r.un+" 个字未收录、已保留原文";
+document.getElementById("live").textContent=msg+"，共匹配 "+r.words.length+" 个词条。";
+}
+document.getElementById("btnGo").addEventListener("click",run);
+document.getElementById("src").addEventListener("keydown",function(e){if(e.key==="Enter"&&(e.ctrlKey||e.metaKey))run();});
+document.getElementById("btnClear").addEventListener("click",function(){document.getElementById("src").value="";document.getElementById("outBox").hidden=true;document.getElementById("live").textContent="已清空，可以重新输入了。";});
+document.getElementById("btnDir").addEventListener("click",function(){dir=dir==="auto"?"ez":dir==="ez"?"zz":"auto";this.textContent="方向："+(dir==="auto"?"自动识别":dir==="ez"?"强制 英文 → 中文":"强制 中文 → 英文")+"（点击切换）";});
+document.getElementById("btnCopy").addEventListener("click",function(){if(!last){document.getElementById("live").textContent="还没有翻译结果，先点「立即翻译」。";return;}
+var self=this;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(last).then(function(){self.textContent="已复制到剪贴板";setTimeout(function(){self.textContent="复制结果";},1500);});}
+else{var ta=document.createElement("textarea");ta.value=last;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);self.textContent="已复制到剪贴板";setTimeout(function(){self.textContent="复制结果";},1500);}});
+document.querySelectorAll(".chip").forEach(function(c){c.addEventListener("click",function(){document.getElementById("src").value=this.getAttribute("data-p");document.getElementById("live").textContent="例句已填入输入框，点「立即翻译」即可。";});});
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/offline-translator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/offline-translator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/814fa388f0da" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1BHquUDfEUbTxFHmy_fTBxQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>8030</b> ｜ 百度提取码：<b>qux0</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/offline-translator-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
