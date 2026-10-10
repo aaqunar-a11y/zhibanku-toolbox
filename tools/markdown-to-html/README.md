@@ -88,8 +88,8 @@ Markdown 转 HTML 工具帮你把 Markdown 文本一键变成干净的 HTML 代�
 | --- | --- |
 | [`index.html`](index.html) | 完整工具（单文件，含全部样式与脚本） |
 
-- **SHA-256**：`b0d05064ce79ff9769ea8d0c1bb8cfc6552b808bec2cba04ff54b06ac73ff8ca`
-- **体积**：18063 字节（约 17.6 KB）
+- **SHA-256**：`5a76ef526dbf5d1ecae10b0e7cee1cb3c57b733279fddaebc1b06f8cf7aa4e9d`
+- **体积**：18548 字节（约 18.1 KB）
 
 ## 🔗 相关链接
 

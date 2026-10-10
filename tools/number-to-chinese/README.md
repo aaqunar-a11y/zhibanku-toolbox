@@ -74,8 +74,8 @@
 | --- | --- |
 | [`index.html`](index.html) | 完整工具（单文件，含全部样式与脚本） |
 
-- **SHA-256**：`c50fe20df369ab3e05883e7a5bb87deace3efcbfbf62c5ce5995227360fd3ca2`
-- **体积**：14944 字节（约 14.6 KB）
+- **SHA-256**：`18872b73b7519ae70aade74b9f108ef29afbd95e775f85f00bd3bf97bbc1ab54`
+- **体积**：15429 字节（约 15.1 KB）
 
 ## 🔗 相关链接
 
