@@ -41,6 +41,12 @@ details{background:var(--card);border:1px solid var(--line);border-radius:10px;p
 summary{font-weight:600;cursor:pointer}
 .rel{list-style:none;padding-left:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
 .rel li a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.aibar{margin:12px 0 0;background:#fbfcfe;border:1px dashed #c9d4e6;border-radius:10px;padding:12px 14px}
+.aiwrap{display:flex;align-items:flex-start;gap:9px;font-size:14.5px;cursor:pointer;margin:0}
+.aiwrap input{width:17px;height:17px;margin-top:4px;accent-color:var(--brand);flex:none}
+.aihint{display:block;margin:7px 0 0;font-size:12.8px;color:var(--muted);line-height:1.7}
+.srcbadge{font-weight:400;font-size:12.6px;color:var(--muted);margin-left:4px}
+.srcbadge.ai{color:#0f7b3f}
 footer{margin-top:44px;font-size:13px;color:var(--muted)}
 </style>
 </head>
@@ -48,11 +54,17 @@ footer{margin-top:44px;font-size:13px;color:var(--muted)}
 <main>
 <p class="crumbs">位置：<a href="https://www.zhibanku.com/tools/">在线工具</a> › 离线翻译</p>
 <h1>离线中英翻译工具</h1>
-<p class="lead">本工具内置 <b>8000 个核心词</b>，开箱即用；需要更高覆盖率时，点一次「加载完整词典」即可把 <b>12.4 万词</b>的完整词典下载并永久保存在你的浏览器里，之后断网也能用。整句译文 + 逐词对照一并给出，输入的文字全程留在本地，<b>不联网、不上传</b>。</p>
+<p class="lead">本工具内置 <b>8000 个核心词</b>，开箱即用；需要更高覆盖率时，点一次「加载完整词典」即可把 <b>12.4 万词</b>的完整词典下载并永久保存在你的浏览器里，之后断网也能用。整句译文 + 逐词对照一并给出，输入的文字全程留在本地，<b>不联网、不上传</b>。若想要更自然流畅的整句译文，可勾选「AI 流畅翻译」（联网，每日免费额度，不勾选则完全不联网）。</p>
 
 <div class="dictbar">
   <span id="dictState"><span class="dot loading"></span>词典状态：内置核心词 8000 个（可离线使用）</span>
   <button id="btnDict" class="btn btn-ghost" type="button" style="padding:7px 16px;font-size:13.5px">加载完整词典（12.4 万词，约 2.4MB）</button>
+</div>
+
+<div class="aibar">
+  <label class="aiwrap" for="chkAI"><input type="checkbox" id="chkAI">AI 流畅翻译（联网 · 默认关闭）</label>
+  <span class="aihint">默认关闭：只用本地词典，<b>全程离线、不上传任何内容</b>。勾选后整句由 AI 模型润色，译文更自然流畅；此时文本会发送到本站接口用于翻译，<b>原文不做保存</b>。免费额度：每个 IP 每天 10 条，全站每天 1000 条，北京时间 0 点重置。</span>
+  <span class="aihint" id="aiQuota" hidden></span>
 </div>
 
 <div class="card">
@@ -71,7 +83,7 @@ footer{margin-top:44px;font-size:13px;color:var(--muted)}
   </div>
   <div id="live" class="hint">词典规模：内置 8000 词；加载完整词典后 124,000+ 词。</div>
   <div id="outBox" hidden>
-    <label>翻译结果</label>
+    <label>翻译结果 <span id="outSrc" class="srcbadge"></span></label>
     <div id="out" class="out"></div>
     <div id="words" class="words"></div>
   </div>
@@ -83,6 +95,7 @@ footer{margin-top:44px;font-size:13px;color:var(--muted)}
   <li>点击蓝色的「立即翻译」按钮，结果区会立刻显示译文，不需要等待网络请求。</li>
   <li>想让生僻词也能翻译，先点一次「加载完整词典」，下载完成后再翻译，覆盖率会大幅提升。</li>
   <li>译文下方的词卡是逐词对照，橙色词卡表示词典未收录、保留原文。</li>
+  <li>想让译文更自然流畅，勾选「AI 流畅翻译（联网）」再点翻译：会先用离线词典出结果，再由 AI 润色替换。默认不勾选，也就完全不联网。</li>
   <li>点击「复制结果」把译文复制到剪贴板，点击「清空重填」重新开始。</li>
 </ol>
 
@@ -92,7 +105,8 @@ footer{margin-top:44px;font-size:13px;color:var(--muted)}
   <li>内置核心词 8000 个，覆盖日常高频词；完整词典 124,000+ 词（含柯林斯、牛津、语料库高频词与技术词汇），首次点击「加载完整词典」后永久保存在本机浏览器缓存中。</li>
   <li>完整词典文件由本站服务器提供，下载后即缓存；此后即使断网、拔网线，再次打开本页也仍然可用。</li>
   <li>英文动词时态与名词复数（ing、ed、s、ies 等）会自动回退到词根查找，但译文不区分时态，仅供理解参考。</li>
-  <li>工具完全在浏览器本地运行，输入的<b>任何文字都不会被发送或保存</b>；把本页面另存为 html 文件即可长期随身携带。</li>
+  <li><strong>默认完全离线</strong>：不勾选「AI 流畅翻译」时，工具只在浏览器本地运行，输入的<b>任何文字都不会被发送或保存</b>；把本页面另存为 html 文件即可长期随身携带。</li>
+  <li>「AI 流畅翻译」为可选项，勾选后才会把待翻译文本发送到本站接口（原文不做留存，只保留内容摘要用于 24 小时去重缓存）。免费额度为每个 IP 每天 10 条、全站每天 1000 条，北京时间 0 点重置；额度用完或调用失败会自动退回离线词典译文。</li>
   <li>手机端同样可用，页面无需登录、无广告、无弹窗。</li>
 </ul>
 
@@ -100,7 +114,9 @@ footer{margin-top:44px;font-size:13px;color:var(--muted)}
 <details><summary>为什么有些词显示「未收录」？</summary><p>内置核心词有 8000 个，遇到专业术语、长尾词会保留原文并标橙色。点击上方「加载完整词典」按钮，把 12.4 万词的完整词典下载到本机后，绝大多数常见英文单词都能查到。</p></details>
 <details><summary>加载完整词典要联网吗？之后还能离线用吗？</summary><p>下载词典的那一次需要联网（约 2.4MB，走 gzip 压缩）。下载完成后会写入浏览器本地存储，此后再次打开本页不再请求网络，断网也能用完整词典。</p></details>
 <details><summary>词典数据会被更新吗？</summary><p>词典文件带版本号，工具只在检测到新版本时才重新下载。你也可以随时点「重新下载词典」强制更新。</p></details>
-<details><summary>输入的文字会被上传到服务器吗？</summary><p>不会。翻译在你的浏览器内存中完成；联网请求只有一个——下载词典文件本身。本页没有任何表单提交、接口请求或统计埋点参与翻译流程。</p></details>
+<details><summary>输入的文字会被上传到服务器吗？</summary><p>默认不会。翻译在你的浏览器内存中完成；唯一可能的联网请求是下载词典文件本身。只有当你主动勾选「AI 流畅翻译」时，待翻译文本才会被发送到本站接口，且原文不做保存（仅保留内容摘要用于 24 小时去重缓存）。本页没有任何统计埋点。</p></details>
+<details><summary>「AI 流畅翻译」的免费额度怎么用？</summary><p>勾选后每次点击翻译消耗 1 条：每个 IP 每天 10 条、全站每天 1000 条，北京时间 0 点自动重置，不用等满 24 小时。相同内容 24 小时内再次翻译命中缓存，不再消耗额度。额度用完或服务异常时会自动退回离线词典译文，不会让你空手而归。单次最多 1200 字，超长请分段。</p></details>
+<details><summary>离线词典翻译和 AI 翻译差别大吗？</summary><p>离线词典是逐词对照 + 语序规则，优点是零延迟、断网可用、绝对私密，适合快速看懂大意；AI 翻译会理解整句语境，长难句和生硬结构的改善最明显，适合要直接拿去用的正式译文。两者可以同时用：先离线出结果，再勾选 AI 看润色后的版本。</p></details>
 <details><summary>怎么把这个工具长期留在电脑上？</summary><p>浏览器菜单选择「网页另存为」保存本 html 文件，或下载下方压缩包解压后双击打开，之后随时离线使用，双击即可，不需要安装。</p></details>
 
 <h2>相关工具推荐</h2>
@@ -121,6 +137,7 @@ var E2Z={"i":"我","you":"你","he":"他","she":"她","we":"我们","they":"他�
 CORE.split("|").forEach(function(p){var i=p.indexOf(":");if(i>0){var w=p.slice(0,i);if(!E2Z[w])E2Z[w]=p.slice(i+1);}});
 
 var P2Z={"good morning":"早上好","good night":"晚安","goodbye":"再见","see you":"再见","thank you":"谢谢你","thank you very much":"非常感谢","how are you":"你好吗","how much":"多少钱","how many":"多少个","where is":"…在哪里","how do i get to":"怎么去","i love you":"我爱你","i don't know":"我不知道","i don't understand":"我听不懂","excuse me":"打扰一下","take care":"保重","good luck":"祝好运","what is this":"这是什么","my name is":"我的名字是","what time":"几点了","how old":"多大了","can you help me":"你能帮我吗","no problem":"没问题","of course":"当然","it doesn't matter":"没关系","long time no see":"好久不见"};
+P2Z["such as"]="例如";P2Z["as well as"]="以及";P2Z["in order to"]="为了";P2Z["a lot of"]="很多";
 var Z2P={"你好":"hello","很高兴认识你":"nice to meet you","谢谢":"thank you","谢谢你":"thank you","请问":"please","在哪里":"where is","怎么读":"how to read","多少钱":"how much","几点了":"what time","对不起":"sorry","非常感谢":"thanks a lot","再见":"goodbye","早上好":"good morning","晚上好":"good evening","晚安":"good night","没关系":"it doesn't matter","打扰一下":"excuse me","我不知道":"i don't know","我听不懂":"i don't understand","你能帮我吗":"can you help me","我爱你":"i love you","这个":"this","那个":"that","车站":"station","火车站":"train station","机场":"airport","酒店":"hotel","洗手间":"toilet","太贵了":"too expensive","便宜一点":"cheaper please","打包":"take away","买单":"check please","祝好运":"good luck","一路顺风":"have a good trip","没问题":"no problem","当然":"of course","好久不见":"long time no see","保重":"take care"};
 var Z2W={},phs=Object.keys(Z2P).sort(function(a,b){return b.length-a.length;});
 for(var k in E2Z){if(!Z2W[E2Z[k]])Z2W[E2Z[k]]=k;}
@@ -191,7 +208,7 @@ function look(w){
 var ART={the:1,a:1,an:1};
 var POSRE=/^\s*(n|v|vt|vi|adj|adv|prep|pron|art|conj|int|abbr|a|ad|pl|aux)\.+\s*/i;
 function shortZh(s){
-  s=(s||"").replace(/\\n/g,"；");
+  s=(s||"").replace(/\\n/g,"；").replace(/\.{2,}/g,"").replace(/…/g,"");
   s=s.replace(/\[[^\]]*\]/g,"");
   s=s.replace(/[（(][^）)]*[）)]/g,"");
   var p=s.split(/[；;，,、]/).map(function(x){return x.trim();});
@@ -200,17 +217,215 @@ function shortZh(s){
   return s.slice(0,24);
 }
 
+/* ---------- 骨架词精译表：整句译文专用，优先于词典释义 ---------- */
+var FUNC={
+  the:"",a:"",an:"",and:"和",or:"或",but:"但",of:"",to:"",in:"在",on:"在",at:"在",
+  for:"为",with:"用",about:"关于",from:"从",by:"由",into:"进入",onto:"到",as:"作为",
+  is:"是",are:"是",be:"是",was:"是",were:"是",am:"是",been:"是",being:"是",
+  do:"",does:"",did:"",done:"",
+  i:"我",me:"我",you:"你",he:"他",she:"她",we:"我们",us:"我们",they:"他们",them:"他们",
+  it:"它",my:"我的",your:"你的",his:"他的",her:"她的",its:"它的",our:"我们的",
+  their:"他们的",this:"这个",that:"",these:"这些",those:"那些",which:"",who:"谁",
+  there:"那里",here:"这里",not:"不",no:"不",yes:"是",
+  also:"也",too:"也",very:"非常",can:"可以",could:"可以",will:"将",would:"会",
+  should:"应该",must:"必须",may:"可能",might:"可能",
+  all:"所有",any:"任何",some:"一些",other:"其他",another:"另一个",each:"每个",
+  every:"每个",both:"两者",more:"更多",most:"大多数",such:"这样的",same:"相同的",
+  what:"什么",when:"何时",where:"哪里",why:"为什么",how:"如何",
+  if:"如果",because:"因为",so:"所以",then:"然后",than:"比",however:"然而",
+  allow:"允许",enable:"使",provide:"提供",use:"使用",get:"获取",make:"使",
+  have:"有",has:"有",had:"有",need:"需要",want:"想要",like:"像",include:"包括",
+  support:"支持",submit:"提交",access:"访问",introduce:"介绍",add:"添加",
+  create:"创建",send:"发送",show:"显示",find:"找到",open:"打开",save:"保存",
+  information:"信息",website:"网站",site:"网站",page:"页面",user:"用户",
+  detail:"详情",details:"详情",data:"数据",documentation:"文档",resource:"资源",
+  online:"在线",programmatically:"以编程方式",webmaster:"网站管理员",
+  api:"API",apis:"API",url:"网址",urls:"网址",sitemap:"网站地图",sitemaps:"网站地图",
+  bing:"必应",search:"搜索",index:"索引",application:"应用程序",interface:"接口",programming:"编程",
+  registered:"已注册的",traffic:"流量",rank:"排名",crawl:"抓取",stats:"统计",
+  keyword:"关键词",link:"链接",content:"内容",result:"结果",list:"列表",
+  please:"请",thanks:"谢谢",hello:"你好",name:"名称",type:"类型",file:"文件"
+};
+var FUNCP={the:"art",a:"art",an:"art",of:"p",to:"p",in:"p",on:"p",at:"p",for:"p",
+  with:"p",about:"p",from:"p",by:"p",into:"p",onto:"p",as:"p",
+  and:"c",or:"c",but:"c",that:"c",which:"c",if:"c",because:"c",so:"c",than:"c",however:"c",
+  is:"v",are:"v",be:"v",was:"v",were:"v",am:"v",been:"v",being:"v",
+  do:"v",does:"v",did:"v",done:"v",can:"v",could:"v",will:"v",would:"v",
+  should:"v",must:"v",may:"v",might:"v",have:"v",has:"v",had:"v",
+  allow:"v",enable:"v",provide:"v",use:"v",get:"v",make:"v",need:"v",want:"v",
+  like:"v",include:"v",support:"v",submit:"v",access:"v",introduce:"v",
+  add:"v",create:"v",send:"v",show:"v",find:"v",open:"v",save:"v",
+  i:"r",me:"r",you:"r",he:"r",she:"r",we:"r",us:"r",they:"r",them:"r",it:"r",
+  my:"r",your:"r",his:"r",her:"r",its:"r",our:"r",their:"r",
+  this:"r",these:"r",those:"r",who:"r",what:"r",when:"r",where:"r",why:"r",how:"r",
+  there:"r",here:"r",
+  not:"d",no:"d",yes:"d",also:"d",too:"d",very:"d",then:"d",
+  all:"a",any:"a",some:"a",other:"a",another:"a",each:"a",every:"a",both:"a",
+  more:"a",most:"a",such:"a",same:"a",online:"a",registered:"a",new:"a",good:"a",
+  information:"n",website:"n",site:"n",page:"n",user:"n",detail:"n",details:"n",
+  data:"n",documentation:"n",resource:"n",api:"n",apis:"n",url:"n",urls:"n",
+  sitemap:"n",sitemaps:"n",application:"n",interface:"n",webmaster:"n",bing:"n",
+  search:"n",index:"n",rank:"n",traffic:"n",keyword:"n",link:"n",stats:"n",
+  content:"n",result:"n",list:"n",name:"n",type:"n",file:"n",
+  programming:"n",crawl:"n",programmatically:"d"
+};
+var POSMAP={n:"n",v:"v",vt:"v",vi:"v",a:"a",adj:"a",adv:"d",prep:"p",pron:"r",
+            art:"art",conj:"c",num:"m",int:"int",abbr:"abbr",aux:"v"};
+function funcOf(w){
+  var l=w.toLowerCase();
+  if(FUNC[l]!=null)return{zh:FUNC[l],pos:FUNCP[l]||""};
+  var f=baseForms(l);
+  for(var i=0;i<f.length;i++){if(FUNC[f[i]]!=null)return{zh:FUNC[f[i]],pos:FUNCP[f[i]]||""};}
+  return null;
+}
+function posOf(w){
+  var g=funcOf(w);if(g)return g.pos;
+  var d=look(w)||"";
+  var m=d.match(/^\s*(n|v|vt|vi|adj|a|adv|prep|pron|art|conj|num|int|abbr|aux)\./i);
+  return m?(POSMAP[m[1].toLowerCase()]||""):"";
+}
+
+/* ---------- 语序重组：英→中 ---------- */
+var PREP_MV={to:"向",into:"到",onto:"到",for:"给",from:"从"};
+var LOC={on:"上",in:"里",at:"处",under:"下",over:"上",near:"附近",with:"一起"};
+var REL={that:1,which:1};
+function isN(c){return !!c&&(c.pos==="n"||c.pos==="r"||c.pos==="abbr"||c.pos==="m");}
+function reorder(tk){
+  var out=[],i=0,n=tk.length;
+  while(i<n){
+    var c=tk[i];
+    if(c.pos==="w"||c.pos==="x"){out.push(c);i++;continue;}
+    /* ① 不定式 to (+副词) + 动词 → 省略 to */
+    if(c.pos==="p"&&c.en&&c.en.toLowerCase()==="to"){
+      var j=i+1;while(j<n&&tk[j].pos==="d")j++;
+      if(tk[j]&&tk[j].pos==="v"){i++;continue;}
+    }
+    /* ② 动词 + 宾语 + to/into/for + 名词 → 向/到/给 + 名词 + 动词 + 宾语 */
+    if(c.pos==="v"){
+      var j2=i+1,obj=[];
+      while(j2<n&&(isN(tk[j2])||tk[j2].pos==="a"||tk[j2].pos==="c"||tk[j2].pos==="w")){
+        if(tk[j2].pos==="w"&&!/^[,，、\s]+$/.test(tk[j2].zh))break;
+        obj.push(tk[j2]);j2++;
+      }
+      var hasObj=false;for(var q=0;q<obj.length;q++){if(obj[q].pos!=="w")hasObj=true;}
+      if(hasObj&&tk[j2]&&tk[j2].pos==="p"&&PREP_MV[tk[j2].en.toLowerCase()]&&isN(tk[j2+1])){
+        var j3=j2+1,pp=[];
+        while(j3<n&&(isN(tk[j3])||tk[j3].pos==="a")){pp.push(tk[j3]);j3++;}
+        out.push({en:tk[j2].en,zh:PREP_MV[tk[j2].en.toLowerCase()],pos:"p"});
+        out=out.concat(pp);out.push(c);out=out.concat(obj);
+        i=j3;continue;
+      }
+    }
+    /* ③ 定语从句：N + that/which + V... → (…) 的 N */
+    if(isN(c)&&tk[i+1]&&tk[i+1].pos==="c"&&REL[tk[i+1].en.toLowerCase()]&&
+       tk[i+2]&&tk[i+2].pos==="v"){
+      var j6=i+2,cl=[];
+      while(j6<n&&tk[j6].pos!=="w"){cl.push(tk[j6]);j6++;}
+      if(cl.length){
+        out=out.concat(reorder(cl));
+        out.push({en:"",zh:"的",pos:"u"});out.push(c);
+        i=j6;continue;
+      }
+    }
+    /* ④ A of B → B 的 A */
+    if(isN(c)&&tk[i+1]&&tk[i+1].en==="of"){
+      var j4=i+2,phr=[];
+      while(j4<n&&(isN(tk[j4])||tk[j4].pos==="a")){phr.push(tk[j4]);j4++;}
+      if(phr.length){out=out.concat(phr);out.push({en:"",zh:"的",pos:"u"});out.push(c);i=j4;continue;}
+    }
+    /* ⑤ 后置介词短语：N + P + NP → P NP 的 N（嵌套介词短语递归处理） */
+    if(isN(c)&&tk[i+1]&&tk[i+1].pos==="p"&&tk[i+1].en.toLowerCase()!=="to"){
+      var j5=i+1,ph2=[],seenP=0,hasN=false;
+      while(j5<n&&tk[j5].pos!=="w"&&tk[j5].pos!=="v"){
+        if(tk[j5].pos==="p"){
+          if(seenP&&!LOC[tk[j5].en.toLowerCase()])break;
+          seenP++;
+        }
+        if(isN(tk[j5]))hasN=true;
+        ph2.push(tk[j5]);j5++;
+      }
+      if(ph2.length>1&&hasN&&isN(tk[j5-1])){
+        out=out.concat(reorder(ph2));
+        out.push({en:"",zh:"的",pos:"u"});out.push(c);i=j5;continue;}
+    }
+    /* ⑥ 方位介词 + NP → 在 NP 上/里 */
+    if(c.pos==="p"&&LOC[c.en.toLowerCase()]&&isN(tk[i+1])){
+      var j7=i+1,np=[];
+      while(j7<n&&(isN(tk[j7])||tk[j7].pos==="a"||tk[j7].pos==="c")){
+        if(tk[j7].pos==="c"&&!(isN(tk[j7+1])||tk[j7+1].pos==="a"))break;
+        np.push(tk[j7]);j7++;
+      }
+      out.push({en:c.en,zh:"在",pos:"p"});out=out.concat(np);
+      out.push({en:"",zh:LOC[c.en.toLowerCase()],pos:"u"});
+      i=j7;continue;
+    }
+    /* ⑦ 形容词 + 名词 → 形 + 的 + 名 */
+    if(c.pos==="a"&&tk[i+1]&&isN(tk[i+1])){
+      out.push(c);out.push({en:"",zh:"的",pos:"u"});i++;continue;
+    }
+    out.push(c);i++;
+  }
+  return out;
+}
+/* 括号缩写去重：…编程接口（API） 不再变成 …编程（API） */
+function dedupParen(tk){
+  for(var i=0;i<tk.length;i++){
+    if(tk[i].pos!=="w"||!/[（(]/.test(tk[i].zh))continue;
+    for(var j=i+1;j<tk.length;j++){
+      if(tk[j].pos!=="w"||!/[）)]/.test(tk[j].zh))continue;
+      var inner="",k;
+      for(k=i+1;k<j;k++)inner+=tk[k].zh;
+      var before="";
+      for(k=i-1;k>=0&&before.length<40;k--)before=tk[k].zh+before;
+      if(inner&&/[一-龥]/.test(inner)&&before.indexOf(inner)>=0){
+        for(k=i+1;k<j;k++)tk[k].zh=tk[k].en;
+      }
+      i=j;break;
+    }
+  }
+  return tk;
+}
+function joinZh(tk){
+  var s="";
+  for(var i=0;i<tk.length;i++){var z=tk[i].zh||"";if(!z)continue;
+    if(s&&/[A-Za-z0-9]$/.test(s)&&/^[A-Za-z0-9]/.test(z))s+=" ";
+    s+=z;}
+  s=s.replace(/\.{2,}/g,"").replace(/…+/g,"");
+  s=s.replace(/\s*,\s*(?![0-9])/g,"，").replace(/\s*;\s*/g,"；")
+     .replace(/\s*:\s*(?![0-9])/g,"：").replace(/\s*!\s*/g,"！").replace(/\s*\?\s*/g,"？");
+  s=s.replace(/\s*\.\s*(?![A-Za-z0-9])/g,"。");
+  s=s.replace(/\s*\(\s*/g,"（").replace(/\s*\)/g,"）");
+  s=s.replace(/。{2,}/g,"。").replace(/，{2,}/g,"，").replace(/、{2,}/g,"、");
+  s=s.replace(/，。/g,"。").replace(/、。/g,"。").replace(/^，|，$/g,"");
+  s=s.replace(/的的+/g,"的");
+  s=s.replace(/([一-龥])(例如|比如|包括)/g,"$1，$2");
+  for(var p=0;p<3;p++)s=s.replace(/([一-龥])[ \t]+([一-龥])/g,"$1$2");
+  s=s.replace(/([一-龥])\s+([，。；：！？、）】])/g,"$1$2");
+  s=s.replace(/([（【，。；：！？、])\s+([一-龥])/g,"$1$2");
+  s=s.replace(/([一-龥])([A-Za-z0-9])/g,"$1 $2").replace(/([A-Za-z0-9])([一-龥])/g,"$1 $2");
+  return s.replace(/[ \t]{2,}/g," ").trim();
+}
+
 function trEn(t){
   var wds=[];
   var pk=Object.keys(P2Z).sort(function(a,b){return b.length-a.length;});
   for(var j=0;j<pk.length;j++){var ph=pk[j];
     t=t.replace(new RegExp("\\b"+ph+"\\b","ig"),function(m){wds.push(ph+"="+P2Z[ph]);return " "+P2Z[ph]+" ";});}
-  var r=t.replace(/[A-Za-z']+/g,function(w){
-    var m=look(w);
-    if(m){var s=shortZh(m);wds.push(w+"="+fmt(m));return ART[w.toLowerCase()]?"":s;}
-    if(ART[w.toLowerCase()]){wds.push(w+"=（冠词）");return "";}
-    wds.push(w+"=?");return w;});
-  return{txt:r.replace(/\s+/g," ").trim(),words:wds};
+  var segs=t.split(/([A-Za-z']+)/),tk=[];
+  for(var i=0;i<segs.length;i++){
+    var seg=segs[i];
+    if(!seg)continue;
+    if(/^[A-Za-z']+$/.test(seg)){
+      var l2=seg.toLowerCase(),m2=look(seg),g=funcOf(seg),one="",p="";
+      if(g){one=g.zh;p=g.pos;}
+      else if(m2){one=shortZh(m2).split("、")[0];p=posOf(seg);}
+      else{wds.push(seg+"=?");tk.push({en:seg,zh:seg,pos:"x"});continue;}
+      if(!one){wds.push(seg+"=（虚词，不译）");if(!ART[l2])tk.push({en:seg,zh:"",pos:p});continue;}
+      wds.push(seg+"="+(fmt(m2)||one));
+      tk.push({en:seg,zh:one,pos:p});
+    }else{if(/^\s+$/.test(seg))continue;tk.push({en:seg,zh:seg,pos:"w"});}
+  }
+  return {txt:joinZh(dedupParen(reorder(tk))),words:wds};
 }
 function trZh(t){
   var wds=[],un=0,out="",i=0;
@@ -251,7 +466,63 @@ function run(){
   var msg=d==="zz"?"中文 → 英文":"英文 → 中文";
   if(r.un)msg+="，有 "+r.un+" 个字未收录、已保留原文";
   document.getElementById("live").textContent=msg+"，共匹配 "+r.words.length+" 个词条"+(dictState==="big"?"（完整词典）":"（内置核心词，可加载完整词典提升覆盖率）")+"。";
+  if(aiOn()&&t)aiRun(t,d);
 }
+
+/* ---------- AI 流畅翻译（可选联网，默认关闭） ---------- */
+var AI_URL="/api/llm/translate",QUOTA_URL="/api/llm/quota",aiAbort=null;
+function aiOn(){var c=document.getElementById("chkAI");return !!(c&&c.checked);}
+function aiQuotaTxt(a,b){return "今日剩余：本机 "+a+" 条 · 全站 "+b+" 条（北京时间 0 点重置）";}
+function setAiHint(txt,cls){
+  var q=document.getElementById("aiQuota");
+  if(!q)return;
+  q.hidden=false;q.textContent=txt||"";
+  q.style.color=cls==="err"?"#b42318":cls==="ok"?"#0f7b3f":"";
+}
+function setOutSrc(txt,isAi){
+  var s=document.getElementById("outSrc");
+  if(!s)return;s.textContent=txt||"";s.className="srcbadge"+(isAi?" ai":"");
+}
+function loadQuota(){
+  fetch(QUOTA_URL,{credentials:"same-origin",cache:"no-store"})
+    .then(function(r){return r.json();})
+    .then(function(j){if(j&&j.ok)setAiHint(aiQuotaTxt(j.leftIp,j.leftGlobal),"");})
+    .catch(function(){setAiHint("额度信息暂时取不到，可直接使用，失败会自动回退离线译文","err");});
+}
+function aiRun(t,d){
+  if(aiAbort)aiAbort.abort();
+  aiAbort=new AbortController();
+  var timer=setTimeout(function(){aiAbort.abort();},45000);
+  setOutSrc("AI 翻译中…",true);
+  setAiHint("正在调用 AI 翻译…（一般 3-8 秒）","");
+  fetch(AI_URL,{method:"POST",credentials:"same-origin",signal:aiAbort.signal,
+      headers:{"Content-Type":"application/json"},body:JSON.stringify({text:t,dir:d})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      clearTimeout(timer);
+      if(!j)throw new Error("bad json");
+      if(j.ok){
+        last=j.text;
+        document.getElementById("out").textContent=j.text;
+        setOutSrc(j.cached?"AI 流畅翻译（命中今日缓存，未消耗额度）":"AI 流畅翻译·"+j.model,true);
+        setAiHint(aiQuotaTxt(j.leftIp,j.leftGlobal)+(j.cached?"":" · 已消耗 1 条"),"ok");
+      }else{
+        setOutSrc("离线词典译文（AI 未生效）",false);
+        setAiHint((j.msg||"AI 翻译暂时不可用")+"（已保留离线词典译文）","err");
+        if(j.leftIp!=null)setAiHint(aiQuotaTxt(j.leftIp,j.leftGlobal)+" · "+(j.msg||""),"err");
+      }
+    })
+    .catch(function(e){
+      clearTimeout(timer);
+      setOutSrc("离线词典译文（AI 未生效）",false);
+      setAiHint("AI 翻译请求失败（网络或服务异常），已保留离线词典译文","err");
+    });
+}
+var chk=document.getElementById("chkAI");
+if(chk)chk.addEventListener("change",function(){
+  if(this.checked){loadQuota();}
+  else{if(aiAbort)aiAbort.abort();setAiHint("", "");document.getElementById("aiQuota").hidden=true;}
+});
 document.getElementById("btnGo").addEventListener("click",run);
 document.getElementById("src").addEventListener("keydown",function(e){if(e.key==="Enter"&&(e.ctrlKey||e.metaKey))run();});
 document.getElementById("btnClear").addEventListener("click",function(){document.getElementById("src").value="";document.getElementById("outBox").hidden=true;document.getElementById("live").textContent="已清空，可以重新输入了。";});
