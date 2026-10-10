@@ -131,11 +131,11 @@ var LS_KEY="zbk_ecdict_v1";
 var BIG=null,Z2E=null,dictState="core";
 function setState(cls,txt){document.getElementById("dictState").innerHTML='<span class="dot '+cls+'"></span>'+txt;}
 function fmt(s){return (s||"").replace(/\\n/g,"；").replace(/[；;]{2,}/g,"；").replace(/[；;]$/,"");}
-function buildBig(raw){
+function buildBig(raw,saved){
   var o=Object.create(null),n=0;
   raw.split("|").forEach(function(p){var i=p.indexOf("");if(i>0){o[p.slice(0,i)]=p.slice(i+1);n++;}});
   BIG=o;dictState="big";
-  setState("ok","词典状态：完整词典已就绪，共 "+n.toLocaleString()+" 词条（已保存到本机，断网可用）");
+  setState("ok","词典状态：完整词典已就绪，共 "+n.toLocaleString()+" 词条（"+(saved?"已保存到本机":"已缓存于浏览器")+"，断网可用）");
   document.getElementById("btnDict").textContent="重新下载词典";
   var b=document.getElementById("btnDict");b.disabled=false;
   return n;
@@ -150,7 +150,7 @@ function buildZ2E(){
 function loadDict(force){
   var btn=document.getElementById("btnDict");
   if(dictState==="loading")return;
-  if(!force){try{var c=localStorage.getItem(LS_KEY);if(c&&c.length>100000){buildBig(c);buildZ2E();return;}}catch(e){}}
+  if(!force){try{var c=localStorage.getItem(LS_KEY);if(c&&c.length>100000){buildBig(c,true);buildZ2E();return;}}catch(e){}}
   dictState="loading";btn.disabled=true;
   setState("loading","词典状态：正在下载完整词典…（约 2.4MB，仅此一次）");
   var s=document.createElement("script");
@@ -158,14 +158,14 @@ function loadDict(force){
   s.onload=function(){
     if(!window.ECDICT_RAW){setState("err","词典状态：下载完成但数据异常，请重试");btn.disabled=false;dictState="core";return;}
     var raw=window.ECDICT_RAW;window.ECDICT_RAW=null;
-    try{localStorage.setItem(LS_KEY,raw);}catch(e){/* 超容量则仅用内存 */}
-    buildBig(raw);buildZ2E();
+    var saved=false;try{localStorage.setItem(LS_KEY,raw);saved=true;}catch(e){/* 超容量则仅用内存 */}
+    buildBig(raw,saved);buildZ2E();
   };
   s.onerror=function(){setState("err","词典状态：下载失败，当前使用内置 8000 核心词（断网或网络异常）");btn.disabled=false;dictState="core";};
   document.body.appendChild(s);
 }
 document.getElementById("btnDict").addEventListener("click",function(){loadDict(true);});
-try{var cached=localStorage.getItem(LS_KEY);if(cached&&cached.length>100000){buildBig(cached);buildZ2E();}}catch(e){}
+try{var cached=localStorage.getItem(LS_KEY);if(cached&&cached.length>100000){buildBig(cached,true);buildZ2E();}}catch(e){}
 
 /* ---------- 查词 ---------- */
 function baseForms(w){
