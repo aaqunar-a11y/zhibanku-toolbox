@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>百分比计算器</h1>
-  <p class="lead">四种最常见的百分比计算：求部分、求占比、求涨跌、算折扣，输入即出结果。</p>
+  <p class="lead">百分比计算器帮你一次算清四种常见场景：X 的百分之几是多少、X 占 Y 的比例、从 A 到 B 的涨跌幅、以及打折后的到手价。页面里有四个标签页，选中对应场景后在输入框里填入数字，点「开始计算」按钮，结果会显示在下方，同时给出完整的算式过程，方便你核对每一步。所有计算都在浏览器本地完成，刷新页面即清空，适合日常记账、看报表和算折扣。</p>
 </header>
 <main>
   <div class="panel">
@@ -121,6 +121,36 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>涨 100% 再跌 100% 为什么不是回到原点？</summary><p>因为基数变了。100 涨 100% 变成 200，再从 200 跌 100% 就变成 0。所以「涨跌百分比」不能简单相加。</p></details>
     <details><summary>折扣填 8.5 是什么含义？</summary><p>表示 8.5 折，即原价的 85%。工具按「原价 × 折扣 ÷ 10」计算，支持小数折扣。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>先在顶部选场景：求百分之几、占比、涨跌幅还是折扣价</li><li>按提示填入对应的两个数值</li><li>点计算按钮，下方立刻给出结果和完整算式</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>商场看到满减和折扣叠加，快速算出实际要付多少钱</li><li>看基金或股价从买入到现在的涨跌百分比</li><li>按比例分摊费用，比如按人数算每人该出多少</li></ul>
+</section>
+<div class="zbk-quick" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="zbkCopy" class="primary" style="cursor:pointer">复制结果</button><button type="button" id="zbkReset" style="cursor:pointer">重置</button></div>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul>
+<li>除数为 0 时算不出比例和涨跌幅，页面会提示先补一个非零的基数。</li>
+<li>折扣框填 8.5 表示八五折，填 85 会算成一五折，别和百分数搞混。</li>
+<li>结果统一保留两位小数并四舍五入，做账时以分为单位自行取整更稳妥。</li>
+<li>输入只接受数字和小数点，逗号、百分号、货币符号都会被拦下。</li>
+<li>计算全部在浏览器本地完成，刷新即清空，不会记录你填过的数字。</li>
+</ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/loan-calc.html">贷款月供计算</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+<a href="https://zhibanku.com/tools/date-diff.html">计算两个日期差</a>
+<a href="https://zhibanku.com/tools/number-to-chinese.html">数字转中文大写</a>
+<a href="https://zhibanku.com/tools/base-converter.html">进制在线互转</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -164,5 +194,59 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/percentage-calc-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<script>
+(function(){
+  var c=document.getElementById('zbkCopy'), r=document.getElementById('zbkReset');
+  var SEL='#out, .out, output, #result, .result, #output';
+  function grab(){
+    var el=document.querySelector(SEL);
+    if(!el) return '';
+    return (el.value!==undefined && el.tagName!=='DIV' && el.tagName!=='SPAN')
+      ? el.value : (el.textContent||'').trim();
+  }
+  if(c) c.addEventListener('click', function(){
+    var t=grab();
+    if(!t){ c.textContent='暂无结果'; setTimeout(function(){c.textContent='复制结果';},1200); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ c.textContent='已复制'; },
+        function(){ c.textContent='复制失败'; });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); c.textContent='已复制';}catch(e){c.textContent='复制失败';}
+      document.body.removeChild(ta);
+    }
+    setTimeout(function(){c.textContent='复制结果';},1200);
+  });
+  if(r) r.addEventListener('click', function(){
+    var els=document.querySelectorAll('input, textarea, select');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.id==='zbkCopy'||el.id==='zbkReset') continue;
+      if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; }
+      else if(!el.readOnly && !el.disabled){ el.value=''; }
+      try{
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(e){}
+    }
+  });
+})();
+</script>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

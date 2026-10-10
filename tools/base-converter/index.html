@@ -50,7 +50,7 @@ footer a{color:#2b6cb0}
 <body>
 <header>
   <h1>进制转换器</h1>
-  <p class="lead">2 到 36 任意进制互转。使用 BigInt 精确计算，超过 2⁵³ 的大整数也不会丢精度。</p>
+  <p class="lead">进制转换器支持 2 到 36 任意进制互转，十进制、二进制、十六进制、八进制之间随便换，超大整数用 BigInt 精确计算，位数再多也不丢精度。使用时在页面上方的输入框里填入要转换的数字，在源进制和目标进制下拉里选好进制，需要 0x、0b 这类前缀输出或按位分组显示，可以在下方选项里打开。填好后点「开始转换」，结果会显示在下方的结果区域，点「复制结果」即可拿走。</p>
 </header>
 <main>
   <div class="panel">
@@ -109,6 +109,29 @@ footer a{color:#2b6cb0}
     <details><summary>支持负数吗？</summary><p>支持，会保留负号。但进制转换中的「补码」是另一种语义——如果你需要的是 32 位补码表示，请先用本工具算出无符号值，再自行按位数取反加一。</p></details>
     <details><summary>结果如何复制？</summary><p>点击结果表格里的任意一行即可复制该行的值，适合直接粘进代码或配置里。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>在输入框里粘贴要转换的数字，比如十进制的 255。</li><li>分别选好当前进制和目标进制，比如从十进制转成十六进制。</li><li>点转换按钮，结果立刻显示，点复制即可使用。</li><li>需要的话打开大小写、前缀或按位分组开关，输出格式会跟着变。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>程序员调试时把十进制数快速换成十六进制颜色值。</li><li>学生做进制练习题，批量验算二进制和八进制的结果对不对。</li><li>核对很长的编号或哈希值，用按位分组看清每一位。</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>输入只接受 0 到 9 和 a 到 z，出现超出目标进制的字符会直接提示格式不对，例如十进制里不能填 a</li><li>负数目前只在十进制输入时完整支持，其他进制暂不接受负号，需要负数请先转成十进制再处理</li><li>只处理整数，带小数点的数字会被判为格式错误，不会自动截断小数部分</li><li>大小写选项只影响输出字母，输入时 A 和 a 都认，结果默认用小写</li><li>勾选带前缀输出后，按位分组会跳过开头的 0x 或 0b，复制时前缀和分组空格都会一起带走</li><li>结果只留在当前页面，刷新或关闭标签页就没了，工具不会把数字存到任何地方</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/number-to-chinese.html">数字转中文大写</a>
+<a href="https://zhibanku.com/tools/percentage-calc.html">百分比在线计算</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+<a href="https://zhibanku.com/tools/dev-ipv4-subnet.html">IPv4 子网计算器</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -202,6 +225,7 @@ footer a{color:#2b6cb0}
   <div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
 <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/base-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
 <a href="https://pan.quark.cn/s/eee46d2b6566" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
 <a href="https://pan.baidu.com/s/1mpI7-3qyqOxtiw5ETZKruw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
 </div>
@@ -209,5 +233,21 @@ footer a{color:#2b6cb0}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/base-converter-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>正则表达式测试</h1>
-  <p class="lead">粘贴正则与测试文本，实时查看匹配高亮、匹配位置与捕获分组。</p>
+  <p class="lead">正则表达式在线测试工具让你边写边验证规则。在上方的正则输入框里填入表达式，按需要勾选匹配标志，再把待测文本粘进下方的文本框，页面会实时高亮所有匹配项，并在结果列表里逐条列出匹配位置、匹配内容和每个捕获分组取到的值，改一处立刻看到新的匹配结果，不用反复提交，调到符合预期再拿去代码里用。</p>
 </header>
 <main>
   <div class="panel">
@@ -105,6 +105,29 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>捕获分组和整体匹配有什么区别？</summary><p>整体匹配（<code>$0</code>）是整段命中的文本；圆括号包起来的部分是捕获分组（<code>$1</code>、<code>$2</code>…）。<code>(?:…)</code> 是「非捕获分组」，只分组不单独抓取。</p></details>
     <details><summary>文本会被上传吗？</summary><p>不会。匹配由浏览器原生正则引擎在本地完成，页面没有任何网络请求。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>输入正则表达式，按需勾选全局、忽略大小写等开关</li><li>在文本框里粘贴要处理的内容</li><li>查看高亮结果和下方的匹配列表</li><li>修改正则后观察列表变化，确认捕获分组的取值</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>写表单校验规则前，先拿几组手机号样本试匹配</li><li>从一堆日志里提取带时间戳的行</li><li>批量替换前先确认正则不会误伤正常内容</li><li>学习正则时直观理解分组和量词的作用</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>支持 g、i、m、s、y 等标志，勾选与否结果可能完全不同，换环境前记得核对</li><li>嵌套量词容易引发回溯爆炸，表现为页面卡住或长时间不出结果，把 .* 拆开写更稳</li><li>待测文本只在浏览器本地匹配，不会上传到任何服务器</li><li>捕获分组按左括号出现顺序编号，非捕获组不占编号，引用分组时别数错</li><li>零宽断言和空匹配会列出大量位置，看着像没结果其实是匹配到了空字符串</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+<a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 字符串转义</a>
+<a href="https://zhibanku.com/tools/case-converter.html">命名风格互转</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -161,5 +184,21 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/dev-regex-tester-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

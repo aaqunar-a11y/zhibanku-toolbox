@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>CSS 渐变生成器</h1>
-  <p class="lead">调整类型、角度与颜色，实时预览渐变效果并复制可直接使用的 CSS 代码。</p>
+  <p class="lead">CSS 渐变生成器，帮你快速做出好看的背景渐变。先在上方选择线性渐变或径向渐变，再拖动色标改颜色、拖动滑块调角度，中间的预览区会实时跟着变。调到满意后点「复制代码」，下方就会生成一段可以直接粘贴的 background 属性代码。全程在浏览器里运行，不用登录，改一次看一次，比手写 CSS 快得多，做按钮、卡片、Banner 背景都合适。</p>
 </header>
 <main>
   <div class="panel">
@@ -99,6 +99,26 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>能叠加多个渐变吗？</summary><p>可以。把多个 <code>linear-gradient</code> 用逗号分隔即可叠加，前一个在上层。本工具生成单层代码，多层可据此手动组合。</p></details>
     <details><summary>复制的代码怎么用？</summary><p>直接把 <code>background: …;</code> 粘贴到 CSS 规则里即可。<code>linear-gradient(...)</code> 也能用于 <code>border-image</code>、文字渐变（配合 <code>background-clip:text</code>）等场景。</p></details>
   </section>
+<section>
+<h2>适用场景</h2>
+<ul><li>给网站首页的头部区域做一层柔和的双色背景</li><li>设计登录按钮的高亮效果，快速试几种配色</li><li>做活动海报时生成多段过渡的底图</li><li>把老项目里手写的渐变替换成更规范的写法</li></ul>
+</section>
+<div class="zbk-quick" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="zbkCopy" class="primary" style="cursor:pointer">复制结果</button><button type="button" id="zbkReset" style="cursor:pointer">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>预览由当前浏览器渲染，换浏览器或者系统开了深色模式，颜色可能有细微差别</li><li>色标位置按百分比计算，两个色标压在同一位置会出现硬边，中间加一个过渡色标会更顺</li><li>生成的是标准 CSS 渐变写法，很老的浏览器不支持，需要另外配一张回退背景图</li><li>代码只包含 background 属性，背景尺寸、重复方式这些要自己补上</li><li>所有调整都在本地完成，你的配色方案不会被上传</li><li>径向渐变的形状与圆心位置参数，在部分旧版本浏览器里表现不一致</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/color-converter.html">颜色格式转换器</a>
+<a href="https://zhibanku.com/tools/meta-tags.html">SEO Meta 标签生成器</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/image-base64.html">图片转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+</div>
+</section>
+
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -143,5 +163,43 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/css-gradient-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<script>
+(function(){
+  var c=document.getElementById('zbkCopy'), r=document.getElementById('zbkReset');
+  var SEL='#out, .out, output, #result, .result, #output';
+  function grab(){
+    var el=document.querySelector(SEL);
+    if(!el) return '';
+    return (el.value!==undefined && el.tagName!=='DIV' && el.tagName!=='SPAN')
+      ? el.value : (el.textContent||'').trim();
+  }
+  if(c) c.addEventListener('click', function(){
+    var t=grab();
+    if(!t){ c.textContent='暂无结果'; setTimeout(function(){c.textContent='复制结果';},1200); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ c.textContent='已复制'; },
+        function(){ c.textContent='复制失败'; });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); c.textContent='已复制';}catch(e){c.textContent='复制失败';}
+      document.body.removeChild(ta);
+    }
+    setTimeout(function(){c.textContent='复制结果';},1200);
+  });
+  if(r) r.addEventListener('click', function(){
+    var els=document.querySelectorAll('input, textarea, select');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.id==='zbkCopy'||el.id==='zbkReset') continue;
+      if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; }
+      else if(!el.readOnly && !el.disabled){ el.value=''; }
+      try{
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(e){}
+    }
+  });
+})();
+</script>
 </body>
 </html>

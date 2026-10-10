@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>HTML 转纯文本</h1>
-  <p class="lead">粘贴 HTML 源码，一键剥离标签与脚本、解码实体，输出可直接使用的纯文本。</p>
+  <p class="lead">HTML 转纯文本工具帮你把网页源码变成干净的可读文字。把 HTML 代码粘贴到上方的输入框，点「开始转换」按钮，工具会自动去掉标签、脚本和注释，把 &nbsp; 这类实体解码回正常字符，并尽量保留段落换行。转换好的纯文本显示在下方的结果框里，直接复制就能粘进文档、邮件或笔记中使用。</p>
 </header>
 <main>
   <div class="panel">
@@ -99,6 +99,29 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>能处理整页 HTML 吗？</summary><p>可以，但请先粘贴源码而不是网址——本工具不联网抓取，只处理你粘贴进来的内容。整页抓下来的源码通常包含大量导航与脚本，转换后需自行取舍。</p></details>
     <details><summary>为什么结果里出现了 &lt; 这样的字符？</summary><p>那是被转义后的文本（原文是 <code>&amp;lt;</code>）。工具解码实体后，若结果本身包含尖括号，会按纯文本原样输出，这是正确行为，不会被执行。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>把网页源码或富文本粘贴进左侧输入框</li><li>点转换按钮</li><li>右侧直接得到去掉标签的纯文本，段落换行保留</li><li>点复制按钮拿走结果</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>从新闻页扒正文，去掉一堆嵌套标签和样式</li><li>把邮件里的 HTML 内容整理成纯文本存档</li><li>给大模型喂资料前，先清洗成干净文字</li><li>导入笔记软件时避免残留标签影响排版</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>script 和 style 标签连同内部代码会被整段丢弃，只保留正文可见文字。</li><li>图片、视频这类非文字元素会直接消失，链接只留显示文字，不保留网址。</li><li>表格会被压成一行行文字，单元格之间用空格分隔，看起来对不齐是正常现象。</li><li>连续空格和制表符可能残留，需要更干净的版本可再用文本工具压缩空白。</li><li>转换在浏览器本地进行，粘贴的源码不会离开你的电脑，刷新页面内容即清空。</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+<a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+<a href="https://zhibanku.com/tools/meta-tags.html">网页 Meta 标签生成</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -151,5 +174,21 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/html-to-text-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

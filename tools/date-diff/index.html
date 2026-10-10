@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>日期差计算</h1>
-  <p class="lead">选择两个日期，算出相差天数、周数、月数与工作日天数；下方还可做日期的加减。</p>
+  <p class="lead">「日期差计算器」帮你算两个日期之间差多少天、多少周、多少个月，还能单独统计其中的工作日天数，自动跳过周六周日；也能在某个日期上加减若干天，直接得到目标日期。用法是先在开始日期和结束日期两个框里分别选好日期，点「计算日期差」，天数、周数、月数和工作日数会显示在下方结果区；要算加减日期，就在天数框里填数字，点「计算目标日期」，结果同样显示在下方。</p>
 </header>
 <main>
   <div class="panel">
@@ -99,6 +99,28 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>月数和年数为什么是「约合」？</summary><p>每月天数不同（28–31 天），跨月天数无法精确换算。工具按平均每月 30.4375 天估算，仅用于粗略表达，不做精确结算。</p></details>
     <details><summary>日期加减能算到期日吗？</summary><p>可以。把「基准日期」设为起始日，「加减天数」填上期限天数（如 90 天），即可得到到期日；填负数就是往前推。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>分别选择开始日期和结束日期</li><li>点计算按钮，读取天数、周数、月数和工作日结果</li><li>切到日期加减，填入基准日期和要加减的天数</li><li>再点一次计算按钮，得到目标日期</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>项目排期时算两个里程碑之间隔了多少个工作日</li><li>合同到期前看看还剩多少天，好提前准备续签</li><li>算试用期、产假这类按天走的期限到哪天结束</li><li>做旅行计划时看整趟行程跨了多少天</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>天数按含开始不含结束统计，想首尾都算就把结束日期往后选一天</li><li>月数和年数按自然月折算，属于约合值，跨大小月时会和手算略有出入</li><li>工作日只排除周六周日，法定节假日和调休需要自己另外扣减</li><li>按设备本地时区的自然日计算，跨时区的日期请先换算成本地日期再输入</li><li>全部计算在浏览器本地完成，输入的日期不会离开当前设备</li><li>年份支持范围有限，超出范围的日期会提示无法计算</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+<a href="https://zhibanku.com/tools/countdown-timer.html">倒计时提醒工具</a>
+<a href="https://zhibanku.com/tools/dev-cron-parser.html">Cron 表达式解析</a>
+<a href="https://zhibanku.com/tools/loan-calc.html">贷款月供计算</a>
+<a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算工具</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

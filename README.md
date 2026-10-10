@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-23-blue.svg)
+![Tools](https://img.shields.io/badge/tools-36-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -21,30 +21,43 @@
 | 工具 | 在线地址 | 源码 |
 | --- | --- | --- |
 | 进制转换器 | [在线使用](https://www.zhibanku.com/tools/base-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base-converter) |
+| Base64 编码 | [在线使用](https://www.zhibanku.com/tools/base64-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-encoder) |
 | Base64 文件编码器 - 文件转 Data URI / Base64 在线工具 | [在线使用](https://www.zhibanku.com/tools/base64-file-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-file-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-file-encoder) |
 | 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/case-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/case-converter) |
 | 颜色格式转换器 | [在线使用](https://www.zhibanku.com/tools/color-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/color-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/color-converter) |
+| 倒计时器 | [在线使用](https://www.zhibanku.com/tools/countdown-timer.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/countdown-timer) |
 | CSS 渐变生成器 | [在线使用](https://www.zhibanku.com/tools/css-gradient.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/css-gradient) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/css-gradient) |
 | 日期差计算器 | [在线使用](https://www.zhibanku.com/tools/date-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/date-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/date-diff) |
 | Cron 表达式解析器 | [在线使用](https://www.zhibanku.com/tools/dev-cron-parser.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-cron-parser) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-cron-parser) |
 | IPv4 子网计算器 | [在线使用](https://www.zhibanku.com/tools/dev-ipv4-subnet.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-ipv4-subnet) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-ipv4-subnet) |
 | JWT 解析工具 | [在线使用](https://www.zhibanku.com/tools/dev-jwt-decoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-jwt-decoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-jwt-decoder) |
 | 正则表达式在线测试 | [在线使用](https://www.zhibanku.com/tools/dev-regex-tester.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-regex-tester) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-regex-tester) |
+| 文件哈希校验器 | [在线使用](https://www.zhibanku.com/tools/file-hash-checker.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/file-hash-checker) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/file-hash-checker) |
 | HTML 实体编解码 | [在线使用](https://www.zhibanku.com/tools/html-entity.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-entity) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-entity) |
 | HTML 转纯文本 | [在线使用](https://www.zhibanku.com/tools/html-to-text.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-to-text) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-to-text) |
 | 图片转 Base64 | [在线使用](https://www.zhibanku.com/tools/image-base64.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/image-base64) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/image-base64) |
+| JSON 美化工具 | [在线使用](https://www.zhibanku.com/tools/json-mei-hua.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-mei-hua) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-mei-hua) |
+| JSON 压缩工具 | [在线使用](https://www.zhibanku.com/tools/json-ya-suo.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-ya-suo) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-ya-suo) |
+| JSON 校验工具 | [在线使用](https://www.zhibanku.com/tools/json-yan-zheng-qi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-yan-zheng-qi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-yan-zheng-qi) |
+| JSON 转义与反转义 | [在线使用](https://www.zhibanku.com/tools/json-zhuan-yi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-zhuan-yi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-zhuan-yi) |
 | 贷款月供计算器 | [在线使用](https://www.zhibanku.com/tools/loan-calc.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/loan-calc) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/loan-calc) |
+| Markdown 转 HTML | [在线使用](https://www.zhibanku.com/tools/markdown-to-html.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/markdown-to-html) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/markdown-to-html) |
+| MD5 生成器 | [在线使用](https://www.zhibanku.com/tools/md5-sheng-cheng-qi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/md5-sheng-cheng-qi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/md5-sheng-cheng-qi) |
 | SEO Meta 标签生成器 | [在线使用](https://www.zhibanku.com/tools/meta-tags.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/meta-tags) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/meta-tags) |
 | 数字转中文大写 | [在线使用](https://www.zhibanku.com/tools/number-to-chinese.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/number-to-chinese) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/number-to-chinese) |
 | 密码生成器 | [在线使用](https://www.zhibanku.com/tools/password-generator.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/password-generator) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/password-generator) |
 | 百分比计算器 | [在线使用](https://www.zhibanku.com/tools/percentage-calc.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/percentage-calc) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/percentage-calc) |
+| 时间戳转换器 | [在线使用](https://www.zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/shi-jian-chuo-zhuan-huan) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/shi-jian-chuo-zhuan-huan) |
 | 文本对比工具 | [在线使用](https://www.zhibanku.com/tools/text-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-diff) |
 | 单位换算工具 | [在线使用](https://www.zhibanku.com/tools/unit-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/unit-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/unit-converter) |
 | URL 编解码工具 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/url-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/url-encoder) |
 | UUID 批量生成器 | [在线使用](https://www.zhibanku.com/tools/uuid-generator.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/uuid-generator) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/uuid-generator) |
 | 字数统计工具 | [在线使用](https://www.zhibanku.com/tools/word-count.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/word-count) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/word-count) |
+| 字数统计 | [在线使用](https://www.zhibanku.com/tools/word-counter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/word-counter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/word-counter) |
+| 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
+| 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 23 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 36 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 

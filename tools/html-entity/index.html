@@ -49,7 +49,7 @@ footer a{color:#2b6cb0}
 <body>
 <header>
   <h1>HTML 实体编解码</h1>
-  <p class="lead">转义特殊字符、把实体还原成字符、从 HTML 里提取纯文本，并提供实时预览确认效果。全部在浏览器本地完成。</p>
+  <p class="lead">HTML 实体编解码工具专门处理网页里的特殊字符：把 <、>、& 这类容易破坏标签结构的符号转成 &lt; 形式的实体，也能反向把实体还原成普通字符。使用时把文本粘贴到上方的输入框，按需勾选是否转义引号、是否用十六进制写法，再点「开始转换」按钮，转换结果会显示在下方的结果框里，直接全选复制就能用。</p>
 </header>
 <main>
   <div class="panel">
@@ -100,6 +100,28 @@ footer a{color:#2b6cb0}
     <details><summary>为什么转义要勾选引号？</summary><p>只有在把内容放进 HTML <strong>属性值</strong>（如 <code>title="..."</code>）时才需要转义引号。放在元素文本内容里的话，转义引号反而会让页面上真的显示出 <code>&amp;quot;</code> 这种字符。</p></details>
     <details><summary>「提取纯文本」和「去除标签」有什么区别？</summary><p>前者会解析实体、保留文字语义（例如 <code>&amp;lt;</code> 会变成真正的 <code>&lt;</code> 字符）；后者只是按正则粗暴地删掉尖括号之间的内容，速度快但遇到不规则 HTML 容易出错。推荐用前者。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>把带实体或特殊字符的文本粘贴进输入框</li><li>点编码按钮，右边立刻显示转好的实体</li><li>或者点解码按钮，把数字实体还原成原文</li><li>点复制按钮取走结果</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>写帮助文档时让标签代码原样显示，不被浏览器吞掉</li><li>接口返回的文案里混着十六进制编码，需要快速看懂</li><li>制作邮件模板，避免尖括号被客户端吃掉</li><li>调试时把一串乱码般的实体还原成中文</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>中文、字母和数字本来就是安全字符，转义后不会变化，没必要多转一道。</li><li>勾选转义引号后，双引号会变成 &quot;，放进 HTML 属性里才不会被截断；不勾选则保持原样。</li><li>反转义时遇到写错或不认识的实体会原样保留，不会自动帮你纠正。</li><li>编码后的文本会明显变长，塞进有字数限制的输入框前先估算一下长度。</li><li>整个过程在浏览器本地完成，内容不会上传到服务器，关掉页面就没了，记得先复制结果。</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+<a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义与反转义</a>
+<a href="https://zhibanku.com/tools/html-to-text.html">HTML 转纯文本</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

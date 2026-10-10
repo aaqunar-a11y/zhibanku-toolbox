@@ -52,7 +52,7 @@ footer a{color:#2b6cb0}
 <body>
 <header>
   <h1>文本对比工具</h1>
-  <p class="lead">逐行比较两段文本或两份文件，标出新增、删除与修改，并给出相似度与行数统计。全部计算在浏览器本地完成。</p>
+  <p class="lead">在线文本对比工具用逐行比较的方式找出两段文本的差异。把原文和新文分别粘贴到左右两个文本框，或者点「上传文件」选择本地文件，然后点「开始对比」按钮，下方结果区会用颜色标出新增、删除和修改的行，并给出相似度百分比与增删行数统计。整个过程在浏览器本地完成，文件不会离开你的电脑，适合校对文档、比对配置和检查代码改动。</p>
 </header>
 <main>
   <div class="panel">
@@ -104,6 +104,34 @@ footer a{color:#2b6cb0}
     <details><summary>支持多大的文本？</summary><p>两侧各 3000 行以内结果最精确。更大的文本会自动启用快速模式，只对差异区做精细比较，速度仍然很快。</p></details>
     <details><summary>文件会离开我的电脑吗？</summary><p>不会。文件通过 <code>FileReader</code> 在本地读取后直接进入比较流程，页面没有任何网络请求，可以打开开发者工具的网络面板验证。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>把原文粘进左边框，改后的内容粘进右边框，或直接选择两份文件</li><li>点开始对比按钮，逐行差异立即高亮显示</li><li>查看顶部的相似度与增删改统计，需要时点复制把结果导出</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>编辑核对稿件修改前后，确认哪些段落被动过</li><li>程序员比对两份配置文件，找出导致报错的那一行改动</li><li>合同或条款修订后，快速定位措辞上的细微差别</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul>
+<li>按整行精确比较，行尾回车换行的差异也会被算成不同，先统一成同一种换行符再对比。</li>
+<li>使用最长公共子序列算法，行数越多越耗时，几万行以内比较顺畅，超大文件建议分段处理。</li>
+<li>只适合纯文本，二进制文件以及 Word、PDF 需要先另存为 txt 再上传。</li>
+<li>文件通过浏览器本地读取，不会上传到服务器，关闭页面后内容即清空。</li>
+<li>相似度按行统计，一行里只改动一个字也会整行标为修改。</li>
+</ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/word-count.html">统计字数与字符</a>
+<a href="https://zhibanku.com/tools/html-to-text.html">HTML 转纯文本</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+<a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验定位错误</a>
+<a href="https://zhibanku.com/tools/zheng-ze-ce-shi.html">正则表达式在线测试</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

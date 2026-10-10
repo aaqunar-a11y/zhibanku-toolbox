@@ -54,7 +54,7 @@ footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;co
 
 <div class="wrap">
 <h1>URL 编解码工具 — 在线 URL 编码与解码</h1>
-<p class="lead">把中文、空格、特殊符号转换成百分号编码（percent-encoding），或把 URL 还原成可读文本。三种模式随时切换，输入即转换。所有处理在浏览器本地完成。</p>
+<p class="lead">URL 编解码工具用来处理网址里的中文、空格和特殊符号。把要处理的网址或参数粘贴到上方输入框，选好 encodeURIComponent、encodeURI 或解码模式，点「开始转换」按钮，处理结果会显示在下方结果框里，直接取用即可。反过来，把编码过的字符串粘进输入框、切到解码模式再点「开始转换」，就能还原成可读文字，全程在当前浏览器里完成。</p>
 
 <section class="card">
   <div class="modes" id="modes">
@@ -125,6 +125,20 @@ footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;co
   </table>
 </section>
 
+<section>
+<h2>注意事项</h2>
+<ul><li>encodeURIComponent 转义的字符更多，适合查询参数值；encodeURI 会保留问号、等号、斜杠等结构符号，用错会导致链接打不开</li><li>已经编码过的字符串再编码一次会出现 %25 这类双重转义，粘贴前先判断内容是否已编码</li><li>空格编码后是 %20，而表单里常用加号表示空格，解码时加号可能被还原成空格</li><li>解码模式选错会得到乱码或原样返回，建议先用一小段已知内容试一下</li><li>输入内容只在当前标签页内处理，不上传服务器，但刷新或关闭页面后输入框会清空</li><li>几万字符以上的超长文本会让页面短暂卡顿，建议分段处理</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/dev-jwt-decoder.html">解析 JWT 令牌内容</a>
+<a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 字符串转义处理</a>
+<a href="https://zhibanku.com/tools/base64-file-encoder.html">上传文件转 Base64</a>
+</div>
+</section>
 <section class="card">
   <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
   <dl>
@@ -188,6 +202,18 @@ footer.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:18px;co
   convert();
 })();
 </script>
+<section>
+<h2>怎么用</h2>
+<ol><li>把要处理的原始文本粘进上方输入框，比如带中文和空格的链接。</li><li>选编码模式：encodeURIComponent 适合参数值，encodeURI 适合整条地址。</li><li>点「编码」按钮，下方立刻给出百分号编码结果，点复制就能拿去用。</li><li>要还原时切到解码模式，粘贴编码串再点「解码」，得到原始文本。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>拼接带中文参数的接口地址，避免服务端收到乱码。</li><li>把分享链接里的空格和井号转义，发出去不会断链。</li><li>调试时把编码串还原，看清原始参数到底是什么。</li></ul>
+</section>
+<section>
+<h2>常见问题</h2>
+<details><summary>编码和解码有什么区别</summary><p>编码是把普通文本转成浏览器和服务器都能安全传输的百分号形式，解码则是把这个形式还原成你原来输入的文字。方向选反了看到的就是乱码，按需切换即可。</p></details><details><summary>encodeURIComponent 和 encodeURI 该用哪个</summary><p>前者会把问号、井号、斜杠这些也一起转掉，适合放在参数值里；后者保留这些分隔符，适合处理整条地址。拿不准时按用途选前者更稳妥。</p></details><details><summary>我粘进去的内容会被上传吗</summary><p>不会。整个过程在你的浏览器里完成，页面不发请求，关掉标签页内容就没了，可以放心处理敏感链接。</p></details>
+</section>
 <div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
 <b style="color:#374151">开源仓库与下载</b>
 <div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>

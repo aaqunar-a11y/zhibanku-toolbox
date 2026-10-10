@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>数字转中文大写</h1>
-  <p class="lead">输入数字，立即得到中文小写读法与财务规范的人民币大写金额。</p>
+  <p class="lead">数字转中文大写工具把阿拉伯数字转成两种写法：一种是中文小读法，比如 1234 读作一千二百三十四；另一种是财务规范的人民币大写金额，比如 1234.56 转成壹仟贰佰叁拾肆元伍角陆分。在页面上方的输入框里填入数字，点「开始转换」按钮，下方结果区会同时显示小写读法和大写金额，填票据、合同时直接照抄就行。</p>
 </header>
 <main>
   <div class="panel">
@@ -102,6 +102,28 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>支持多大的数字？</summary><p>整数位最多 16 位，可覆盖到「亿亿」量级，日常报销、合同、发票完全够用。超出范围会提示而非给出错误结果。</p></details>
     <details><summary>小数超过两位怎么办？</summary><p>金额最小到「分」，因此只保留两位小数。若你要转换的是科学数据而非金额，请先自行四舍五入到两位再输入。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>在输入框里填入要转换的数字，支持整数、小数和带小数点的金额</li><li>点击转换按钮，页面立刻同时给出中文小写读法和人民币大写金额</li><li>需要哪种写法就点对应的复制按钮，直接粘贴到合同或票据里</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>财务人员开具发票前，核对金额大写是否填写正确</li><li>签采购合同时，把总价快速转成大写避免手写笔误</li><li>报销单、借条上需要写规范金额，随手一转就能填</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>输入框只接受数字、小数点和负号，带逗号分隔、货币符号或中文的写法会被拒绝，需要先删掉。</li><li>大写金额按人民币规范输出，实际填票据前仍建议对照银行或财务要求人工核对一遍，机器结果不能替代复核。</li><li>中间含零的金额读法变化较多，例如连续多个零的处理，转换后请重点看一眼零的位置对不对。</li><li>结果只输出中文文字，不带 ¥ 之类的货币符号，需要符号请自行添加。</li><li>计算在浏览器本地完成，刷新页面后输入和结果都会清空。</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算与换算</a>
+<a href="https://zhibanku.com/tools/base-converter.html">进制互转计算</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+<a href="https://zhibanku.com/tools/loan-calc.html">贷款月供计算</a>
+<a href="https://zhibanku.com/tools/date-diff.html">计算日期相差天数</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

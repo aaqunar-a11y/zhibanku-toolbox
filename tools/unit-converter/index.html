@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>常用单位换算</h1>
-  <p class="lead">选择类别与单位，输入数值即刻换算，并一次列出该类别下所有单位的对应值。</p>
+  <p class="lead">单位换算工具帮你在线完成长度、面积、重量、体积、速度、数据存储和时间的换算，还收录了市斤、亩、加仑这类常用单位。打开页面后，在上方输入框填入要换算的数值，从下拉菜单选择原单位和目标单位，点「开始换算」按钮，结果会立刻显示在下方结果区，并附带换算公式方便核对。全程无需登录，修改数值后再点一次「开始换算」就能反复使用，常用单位一键切换。</p>
 </header>
 <main>
   <div class="panel">
@@ -103,6 +103,29 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>「亩」「斤」「两」用的是什么标准？</summary><p>采用中国大陆市制：1 亩 ≈ 666.67 平方米，1 斤 = 500 克，1 两 = 50 克。港澳台及部分地区的「斤」定义不同，跨地区交易需另行确认。</p></details>
     <details><summary>温标之间的公式是什么？</summary><p>摄氏与华氏满足 <code>°F = °C × 9/5 + 32</code>，开尔文为 <code>K = °C + 273.15</code>。工具内置这些公式，输入任一温标即可换算其余两个。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>先选类别，比如长度、重量或数据存储</li><li>在输入框填数值，再选好源单位和目标单位</li><li>结果实时刷新在下方，点单位名可随时切换其它单位</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>海淘看商品规格是磅和盎司，换算成斤更直观</li><li>装修预算按亩或平方米计价，快速折算总价</li><li>看网速兆和兆每秒的换算，判断下载要多久</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>数据存储换算默认按 1024 进制，硬盘厂商宣传的容量按 1000 进制标注，两者结果会差约 7%</li><li>市斤按 1 市斤等于 500 克、1 两等于 50 克计算，与港台的斤两（约 600 克）不是一套</li><li>亩按 1 亩约等于 666.67 平方米计算，即传统 60 平方丈，不要和英亩混淆</li><li>加仑区分美制与英制，页面默认美制液体加仑，换英制结果会差约 20%</li><li>温度属于差值换算，摄氏与华氏之间要先加减 32 再乘除，不能直接按比例套</li><li>换算全部在浏览器本地完成，输入的数值不会上传，但刷新页面后输入框会清空</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/percentage-calc.html">百分比在线计算器</a>
+<a href="https://zhibanku.com/tools/number-to-chinese.html">数字转中文大写金额</a>
+<a href="https://zhibanku.com/tools/base-converter.html">二进制十六进制互转</a>
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+<a href="https://zhibanku.com/tools/date-diff.html">两个日期相差天数</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -168,5 +191,21 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/unit-converter-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

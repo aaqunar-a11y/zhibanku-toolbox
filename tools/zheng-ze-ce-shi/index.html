@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>正则表达式测试器 — 在线测试正则 | 知办库</title>
+<meta name="description" content="知办库免费在线正则测试器：用 JavaScript 正则引擎测试表达式，列出每个匹配的位置与捕获组。纯前端运行。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/zheng-ze-ce-shi.html">
+<meta property="og:title" content="正则表达式测试器 — 在线测试正则">
+<meta property="og:description" content="知办库免费在线正则测试器：用 JavaScript 正则引擎测试表达式，列出每个匹配的位置与捕获组。纯前端运行。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/zheng-ze-ce-shi.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:6px 0}
+pre.out{white-space:pre-wrap;word-break:break-all;min-height:120px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "正则表达式测试器 — 在线测试正则", "url": "https://zhibanku.com/tools/zheng-ze-ce-shi.html", "description": "知办库免费在线正则测试器：用 JavaScript 正则引擎测试表达式，列出每个匹配的位置与捕获组。纯前端运行。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "使用哪种正则引擎？", "acceptedAnswer": {"@type": "Answer", "text": "使用浏览器内置的 JavaScript（ECMAScript）正则引擎，语法与网页代码一致。"}}, {"@type": "Question", "name": "标志有什么作用？", "acceptedAnswer": {"@type": "Answer", "text": "常用标志：g（全局，匹配全部）、i（忽略大小写）、m（多行）、s（dotAll），行为与 JavaScript 完全一致。"}}, {"@type": "Question", "name": "会上传我的数据吗？", "acceptedAnswer": {"@type": "Answer", "text": "不会。匹配完全在浏览器本地进行。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · dev-tools</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/">dev-tools</a> / 正则表达式测试器</nav>
+  <h1>正则表达式测试器 — 在线测试正则</h1>
+<p class="lead">「正则表达式测试器」帮你在线验证一段正则写得对不对。在页面上方第一栏填入正则表达式，第二栏粘贴要匹配的测试文本，需要忽略大小写或全局匹配时勾选对应标志，接着点「开始测试」按钮，下方就会列出每一处匹配的位置、匹配到的内容，以及各个捕获组分别取到了什么。表达式和文本都在浏览器本地运行，改一次点一次，调试查错非常直观，不用装任何软件。</p>
+  <p class="sub">输入正则、可选标志与测试文本，列出每个匹配的位置与捕获组。纯前端运行。</p>
+  <div class="box">
+<div class="opts"><label>正则 <input type="text" id="f_pattern" data-f="pattern" placeholder="\b\w+\b" aria-label="正则"></label></div>
+<div class="opts"><label>标志 <input type="text" id="f_flags" data-f="flags" placeholder="g" aria-label="标志"></label></div>
+<div class="opts"><label>测试文本</label></div>
+<textarea id="f_input" data-f="input" placeholder="The quick brown fox jumps 42 times." aria-label="测试文本" spellcheck="false"></textarea><div class="bar"><button class="btn primary" id="runBtn" type="button">Test</button><button class="btn" id="sampleBtn" type="button">Sample</button><button class="btn" id="clearBtn" type="button">清空</button></div>
+<textarea id="output" readonly placeholder="结果 appears here…" aria-label="输出" spellcheck="false"></textarea>
+<div class="bar"><button class="btn" id="copyBtn" type="button">复制 result</button></div>
+<div class="note" id="live" role="status" aria-live="polite"></div>
+<div class="counts" id="stats"></div>
+</div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>用的是浏览器自带的 JavaScript 正则引擎，Python、Java 里的写法不一定通用，比如命名分组 (?P&lt;名字&gt;) 这种语法不支持</li><li>加上 g 标志才会列出全部匹配，不加通常只返回第一处，明明有多处却只显示一个时先检查标志</li><li>点号、括号、星号在正则里另有含义，想匹配它们本身必须加反斜杠转义，否则会匹配到一堆意外内容</li><li>空表达式或 a* 这类能匹配空串的写法会刷出海量结果，容易把页面卡住，建议先限定一个具体字符</li><li>表达式和测试文本都只在本地计算，不发往服务器，但调试时别把身份证号、密码这类真实数据贴进来</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>使用哪种正则引擎？</summary><p>使用浏览器内置的 JavaScript（ECMAScript）正则引擎，语法与网页代码一致。</p></details><details><summary>标志有什么作用？</summary><p>常用标志：g（全局，匹配全部）、i（忽略大小写）、m（多行）、s（dotAll），行为与 JavaScript 完全一致。</p></details><details><summary>会上传我的数据吗？</summary><p>不会。匹配完全在浏览器本地进行。</p></details></div></section>
+  
+  <footer>
+<p>© 2026 知办库 (DevVault). MIT licensed.</p>
+<p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">检查 JSON 合法性</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">在线 URL 编码与解码</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体互转</a>
+<a href="https://zhibanku.com/tools/text-diff.html">对比两段文本的差异</a>
+<a href="https://zhibanku.com/tools/case-converter.html">驼峰下划线互转</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+function el(id){return document.getElementById(id);}
+function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
+function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
+function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
+function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
+function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
+
+var transform = function(v){
+  var pat=v.pattern||'', flags=v.flags||'', s=v.input||'';
+  if(pat==='') return {text:'Enter a pattern.', stats:[]};
+  var re; try{ re=new RegExp(pat, flags); }catch(e){ return {text:'输入不合法'+e.message, stats:[]}; }
+  var m, out=[], n=0, guard=0;
+  re.lastIndex=0;
+  while((m=re.exec(s))!==null){
+    n++;
+    var line='#'+(n)+' @'+m.index+': '+JSON.stringify(m[0])+(m.length>1?(' groups='+JSON.stringify(m.slice(1))):'');
+    out.push(line);
+    if(m.index===re.lastIndex) re.lastIndex++;
+    if(++guard>5000) { out.push('... stopped after 5000 matches'); break; }
+  }
+  var text= n? out.join('\n') : 'No matches.';
+  return {text:text, stats:[['Matches', n]]};
+};
+function run(){ var v={}; document.querySelectorAll('[data-f]').forEach(function(e){ v[e.getAttribute('data-f')]=e.value; }); try{ var r=transform(v); var done=function(res){ var o=document.getElementById('output'); if(o) o.value=(res&&res.text)||''; renderStats((res&&res.stats)||[]); setLive('已完成',true); }; if(r && typeof r.then==='function'){ r.then(done).catch(function(e){ setLive('处理出错'+((e&&e.message)?e.message:e),false); }); } else { done(r); } }catch(e){ setLive('处理出错'+e.message,false); } }
+function sample(){ var d={'pattern':'\b\w+\b','flags':'g','input':'The quick brown fox jumps 42 times.'}; for(var k in d){ var e=document.querySelector('[data-f="'+k+'"]'); if(e) e.value=d[k]; } setLive('Sample loaded.',true); }
+function clearAll(){ document.querySelectorAll('[data-f]').forEach(function(e){ e.value=''; }); var o=document.getElementById('output'); if(o) o.value=''; renderStats([]); setLive('Cleared.',true); }
+el('runBtn').addEventListener('click',run);
+el('sampleBtn').addEventListener('click',sample);
+el('clearBtn').addEventListener('click',clearAll);
+el('copyBtn').addEventListener('click',function(){ var o=document.getElementById('output'); if(o&&o.value) copyText(o.value); });
+setLive('已就绪',true);
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>在表达式框输入正则，注意用反斜杠转义特殊符号。</li><li>选好标志位，比如全局匹配或忽略大小写。</li><li>把待测文本粘进下方测试区，点「测试」按钮。</li><li>结果区列出每个匹配的位置、原文与捕获组，并在原文里高亮标出。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>校验手机号、邮箱等表单规则前先跑几组样例。</li><li>从一大段日志里提取固定格式的条目。</li><li>改完正则立刻验证，确认没把不该匹配的内容也抓进来。</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/0e7aae833ab2" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1jMa2rxFhaa_ZZIGsSfVTVQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>2989</b> ｜ 百度提取码：<b>k3zb</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/zheng-ze-ce-shi-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

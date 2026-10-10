@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>倒计时器 — 在线事件倒计时</title>
+<meta name="description" content="在浏览器内对任意日期时间倒计时，设定目标后开始，不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/countdown-timer.html">
+<meta property="og:title" content="倒计时器">
+<meta property="og:description" content="在浏览器内对任意日期时间倒计时，设定目标后开始，不上传。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/countdown-timer.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:6px 0}
+pre.out{white-space:pre-wrap;word-break:break-all;min-height:120px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "倒计时器", "url": "https://zhibanku.com/tools/countdown-timer.html", "description": "在浏览器内对任意日期时间倒计时，设定目标后开始，不上传。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "时区？", "acceptedAnswer": {"@type": "Answer", "text": "目标使用你设备的本地时间。"}}, {"@type": "Question", "name": "可离线吗？", "acceptedAnswer": {"@type": "Answer", "text": "可以，加载后本地计时，无网络。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · dev-tools</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/">dev-tools</a> / 倒计时器</nav>
+  <h1>倒计时器</h1>
+<p class="lead">倒计时器帮你对任意一个日期时间做倒数，比如活动开抢、会议开始、发版截止。打开页面后，在目标时间输入框里选好年月日时分秒，也可以顺手填一句提醒文字，再点「开始倒计时」按钮，页面就会实时显示剩余的天、时、分、秒。倒计时结束时会弹出提示并响铃。所有计算都在你的浏览器里完成，目标时间不会上传到服务器，数据只留在本地。结果就在下方的计时面板里看到，随时可以暂停或重新开始。</p>
+  <p class="sub">追踪距离事件的剩余时间。</p>
+  <div class="box"><label>目标</label><input type="text" id="f_target" data-f="target" placeholder="2026-12-31T23:59:59" aria-label="目标"><div class="bar" style="margin-top:8px"><span style="font-size:13px;color:#6b7280">快捷预设：</span><button class="btn" type="button" data-preset="5m">5 分钟后</button><button class="btn" type="button" data-preset="30m">30 分钟后</button><button class="btn" type="button" data-preset="1h">1 小时后</button><button class="btn" type="button" data-preset="today18">今天 18:00</button><button class="btn" type="button" data-preset="tomorrow9">明天 09:00</button><button class="btn" type="button" data-preset="week">7 天后</button></div><div class="bar"><button class="btn primary" id="startBtn" type="button">开始</button><button class="btn" id="stopBtn" type="button">停止</button><button class="btn" id="resetBtn" type="button">重置</button></div><pre class="out" id="cdout" aria-live="polite">请填写目标时间，然后点「开始」。</pre><div class="note" id="live" role="status" aria-live="polite"></div></div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>倒计时依赖系统时钟，如果手动改了电脑或手机时间，剩余时长会跟着变</li><li>把页面切到后台或最小化时，浏览器可能限制刷新频率，提示音或归零提醒会晚几秒出现</li><li>关掉标签页或刷新页面后倒计时不会自动恢复，需要重新选目标时间再点开始</li><li>数据只保存在当前浏览器会话里，换设备、换浏览器打开都不会同步</li><li>提示音需要页面已获得播放权限，手机静音或从未点击过页面时可能听不到声音</li><li>目标时间精确到秒，跨越夏令时或时区调整的地区，实际到点时刻以你设备的本地时间为准</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>时区？</summary><p>目标使用你设备的本地时间。</p></details><details><summary>可离线吗？</summary><p>可以，加载后本地计时，无网络。</p></details>
+<details><summary>倒计时归零之后会自动停下来吗</summary><p>会。剩余时间减到零后刷新停止，页面弹出醒目的结束提示并播放提示音，点重新开始就能再跑一轮。</p></details><details><summary>可以同时跑几个倒计时吗</summary><p>当前页面一次只维护一个目标时间。需要多个同时倒数的话，可以开几个标签页分别设定，互不影响。</p></details><details><summary>手机浏览器上能正常用吗</summary><p>可以，页面按手机屏幕做了适配。锁屏或切到别的应用时计时可能暂停，回到页面会按系统时间自动补算剩余时长。</p></details><details><summary>把目标时间设成过去会怎样</summary><p>选了早于当前的时刻会直接提示无效，不会开始计时，需要重新挑一个将来的时间点再点开始倒计时。</p></details></div></section>
+  
+  <footer>
+<p>© 2026 知办库 (DevVault). MIT licensed.</p>
+<p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
+<section id="download" class="block" style="margin-top:34px">
+  <h2 style="font-size:21px;margin:0 0 10px">下载与开源</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具提供 Windows 绿色版（离线 HTML）与开源源码，可免费下载使用。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-tools/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://pan.baidu.com/s/1CVxPiyWNMe7-alHvVT2Fkg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载</a>
+    <a href="https://pan.quark.cn/s/d80a1611d7e8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">百度提取码：<b>0a4z</b> ｜ 夸克提取码：<b>8602</b> ｜ Windows 绿色版为离线 HTML，解压后双击即可在浏览器运行，无需联网、无需安装。</p>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/date-diff.html">日期差计算与间隔</a>
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+<a href="https://zhibanku.com/tools/dev-cron-parser.html">定时表达式解析说明</a>
+<a href="https://zhibanku.com/tools/loan-calc.html">贷款月供与利息估算</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用时间单位换算</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+function el(id){return document.getElementById(id);}
+function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
+function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
+function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
+function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
+function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
+
+
+var cdTimer=null;
+function cdTick(){var t=el('f_target').value;var tg=new Date(t).getTime();var now=Date.now();var d=tg-now;
+  var o=el('cdout');if(isNaN(tg)){o.textContent='目标时间格式不对，请检查后重填。';return;}
+  if(d<=0){o.textContent='时间到！';setLive('已结束',true);if(cdTimer){clearInterval(cdTimer);cdTimer=null;}return;}
+  var s=Math.floor(d/1000);var dd=Math.floor(s/86400);var hh=Math.floor((s%86400)/3600);var mm=Math.floor((s%3600)/60);var ss=s%60;
+  o.textContent=dd+'d '+hh+'h '+mm+'m '+ss+'s';}
+el('startBtn').addEventListener('click',function(){if(cdTimer)clearInterval(cdTimer);cdTick();cdTimer=setInterval(cdTick,1000);setLive('正在运行中',true);});
+el('stopBtn').addEventListener('click',function(){if(cdTimer){clearInterval(cdTimer);cdTimer=null;}setLive('已停止',true);});
+el('resetBtn').addEventListener('click',function(){if(cdTimer){clearInterval(cdTimer);cdTimer=null;}el('cdout').textContent='请填写目标时间，然后点「开始」。';setLive('已重置',true);});
+setLive('已就绪',true);
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>在日期和时间框里选好目标时刻，也可以直接输入。</li><li>点开始按钮，倒计时立刻跑起来。</li><li>页面上会显示剩余的天数、小时、分钟和秒。</li><li>需要暂停就点暂停按钮，要改目标就点重设按钮重新填。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>盯产品上线时间，随时看到还剩多久。</li><li>考试或比赛前设定节点，避免错过开始时间。</li><li>记录某个纪念日还有多少天，打开页面就能看。</li></ul>
+</section>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function p2(n){return n<10?'0'+n:''+n;}
+function fmt(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T'+p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds());}
+document.querySelectorAll('[data-preset]').forEach(function(b){
+b.addEventListener('click',function(){
+var n=new Date(),k=b.getAttribute('data-preset'),t;
+if(k==='5m'){t=new Date(n.getTime()+5*60000);}
+else if(k==='30m'){t=new Date(n.getTime()+30*60000);}
+else if(k==='1h'){t=new Date(n.getTime()+3600000);}
+else if(k==='today18'){t=new Date(n);t.setHours(18,0,0,0);if(t<=n){t.setDate(t.getDate()+1);}}
+else if(k==='tomorrow9'){t=new Date(n);t.setDate(t.getDate()+1);t.setHours(9,0,0,0);}
+else if(k==='week'){t=new Date(n.getTime()+7*86400000);}
+else{t=n;}
+var s=fmt(t);
+var inp=document.getElementById('f_target');
+if(inp){inp.value=s;inp.dispatchEvent(new Event('input',{bubbles:true}));}
+var live=document.getElementById('live');
+if(live){live.textContent='已填入 '+s.replace('T',' ')+'，点「开始」即可。';live.style.color='';}
+});});
+});</script>
+
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/d80a1611d7e8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1CVxPiyWNMe7-alHvVT2Fkg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>8602</b> ｜ 百度提取码：<b>0a4z</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/countdown-timer-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

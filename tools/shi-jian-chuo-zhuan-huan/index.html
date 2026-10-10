@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间戳转换器 — 在线 Unix 时间戳与日期互转 | 知办库</title>
+<meta name="description" content="知办库免费在线时间戳转换器：把 Unix 时间戳（秒或毫秒）转为任意时区的可读日期，也可把 UTC 日期转回 Unix 时间戳。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">
+<meta property="og:title" content="时间戳转换器 — 在线 Unix 时间戳与日期互转 | 知办库">
+<meta property="og:description" content="知办库免费在线时间戳转换器：把 Unix 时间戳（秒或毫秒）转为任意时区的可读日期，也可把 UTC 日期转回 Unix 时间戳。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"\u65f6\u95f4\u6233\u8f6c\u6362\u5668 \u2014 Unix \u65f6\u95f4\u6233\u4e0e\u65e5\u671f\u4e92\u8f6c","url":"https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html","description":"\u77e5\u529e\u5e93\u514d\u8d39\u5728\u7ebf\u65f6\u95f4\u6233\u8f6c\u6362\u5668\uff1a\u628a Unix \u65f6\u95f4\u6233\uff08\u79d2\u6216\u6beb\u79d2\uff09\u8f6c\u4e3a\u4efb\u610f\u65f6\u533a\u7684\u53ef\u8bfb\u65e5\u671f\uff0c\u4e5f\u53ef\u628a UTC \u65e5\u671f\u8f6c\u56de Unix \u65f6\u95f4\u6233\u3002","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"browserRequirements":"Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"\u4ec0\u4e48\u662f Unix \u65f6\u95f4\u6233\uff1f","acceptedAnswer":{"@type":"Answer","text":"\u81ea 1970-01-01 00:00:00 UTC \u8d77\u7ecf\u8fc7\u7684\u79d2\u6570\uff08\u6216\u6beb\u79d2\u6570\uff09\uff0c\u662f\u8ba1\u7b97\u673a\u5b58\u50a8\u65f6\u95f4\u7684\u901a\u7528\u65b9\u5f0f\u3002"}},{"@type":"Question","name":"\u79d2\u8fd8\u662f\u6beb\u79d2\uff1f","acceptedAnswer":{"@type":"Answer","text":"10 \u4f4d\u662f\u79d2\uff0c13 \u4f4d\u662f\u6beb\u79d2\uff0c\u5de5\u5177\u4f1a\u81ea\u52a8\u8bc6\u522b\u3002"}},{"@type":"Question","name":"\u6570\u636e\u4f1a\u4e0a\u4f20\u5417\uff1f","acceptedAnswer":{"@type":"Answer","text":"\u4e0d\u4f1a\uff0c\u5168\u90e8\u8f6c\u6362\u5728\u6d4f\u89c8\u5668\u672c\u5730\u5b8c\u6210\u3002"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · 开发工具</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/tools/">开发工具</a> / 时间戳转换器 - Unix 时间戳与日期互转</nav>
+  <h1>时间戳转换器 — Unix 时间戳与日期互转</h1>
+<p class="lead">知办库免费在线时间戳转换器，可以把 Unix 时间戳转成可读日期，也能把日期反向转回时间戳。在页面上方选择转换方向和单位（秒或毫秒），再选目标时区，在输入框里填入时间戳或日期时间，点「开始转换」按钮，结果会显示在下方结果区，同时列出协调世界时与本地时间的对照，方便核对。数据全程在浏览器里处理，不上传服务器，刷新即清空。</p>
+  <p class="sub">在所选时区里把 Unix 时间戳与可读日期互转，全程在浏览器本地完成。</p>
+  <div class="box"><textarea id="input" placeholder="Unix 时间戳（如 1700000000）或 YYYY-MM-DD HH:MM:SS" aria-label="输入" spellcheck="false"></textarea>
+  <div class="bar"><button class="btn primary" id="runBtn" type="button">转换</button><button class="btn" id="sampleBtn" type="button">载入示例</button><button class="btn" id="clearBtn" type="button">清空</button></div>
+  <div class="opts"><label>模式 <select id="f_mode"><option value="to_date">Unix → Date</option><option value="to_ts">Date → Unix</option></select></label></div><div class="opts"><label>时区 <select id="f_tz"><option value="UTC">UTC</option><option value="Asia/Shanghai">China (UTC+8)</option><option value="Asia/Tokyo">Tokyo</option><option value="Asia/Kolkata">Kolkata</option><option value="Europe/London">London</option><option value="Europe/Paris">Paris</option><option value="America/New_York">New York</option><option value="America/Chicago">Chicago</option><option value="America/Los_Angeles">Los Angeles</option><option value="Australia/Sydney">Sydney</option></select></label></div>
+  <textarea id="output" readonly placeholder="结果将显示在这里……" aria-label="输出" spellcheck="false"></textarea>
+  <div class="bar"><button class="btn" id="copyBtn" type="button">复制结果</button></div>
+  <div class="note" id="live" role="status" aria-live="polite"></div>
+  <div class="counts" id="stats"></div></div>
+  <section>
+<h2>注意事项</h2>
+<ul>
+<li>秒是十位数字，毫秒是十三位，单位选错结果会差一千倍，转换前先数一下位数。</li>
+<li>时间戳从 1970 年 1 月 1 日零点起算，负数代表更早的日期，超出范围会提示无效。</li>
+<li>时区跟随浏览器设置，换设备查看时记得手动选成目标时区，否则容易差八小时。</li>
+<li>输入框只接受纯数字，粘贴内容里带空格或换行要先删掉，否则不会出结果。</li>
+<li>转换在本地浏览器完成，输入的时间戳和日期不会发送到服务器。</li>
+</ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>什么是 Unix 时间戳？</summary><p>自 1970-01-01 00:00:00 UTC 起经过的秒数（或毫秒数），是计算机存储时间的通用方式。</p></details><details><summary>秒还是毫秒？</summary><p>10 位是秒，13 位是毫秒，工具会自动识别。</p></details><details><summary>数据会上传吗？</summary><p>不会，全部转换在浏览器本地完成。</p></details></div></section>
+  
+  <footer><p>知办库 v1.0.0 &mdash; free, privacy-first, pure browser tool.</p><section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/date-diff.html">计算两个日期差</a>
+<a href="https://zhibanku.com/tools/countdown-timer.html">在线倒计时提醒</a>
+<a href="https://zhibanku.com/tools/dev-cron-parser.html">Cron 表达式解析</a>
+<a href="https://zhibanku.com/tools/base-converter.html">进制在线互转</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+
+function el(id){return document.getElementById(id);}
+function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
+function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
+function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
+function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
+function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
+
+
+var transform=function(v){
+  function fmt(date,tz){
+    try{
+      var p=new Intl.DateTimeFormat('en-GB',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(date).reduce(function(a,x){a[x.type]=x.value;return a;},{});
+      return p['year']+'-'+p['month']+'-'+p['day']+' '+p['hour']+':'+p['minute']+':'+p['second']+' ('+tz+')';
+    }catch(e){ return date.toISOString().slice(0,19).replace('T',' ')+' (UTC)'; }
+  }
+  var mode=v.mode, tz=v.tz, raw=(v.input||'').trim();
+  if(!raw) return {text:'', stats:[]};
+  if(mode==='to_date'){
+    var num=parseFloat(raw);
+    if(isNaN(num)) return {text:'输入不合法', stats:[]};
+    var asMs = raw.replace('.','').length >= 13;
+    var ts = asMs ? num : num*1000;
+    var d=new Date(ts);
+    if(isNaN(d.getTime())) return {text:'输入不合法', stats:[]};
+    return {text:fmt(d,tz), stats:[['Unix seconds',Math.floor(ts/1000)],['Unix ms',Math.floor(ts)],['Timezone',tz]]};
+  } else {
+    var m=raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/);
+    if(!m) return {text:'Use format YYYY-MM-DD HH:MM:SS (interpreted as UTC)', stats:[]};
+    var d2=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]));
+    var sec=Math.floor(d2.getTime()/1000);
+    return {text:String(sec), stats:[['Unix seconds',sec],['As UTC',fmt(d2,'UTC')],['In '+tz,fmt(d2,tz)]]};
+  }
+};
+var sample=function(){return {input:'1700000000', mode:'to_date', tz:'Asia/Shanghai'};};
+function run(){var v={input:el('input').value};
+v['mode']=el('f_mode').value;
+v['tz']=el('f_tz').value;
+try{var r=transform(v);el('output').value=r.text||'';renderStats(r.stats||[]);setLive('已完成',true);}catch(e){el('output').value='';renderStats([]);setLive('处理出错'+e.message,false);}}
+el('runBtn').addEventListener('click',run);
+el('sampleBtn').addEventListener('click',function(){var s=sample();el('input').value=s.input||'';if(s['mode']!==undefined)el('f_mode').value=s['mode'];
+if(s['tz']!==undefined)el('f_tz').value=s['tz'];
+setLive('Sample loaded.',true);});
+el('clearBtn').addEventListener('click',function(){el('input').value='';el('output').value='';renderStats([]);setLive('Cleared.',true);if(el('input').focus)el('input').focus();});
+el('copyBtn').addEventListener('click',function(){if(!el('output').value)return;copyText(el('output').value);});
+setLive('粘贴 text and run.',true);
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>把时间戳粘进输入框，秒级和毫秒级都能自动分辨</li><li>在时区选项里挑目标时区，页面即时刷新对应的日期时间</li><li>切到反向转换，填入日期时间即可得到对应的 Unix 时间戳</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>看数据库里的创建时间字段，快速确认事件发生的具体时刻</li><li>核对服务器日志时间与本地时间是否对得上</li><li>开发时需要构造指定时间的测试数据，反查时间戳</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/shi-jian-chuo-zhuan-huan" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/shi-jian-chuo-zhuan-huan" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/3b09d1639a11" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1165BxEZVCohc3KBmTgXVug" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0406</b> ｜ 百度提取码：<b>vrc0</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/shi-jian-chuo-zhuan-huan-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

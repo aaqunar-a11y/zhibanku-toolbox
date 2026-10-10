@@ -62,7 +62,7 @@ var _hmt = _hmt || [];
 
 <div class="wrap">
 <h1>命名风格转换 — 驼峰 / 下划线 / 短横线互转</h1>
-<p class="lead">把变量名、文件名、接口字段在常见命名约定之间互相转换。支持拆分 <code>camelCase</code>、<code>snake_case</code>、<code>kebab-case</code>、空格与连续大写缩写（如 <code>HTTPServer</code>）。纯前端运行。</p>
+<p class="lead">命名风格转换工具帮你把变量名、类名、字段名在驼峰、帕斯卡、下划线、短横线等常见风格之间一键互转。在页面上方的输入框里粘贴要处理的名称，一行一个，然后在下方选好目标风格，点「开始转换」，转换结果会显示在右侧的结果区域，点「复制结果」就能一次全部拿走。中英文混排、带数字的名称也能正确切分。</p>
 
 <section class="card">
   <label for="src">输入（可含空格、下划线、短横线或已有驼峰）</label>
@@ -104,6 +104,20 @@ var _hmt = _hmt || [];
   </table>
 </section>
 
+<section>
+<h2>注意事项</h2>
+<ul><li>一行一个名称，粘贴时带的空行会被忽略，但同一行写了多个词会被当成一个整体处理</li><li>原文里的下划线、短横线和空格都会先被当作分隔符拆开，再按目标风格重新拼接</li><li>连续大写的缩写如 ID、URL 默认整体保留，不会自动拆成小写单词，切分规则可能和预期不同</li><li>中文字符不参与大小写变化，原样保留，只有英文字母会被改写</li><li>结果只在本地生成，不上传也不保存，输入框里的原文会一直留着，方便反复试</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/zheng-ze-ce-shi.html">正则表达式在线测试</a>
+<a href="https://zhibanku.com/tools/text-diff.html">文本对比找差异</a>
+<a href="https://zhibanku.com/tools/html-to-text.html">HTML 转纯文本</a>
+<a href="https://zhibanku.com/tools/word-count.html">字数与字符统计</a>
+<a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 格式化与校验</a>
+</div>
+</section>
 <section class="card">
   <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
   <dl>
@@ -202,11 +216,25 @@ var _hmt = _hmt || [];
   render();
 })();
 </script>
+<section>
+<h2>怎么用</h2>
+<ol><li>把原始名称粘进输入框，多行内容可以一次贴进来。</li><li>在风格列表里点你要的目标写法。</li><li>结果实时更新，点复制按钮就能拿走。</li><li>原名里混了空格和符号的话，先点清理按钮统一分隔符，再做转换。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>写接口时把数据库字段名批量转成代码里的驼峰写法。</li><li>整理素材文件，把带空格的文件名统一改成连字符式。</li><li>对照团队规范，检查已有变量名是不是写错了风格。</li></ul>
+</section>
+<section>
+<h2>常见问题</h2>
+<details><summary>支持哪些命名风格</summary><p>常见的驼峰、大驼峰、下划线、连字符、全大写下划线等都能一键切换。</p></details><details><summary>能一次处理很多个吗</summary><p>可以，一行一个粘进去，所有结果会按顺序一起生成，方便整批复制。</p></details><details><summary>需要付费或登录吗</summary><p>不需要，工具免费开放，打开就能用，也没有次数限制。</p></details>
+</section>
+<div class="zbk-quick" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="zbkCopy" class="primary" style="cursor:pointer">复制结果</button><button type="button" id="zbkReset" style="cursor:pointer">重置</button></div>
 <div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
 <b style="color:#374151">开源与下载</b>
   <div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
 <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/case-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/case-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
 <a href="https://pan.quark.cn/s/61e8d6ea365d" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
 <a href="https://pan.baidu.com/s/1_JsrORaMdZdeZm_b9z7-uQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
 </div>
@@ -214,5 +242,43 @@ var _hmt = _hmt || [];
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/case-converter-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<script>
+(function(){
+  var c=document.getElementById('zbkCopy'), r=document.getElementById('zbkReset');
+  var SEL='#out, .out, output, #result, .result, #output';
+  function grab(){
+    var el=document.querySelector(SEL);
+    if(!el) return '';
+    return (el.value!==undefined && el.tagName!=='DIV' && el.tagName!=='SPAN')
+      ? el.value : (el.textContent||'').trim();
+  }
+  if(c) c.addEventListener('click', function(){
+    var t=grab();
+    if(!t){ c.textContent='暂无结果'; setTimeout(function(){c.textContent='复制结果';},1200); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ c.textContent='已复制'; },
+        function(){ c.textContent='复制失败'; });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); c.textContent='已复制';}catch(e){c.textContent='复制失败';}
+      document.body.removeChild(ta);
+    }
+    setTimeout(function(){c.textContent='复制结果';},1200);
+  });
+  if(r) r.addEventListener('click', function(){
+    var els=document.querySelectorAll('input, textarea, select');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.id==='zbkCopy'||el.id==='zbkReset') continue;
+      if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; }
+      else if(!el.readOnly && !el.disabled){ el.value=''; }
+      try{
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(e){}
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>IPv4 子网计算器</h1>
-  <p class="lead">输入「IP/掩码长度」或「IP + 掩码」，立即得到网段、广播地址、可用主机范围与主机数。</p>
+  <p class="lead">IPv4 子网计算器帮你把一个 IP 或网段快速拆解清楚。在页面上方的输入框里填入 IP 地址或 CIDR 写法，比如 192.168.1.10/24，也可以只填 192.168.1.0 再选掩码位数，然后点「开始计算」按钮，页面下方的结果区会立刻列出子网掩码、网络地址、广播地址、可用主机范围和主机数量，还会提示这个地址属于公网还是私有地址段，排查网络和配置设备时都能直接照着抄。</p>
 </header>
 <main>
   <div class="panel">
@@ -102,6 +102,28 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>私有地址有哪些？</summary><p>RFC 1918 定义了三个网段：<code>10.0.0.0/8</code>、<code>172.16.0.0/12</code>、<code>192.168.0.0/16</code>。它们不会在公网路由，家用路由器与内网普遍使用。</p></details>
     <details><summary>为什么示例里 203.0.113.7 是公网地址？</summary><p>它属于 RFC 5737 保留的文档示例网段（203.0.113.0/24），专门用于教学与文档，不会真实出现在互联网上。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>输入 IP 地址或带前缀长度的网段写法</li><li>点计算按钮</li><li>读取子网掩码、网络地址、广播地址和可用主机范围</li><li>需要时调整前缀长度，再次点计算查看新网段</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>给办公室划分部门网段，确认每个网段能放多少台设备</li><li>排查两台机器不通，核对是不是落在同一网段</li><li>配置路由器访问控制列表前先确认网段边界</li><li>规划机房地址分配，避免和已有网段冲突</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>只支持 IPv4，输入 IPv6 地址会直接报错，两者不能混算</li><li>地址必须写成四段、每段 0-255，192.168.1 这种省略写法不认</li><li>/31 和 /32 属于点对点或单主机用途，可用主机数不是简单的总数减 2</li><li>网络地址和广播地址不能配给设备，真正能用的只有中间那部分</li><li>掩码位数越小网络越大，/8 这种大网段主机数量会非常庞大，注意别在办公网误用</li><li>全部计算在浏览器本地完成，输入的地址不会离开你的电脑</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/base-converter.html">进制与二进制互转</a>
+<a href="https://zhibanku.com/tools/dev-cron-parser.html">Cron 表达式解析</a>
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+<a href="https://zhibanku.com/tools/dev-regex-tester.html">正则表达式在线测试</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

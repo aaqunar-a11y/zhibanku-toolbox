@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>字数统计</h1>
-  <p class="lead">粘贴或输入文本，实时统计字数、段落与预计阅读时长，支持中英文混排。</p>
+  <p class="lead">字数统计工具帮你快速摸清一段文字的规模。把文章粘贴到上方文本框或直接输入，页面会实时统计字符数（含空格与不含空格）、中文字符数、英文单词数、段落数、行数、句子数，并估算阅读时长，各项数字显示在文本框下方的统计面板里。改一个字数字就跟着变；想换一段内容，点文本框旁的「清空」按钮重新粘贴即可，统计全程在浏览器本地完成。</p>
 </header>
 <main>
   <div class="panel">
@@ -99,6 +99,29 @@ This tool counts Chinese characters and English words at the same time. It runs 
     <details><summary>emoji 和标点算不算？</summary><p>「字符（含空格）」计入全部可见字符；「中文字符」只计汉字，不含标点与 emoji。这样设计是为了贴合以「汉字数」计价或限字的场景。</p></details>
     <details><summary>文本会被保存或上传吗？</summary><p>不会。统计全部在浏览器本地完成，刷新即清空，页面没有任何网络请求。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>把文本粘进或直接在编辑区输入，页面实时刷新各项数字。</li><li>看字符数一栏，可切换含空格与不含空格两种口径。</li><li>下方同时给出中文字符、英文单词、段落、行数与句子数。</li><li>右侧显示估算的阅读时长，改文字时自动跟着更新。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>公众号发文前核对字数，看是否符合平台要求。</li><li>投稿时确认稿件长度，顺便估算读者要读多久。</li><li>写摘要或简介时控制篇幅，超了就删。</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>英文单词按空格和标点切分，连字符连在一起的词算一个词，和 Word 的口径不完全一致</li><li>一个 emoji 可能占多个码位，字符数按 Unicode 码点统计，和部分软件显示会有出入</li><li>段落以空行分隔，行数按换行符统计，从网页复制的软换行可能被算成新行</li><li>句子按句号、问号、感叹号切分，省略号或英文缩写后的句点可能被误判成新句</li><li>阅读时长按中文每分钟约 400 字估算，只作参考，实际速度因人而异</li><li>文本只在当前浏览器里统计，不上传服务器，但刷新或关闭页面后内容会丢失</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/text-diff.html">对比两段文本差异</a>
+<a href="https://zhibanku.com/tools/html-to-text.html">HTML 提取纯文本</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML 文档</a>
+<a href="https://zhibanku.com/tools/meta-tags.html">生成网页描述标签</a>
+<a href="https://zhibanku.com/tools/case-converter.html">英文大小写风格转换</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -149,5 +172,21 @@ This tool counts Chinese characters and English words at the same time. It runs 
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/word-count-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

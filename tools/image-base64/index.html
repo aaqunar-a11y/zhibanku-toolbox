@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>图片转 Base64</h1>
-  <p class="lead">选择本地图片，生成 Base64 编码与可直接用于 CSS/HTML 的 Data URI。图片不上传。</p>
+  <p class="lead">图片转 Base64 工具可以把本地图片直接编码成一长串文本。点击页面上的上传区域选择电脑里的图片，或者把图片直接拖进来，确认缩略图后点「开始编码」按钮，稍等片刻，下方结果区会同时给出纯 Base64 编码和带 data:image 前缀的 Data URI 两种格式，点复制按钮就能拿去使用。</p>
 </header>
 <main>
   <div class="panel">
@@ -94,6 +94,25 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>图片会上传到服务器吗？</summary><p>不会。文件通过浏览器的 FileReader 在本地读取，页面没有任何上传请求。可以在开发者工具的网络面板确认。</p></details>
     <details><summary>支持 SVG 和 GIF 吗？</summary><p>支持。选择任意 <code>image/*</code> 文件都会按 MIME 类型生成对应前缀，例如 <code>data:image/svg+xml;base64,…</code>。SVG 若为纯文本，也可以直接内联而无需 Base64。</p></details>
   </section>
+<section>
+<h2>适用场景</h2>
+<ul><li>把小图标内嵌进样式表，减少一次请求</li><li>写邮件模板或小程序时图片没法外链，只能用编码</li><li>生成头像占位图，避免加载时闪一下</li><li>在线编辑器里粘贴图片，绕过上传限制</li></ul>
+</section>
+<div class="zbk-quick" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="zbkCopy" class="primary" style="cursor:pointer">复制结果</button><button type="button" id="zbkReset" style="cursor:pointer">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>编码在浏览器本地完成，图片不会上传，但关闭页面后结果就没了，记得及时复制。</li><li>超过几兆的图片会让编码字符串变得极长，粘进 CSS 或 HTML 可能拖慢页面加载。</li><li>Base64 比原文件大约三成，它不是压缩手段，只适合内联小图标和装饰图。</li><li>GIF 和 SVG 也能编码，但 SVG 属于文本格式，直接粘贴源码通常更省事。</li><li>复制时别漏掉开头的 data:image/png;base64, 前缀，否则浏览器无法识别成图片。</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/base64-file-encoder.html">文件转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/file-hash-checker.html">文件哈希校验</a>
+<a href="https://zhibanku.com/tools/color-converter.html">颜色格式转换</a>
+<a href="https://zhibanku.com/tools/md5-sheng-cheng-qi.html">本地生成 MD5 哈希</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -144,5 +163,43 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/image-base64-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<script>
+(function(){
+  var c=document.getElementById('zbkCopy'), r=document.getElementById('zbkReset');
+  var SEL='#out, .out, output, #result, .result, #output';
+  function grab(){
+    var el=document.querySelector(SEL);
+    if(!el) return '';
+    return (el.value!==undefined && el.tagName!=='DIV' && el.tagName!=='SPAN')
+      ? el.value : (el.textContent||'').trim();
+  }
+  if(c) c.addEventListener('click', function(){
+    var t=grab();
+    if(!t){ c.textContent='暂无结果'; setTimeout(function(){c.textContent='复制结果';},1200); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ c.textContent='已复制'; },
+        function(){ c.textContent='复制失败'; });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); c.textContent='已复制';}catch(e){c.textContent='复制失败';}
+      document.body.removeChild(ta);
+    }
+    setTimeout(function(){c.textContent='复制结果';},1200);
+  });
+  if(r) r.addEventListener('click', function(){
+    var els=document.querySelectorAll('input, textarea, select');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.id==='zbkCopy'||el.id==='zbkReset') continue;
+      if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; }
+      else if(!el.readOnly && !el.disabled){ el.value=''; }
+      try{
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(e){}
+    }
+  });
+})();
+</script>
 </body>
 </html>

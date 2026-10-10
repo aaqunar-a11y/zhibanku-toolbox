@@ -42,6 +42,7 @@ footer p{margin:6px 0 0;font-size:13px}
 <body>
 <main>
 <h1>Base64 文件编码器</h1>
+<p class="lead">Base64 文件编码器能在本地把任意文件转成 Base64 字符串或 Data URI，图片、字体、小音频都行，文件全程不上传服务器。把文件拖进页面上方的拖拽区域，或者点「选择文件」从本地挑一个，选好后点「开始编码」，编码结果会显示在下方的结果框里，可以点「复制结果」直接粘走，也可以点「导出文本」存成一个 txt 文件。</p>
 <p class="sub">把文件拖入即得 Data URI / Base64 字符串，可复制或下载。全部在浏览器本地完成。</p>
 
 <div class="card">
@@ -75,6 +76,32 @@ footer p{margin:6px 0 0;font-size:13px}
   </div>
   <p class="hint">提示：Data URI 可直接写入 HTML 的 img src 或 CSS 的 url() 中；纯 Base64 适合接口传输或存库。</p>
 </div>
+<section>
+<h2>怎么用</h2>
+<ol><li>把文件拖进页面的虚线框，或者点选择文件按钮从本地挑一个。</li><li>选好输出格式，是要纯字符串还是带前缀的 Data URI。</li><li>点开始编码按钮，等进度走完，结果出现在下方。</li><li>点复制按钮拿走结果，或者点导出按钮存成文本文件。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>把小图标转成文本直接写进样式表，省掉一次网络请求。</li><li>在只能发纯文本的场合，把文件内容整段贴进去传递。</li><li>离线环境下，把文件内容搬进另一台机器的代码里。</li></ul>
+</section>
+<section>
+<h2>常见问题</h2>
+<details><summary>大文件能转吗</summary><p>建议控制在几兆以内，文件越大生成的文本越长，浏览器处理起来会变慢甚至卡住。</p></details><details><summary>文件会上传吗</summary><p>不会，读取和编码都在本地浏览器完成，网络面板里看不到任何上传请求。</p></details><details><summary>生成的 Data URI 怎么用</summary><p>直接粘到图片的地址属性或样式表的背景地址里，浏览器会自动还原成原文件。</p></details>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>文件在浏览器内按字节读取，不会上传，但刷新页面结果就没了，导出前请先保存</li><li>文件越大越吃内存，超过 10 兆容易卡顿甚至页面无响应，建议只转图片、字体这类小文件</li><li>编码后体积约为原文件的 1.33 倍，Data URI 直接写进样式或标签会让页面明显变重</li><li>部分浏览器对超长地址有长度上限，几万字符以上的 Data URI 可能被截断，正式项目建议引用独立文件</li><li>复制结果时注意别被编辑器自动换行插进空格，一旦混入空白字符解码就会失败</li><li>拖拽区一次只接受一个文件，多个文件需要逐个转换</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/image-base64.html">图片转 Base64 字符串</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/file-hash-checker.html">文件哈希校验</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编码与解码</a>
+</div>
+</section>
 </main>
 
 <footer>

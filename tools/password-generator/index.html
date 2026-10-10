@@ -70,7 +70,7 @@ var _hmt = _hmt || [];
 
 <div class="wrap">
 <h1>密码生成器 — 在线生成高强度随机密码</h1>
-<p class="lead">使用浏览器内置的加密级随机数源生成密码，可自定义长度与字符集。所有计算在你的设备上完成，密码不会被发送到任何服务器。</p>
+<p class="lead">密码生成器是知办库的免费在线工具，用浏览器自带的加密级随机数生成高强度密码。在页面上方设置密码长度，勾选是否包含大写字母、小写字母、数字和特殊符号，还能选择排除易混淆字符。设置完成后点「生成密码」按钮，新密码会立刻出现在下方结果区，并附带强度评估；点旁边的「复制」按钮即可取走。全程在本地浏览器完成，不上传服务器，刷新页面后旧密码就没了。</p>
 
 <section class="card">
   <div class="out" id="out" aria-live="polite" aria-label="生成的密码">点击下方按钮生成密码</div>
@@ -148,6 +148,26 @@ var _hmt = _hmt || [];
   <p class="note">熵是“暴力猜解难度的理论上界”，不等于绝对安全。真正的风险通常来自复用密码、钓鱼与撞库，而不是密码本身不够随机。建议每个账号使用不同密码，并用密码管理器保存。</p>
 </section>
 
+<section>
+<h2>注意事项</h2>
+<ul>
+<li>随机数来自浏览器的加密级随机源，不是普通伪随机，页面不会保存生成过的密码，关掉就找不回来。</li>
+<li>长度上限为 128 个字符，超出部分不会生成；部分网站对密码长度也有限制，注册前先看清楚要求。</li>
+<li>勾选排除易混淆字符会减少可选字符，长度不变时强度略降，建议用加长来补回。</li>
+<li>特殊符号并非所有平台都接受，遇到注册或登录报错，可先取消符号选项再试。</li>
+<li>整个生成过程在本地浏览器完成，不会上传，也没有历史记录列表可查。</li>
+</ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/uuid-generator.html">批量生成随机 UUID</a>
+<a href="https://zhibanku.com/tools/md5-sheng-cheng-qi.html">MD5 文本哈希生成</a>
+<a href="https://zhibanku.com/tools/file-hash-checker.html">文件哈希校验比对</a>
+<a href="https://zhibanku.com/tools/dev-jwt-decoder.html">解析 JWT 令牌内容</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本 Base64 编码</a>
+</div>
+</section>
 <section class="card">
   <h2 style="font-size:19px;margin:0 0 12px">常见问题</h2>
   <dl>
@@ -312,11 +332,24 @@ var _hmt = _hmt || [];
   refreshMeta(null);
 })();
 </script>
+<section>
+<h2>怎么用</h2>
+<ol><li>拖动长度滑块或直接填数字，设定想要的密码位数</li><li>勾选要包含的字符类型，按需打开排除易混淆字符的开关</li><li>点击生成按钮，得到一串新密码并显示强度评分</li><li>点复制按钮把密码存到剪贴板，再点一次可重新生成</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>注册重要平台账号时，生成一串记不住但存得下的强密码</li><li>批量给测试环境配置不重复的访问口令</li><li>定期更换邮箱或网银密码，避免沿用老密码带来的风险</li></ul>
+</section>
+<section>
+<h2>常见问题</h2>
+<details><summary>生成的密码会被保存或上传吗</summary><p>不会。随机数在浏览器本地产生，页面不记录也不发送任何结果，关掉标签页就什么都不剩。</p></details><details><summary>为什么要排除易混淆字符</summary><p>打开这个选项后，0 和 O、1 和 l、I 这类长得像的字符会被剔除，手抄密码时不容易看错。</p></details><details><summary>密码多长才够安全</summary><p>一般账号建议 16 位以上并混合大小写、数字和符号，长度越长暴力破解的代价越高，强度评分也会随之提升。</p></details>
+</section>
 <div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
 <b style="color:#374151">开源与下载</b>
   <div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
 <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/password-generator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/password-generator" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
 <a href="https://pan.quark.cn/s/566c5dc20fa9" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
 <a href="https://pan.baidu.com/s/1KwQPLpUHGZEv4PgpSqNLYA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
 </div>

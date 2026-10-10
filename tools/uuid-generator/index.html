@@ -49,7 +49,7 @@ footer a{color:#2b6cb0}
 <body>
 <header>
   <h1>UUID 批量生成器</h1>
-  <p class="lead">一次生成成百上千个 UUID，支持 v4（纯随机）与 v7（时间有序），并可导出为 SQL、JSON、CSV 等格式。</p>
+  <p class="lead">UUID 批量生成器用来一次性生成多个唯一标识符。页面上方先选版本，v4 为纯随机，v7 带时间顺序、更适合做数据库主键；再设置生成数量、大小写、是否去掉连字符以及前后缀。确认后点「生成」按钮，结果会逐行列在下方列表里，整段选中即可复制。生成在浏览器本地完成，刷新页面后结果会清空，需要留存请及时复制保存。</p>
 </header>
 <main>
   <div class="panel">
@@ -115,6 +115,29 @@ footer a{color:#2b6cb0}
     <details><summary>结果会被记录或上传吗？</summary><p>不会。页面没有网络请求，也不写 Cookie 或 localStorage，刷新即消失。你可以打开开发者工具的网络面板验证。</p></details>
     <details><summary>为什么有的库说我的 UUID 不合法？</summary><p>多半是版本位或变体位不对。手写的随机串常常只是「32 位十六进制」，缺少第 13 位固定为 4、第 17 位为 8/9/a/b 的约束。用本工具生成的一定符合 RFC 4122 / RFC 9562。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>在数量框里填要生成的个数，比如 20。</li><li>选版本：v4 完全随机，v7 按时间排序，做主键更合适。</li><li>按需勾选大写、去连字符、加前后缀等格式选项。</li><li>点「生成」按钮，列表里出现结果，可复制单条或一键下载全部。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>给新表的主键字段批量造一批测试数据。</li><li>为设备或会话生成唯一标识，避免编号撞车。</li><li>一次性生成几十个 ID 贴进脚本里跑初始化。</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>v7 按时间有序排列，同一批生成的前几位完全相同，别把它当随机熵使用</li><li>去掉连字符后是 32 位十六进制串，部分表字段按 36 位设计，插入前先确认长度</li><li>大写形式并非所有库都接受，标准写法是小写，不确定时保持默认即可</li><li>添加前后缀会改变总长度，字段若是定长类型需预留出前后缀的空间</li><li>生成依赖浏览器的加密随机数，很旧的浏览器可能退化成普通随机，质量下降</li><li>结果只存在于当前页面，刷新即消失，需要长期使用请自行复制保存</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/password-generator.html">生成高强度随机密码</a>
+<a href="https://zhibanku.com/tools/md5-sheng-cheng-qi.html">本地生成文本 MD5 哈希</a>
+<a href="https://zhibanku.com/tools/file-hash-checker.html">校验文件哈希值</a>
+<a href="https://zhibanku.com/tools/case-converter.html">命名风格大小写转换</a>
+<a href="https://zhibanku.com/tools/dev-regex-tester.html">在线测试正则表达式</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -205,5 +228,21 @@ footer a{color:#2b6cb0}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/uuid-generator-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

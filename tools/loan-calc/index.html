@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>贷款月供计算器</h1>
-  <p class="lead">输入金额、年利率与期限，对比等额本息与等额本金的月供、总利息与还款总额。</p>
+  <p class="lead">知办库贷款月供计算器帮你算清房贷、车贷每个月到底要还多少钱。在页面上方依次填入贷款金额、年利率和贷款期限（年限或月数都行），然后点「开始计算」按钮，下方结果区会同时给出等额本息和等额本金两种方式的月供、总利息与还款总额，并附一张前若干期的还款明细表，方便你对比哪种方案更省钱。</p>
 </header>
 <main>
   <div class="panel">
@@ -105,6 +105,28 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>为什么利率填 0 也能算？</summary><p>零利率时退化为「本金 ÷ 期数」，常用于亲友借款或免息分期。工具对这种情况做了单独处理，不会出现除零。</p></details>
     <details><summary>还款计划表为什么只显示前 12 期？</summary><p>30 年房贷有 360 期，全部列出会很长。工具固定展示前 12 期以作节奏参考；等额本息每期金额相同，等额本金每期递减，规律清晰。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>依次填入贷款金额、年利率和还款期限。</li><li>点「开始计算」按钮。</li><li>页面给出等额本息与等额本金的月供、总利息、还款总额，并列出前若干期的本金与利息明细。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>看房时对比商贷和公积金组合贷，估算每月压力。</li><li>买车前算清贷款比全款多花多少利息。</li><li>手头有闲钱，比较缩短年限和减少月供哪种更划算。</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>结果按标准公式估算，实际月供以银行合同和放款日的计息规则为准</li><li>填的是名义年利率，若利率随 LPR 浮动，需要自己换算成当期数值再填</li><li>等额本金首月最高、之后逐月递减，前期现金流压力明显更大</li><li>提前还款违约金、保险、手续费等未计入，仅供对比参考</li><li>还款明细表默认只展示前若干期，完整计划以银行账单为准</li><li>计算在浏览器本地完成，填写的金额与利率不会上传</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算工具</a>
+<a href="https://zhibanku.com/tools/number-to-chinese.html">数字转中文大写</a>
+<a href="https://zhibanku.com/tools/date-diff.html">日期差计算</a>
+<a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+<a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

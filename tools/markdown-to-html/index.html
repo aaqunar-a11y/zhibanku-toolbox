@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown 转 HTML — 在线转换 Markdown</title>
+<meta name="description" content="将 Markdown 转为干净 HTML，支持标题、列表、代码、链接，完全本地。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/markdown-to-html.html">
+<meta property="og:title" content="Markdown 转 HTML">
+<meta property="og:description" content="将 Markdown 转为干净 HTML，支持标题、列表、代码、链接，完全本地。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/markdown-to-html.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:6px 0}
+pre.out{white-space:pre-wrap;word-break:break-all;min-height:120px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Markdown 转 HTML", "url": "https://zhibanku.com/tools/markdown-to-html.html", "description": "将 Markdown 转为干净 HTML，支持标题、列表、代码、链接，完全本地。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "支持哪些语法？", "acceptedAnswer": {"@type": "Answer", "text": "标题、加粗、斜体、代码、列表、链接、引用、分隔线。"}}, {"@type": "Question", "name": "输出安全吗？", "acceptedAnswer": {"@type": "Answer", "text": "应用格式规则前先转义文本。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · dev-tools</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/">dev-tools</a> / Markdown 转 HTML</nav>
+  <h1>Markdown 转 HTML</h1>
+<p class="lead">Markdown 转 HTML 工具帮你把 Markdown 文本一键变成干净的 HTML 代码，支持标题、列表、代码块、链接、图片等常用写法，全程在浏览器本地完成，内容不会上传服务器。把写好的 Markdown 粘贴到页面上方的输入框里，或者直接把 .md 文件拖进输入区，然后点「开始转换」按钮，右侧结果区就会立刻显示生成的 HTML，整段选中即可复制去用。</p>
+  <p class="sub">由 Markdown 源码得到 HTML 输出。</p>
+  <div class="box">
+<div class="opts"><label>Markdown 源码</label></div>
+<textarea id="f_md" data-f="md" placeholder="" aria-label="Markdown 源码" spellcheck="false"></textarea><div class="bar"><button class="btn primary" id="runBtn" type="button">计算</button><button class="btn" id="sampleBtn" type="button">Sample</button><button class="btn" id="clearBtn" type="button">清空</button></div>
+<textarea id="output" readonly placeholder="结果 appears here…" aria-label="输出" spellcheck="false"></textarea>
+<div class="bar"><button class="btn" id="copyBtn" type="button">复制 result</button></div>
+<div class="note" id="live" role="status" aria-live="polite"></div>
+<div class="counts" id="stats"></div>
+</div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>支持标题、段落、有序与无序列表、引用、代码块、行内代码、链接、图片、表格、粗斜体等常用写法；脚注、任务列表这类扩展语法会按普通文本原样输出。</li><li>转换全程在浏览器本地完成，粘贴的内容不会离开你的电脑，但刷新或关闭页面后输入框会被清空，重要文稿请自行留存一份。</li><li>输出的正文字符已做转义，链接地址和图片地址按原样保留，嵌入第三方内容前请自行确认来源是否可信。</li><li>代码块的语言标记以属性形式输出，粘到不带代码高亮样式的页面里不会自动上色，需要配合高亮脚本使用。</li><li>几万字以上的长文档一次性转换会让页面短暂卡顿，建议分段粘贴处理。</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>支持哪些语法？</summary><p>标题、加粗、斜体、代码、列表、链接、引用、分隔线。</p></details><details><summary>输出安全吗？</summary><p>应用格式规则前先转义文本。</p></details>
+<details><summary>转换出来的代码能直接放进网页吗</summary><p>可以，把结果整段粘到页面正文或模板里就能显示。标题、列表会自动套用你页面已有的样式，不需要额外加类名。</p></details><details><summary>表格和任务列表支持吗</summary><p>标准写法的表格支持，会输出 table 结构。任务列表这种扩展语法目前按普通列表处理，勾选框不会生成。</p></details><details><summary>输入的内容会被保存下来吗</summary><p>不会。转换在浏览器本地完成，内容不上传，刷新或关掉页面就没了，需要留底请自己复制保存。</p></details><details><summary>能把 HTML 反向转回 Markdown 吗</summary><p>本工具只做单向转换。需要反向处理时，可以先用 HTML 转纯文本工具提取正文，再手动补回 Markdown 标记。</p></details></div></section>
+  
+  <footer>
+<p>© 2026 知办库 (DevVault). MIT licensed.</p>
+<p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
+<section id="download" class="block" style="margin-top:34px">
+  <h2 style="font-size:21px;margin:0 0 10px">下载与开源</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具提供 Windows 绿色版（离线 HTML）与开源源码，可免费下载使用。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-tools/tree/main/tools/markdown-to-html" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://pan.baidu.com/s/1Y3i4lYz72XBmpB_iFd1mww" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载</a>
+    <a href="https://pan.quark.cn/s/119086aaa129" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">百度提取码：<b>avuc</b> ｜ 夸克提取码：<b>5282</b> ｜ Windows 绿色版为离线 HTML，解压后双击即可在浏览器运行，无需联网、无需安装。</p>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/html-to-text.html">HTML 转纯文本工具</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/word-count.html">统计字数与字符数</a>
+<a href="https://zhibanku.com/tools/text-diff.html">两段文本对比差异</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">网址编码与解码</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+function el(id){return document.getElementById(id);}
+function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
+function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
+function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
+function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
+function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
+
+
+function mdToHtml(src){
+  var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var inline=function(s){
+    s=esc(s);
+    s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+    s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+    s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  };
+  var lines=src.replace(/\r\n/g,'\n').split('\n');
+  var html='';var i=0;var listType=null;
+  function closeList(){if(listType){html+=(listType==='ul'?'</ul>':'</ol>')+'\n';listType=null;}}
+  while(i<lines.length){
+    var ln=lines[i];
+    if(/^```/.test(ln)){closeList();var code='';i++;while(i<lines.length&&!/^```/.test(lines[i])){code+=lines[i]+'\n';i++;}html+='<pre><code>'+esc(code)+'</code></pre>\n';i++;continue;}
+    if(/^\s*$/.test(ln)){closeList();i++;continue;}
+    var h=ln.match(/^(#{1,6})\s+(.*)$/);
+    if(h){closeList();var lvl=h[1].length;html+='<h'+lvl+'>'+inline(h[2])+'</h'+lvl+'>\n';i++;continue;}
+    if(/^\s*>\s?/.test(ln)){closeList();html+='<blockquote>'+inline(ln.replace(/^\s*>\s?/,''))+'</blockquote>\n';continue;}
+    if(/^\s*[-*]\s+/.test(ln)){if(listType!=='ul'){closeList();html+='<ul>\n';listType='ul';}html+='<li>'+inline(ln.replace(/^\s*[-*]\s+/,''))+'</li>\n';i++;continue;}
+    if(/^\s*\d+\.\s+/.test(ln)){if(listType!=='ol'){closeList();html+='<ol>\n';listType='ol';}html+='<li>'+inline(ln.replace(/^\s*\d+\.\s+/,''))+'</li>\n';i++;continue;}
+    if(/^---+$/.test(ln.trim())){closeList();html+='<hr>\n';i++;continue;}
+    closeList();html+='<p>'+inline(ln)+'</p>\n';i++;
+  }
+  closeList();return html;
+}
+
+function transform(v){
+  var h=mdToHtml(v.md||'');
+  return {text:h,stats:[['HTML bytes',bcount(h)]]};
+}
+
+function run(){ var v={}; document.querySelectorAll('[data-f]').forEach(function(e){ v[e.getAttribute('data-f')]=e.value; }); try{ var r=transform(v); var done=function(res){ var o=document.getElementById('output'); if(o) o.value=(res&&res.text)||''; renderStats((res&&res.stats)||[]); setLive('已完成',true); }; if(r && typeof r.then==='function'){ r.then(done).catch(function(e){ setLive('处理出错'+((e&&e.message)?e.message:e),false); }); } else { done(r); } }catch(e){ setLive('处理出错'+e.message,false); } }
+function sample(){ var d={'md':'# Title
+
+Some **bold** text.'}; for(var k in d){ var e=document.querySelector('[data-f="'+k+'"]'); if(e) e.value=d[k]; } setLive('Sample loaded.',true); }
+function clearAll(){ document.querySelectorAll('[data-f]').forEach(function(e){ e.value=''; }); var o=document.getElementById('output'); if(o) o.value=''; renderStats([]); setLive('Cleared.',true); }
+el('runBtn').addEventListener('click',run);
+el('sampleBtn').addEventListener('click',sample);
+el('clearBtn').addEventListener('click',clearAll);
+el('copyBtn').addEventListener('click',function(){ var o=document.getElementById('output'); if(o&&o.value) copyText(o.value); });
+setLive('已就绪',true);
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>把 Markdown 原文粘贴到左侧输入框。</li><li>点「转换」按钮。</li><li>右侧显示对应的 HTML 代码，点复制按钮拿走即可。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>把写好的说明文档一键转成网页，直接嵌进站点。</li><li>博客编辑器只收 HTML 时，用它快速过一遍格式。</li><li>检查自己的 Markdown 写法是否规范，看生成结果有没有偏差。</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/markdown-to-html" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/markdown-to-html" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/119086aaa129" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1Y3i4lYz72XBmpB_iFd1mww" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>5282</b> ｜ 百度提取码：<b>avuc</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/markdown-to-html-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

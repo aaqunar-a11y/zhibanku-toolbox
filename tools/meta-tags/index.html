@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>SEO Meta 标签生成器</h1>
-  <p class="lead">填入页面信息，一键生成基础 SEO、Open Graph 与 Twitter Card 标签，并校验长度。</p>
+  <p class="lead">SEO Meta 标签生成器帮你快速写出网页头部要用的标题、描述与网址声明标签。在页面上方依次填写网页标题、描述文字和网址，哪项不需要就留空，然后点「生成代码」按钮，下方代码区会输出一段可直接粘进页面头部的 HTML。改了任意一项再点一次就能拿到最新版本，复制后放进模板保存即可生效。</p>
 </header>
 <main>
   <div class="panel">
@@ -106,6 +106,29 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>canonical 必须填吗？</summary><p>当同一内容存在多个可访问网址（带参、www 与非 www、分页）时建议填写，指向你希望被收录的那个版本。工具会原样输出你填写的地址。</p></details>
     <details><summary>生成的代码放哪里？</summary><p>放在网页 <code>&lt;head&gt;</code> 中靠前的位置，确保 title、description、canonical 先于脚本加载，便于爬虫尽早读取。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>填写页面标题、描述文字和网址。</li><li>点「生成代码」按钮。</li><li>下方输出可直接粘贴的标签代码，同时提示标题与描述的字数是否合适。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>新页面上线前，快速补齐缺失的描述和规范网址。</li><li>批量整理多个页面的标题，统一控制在合适的字数内。</li><li>把生成的代码发给开发，省去反复沟通格式的时间。</li></ul>
+</section>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>标题建议控制在 30 个汉字以内，描述控制在 70 到 80 个汉字，超出的部分在搜索结果里会被截断。</li><li>网址声明请填带协议的完整地址，例如以 https 开头的全路径，填相对路径搜索引擎可能识别不了。</li><li>工具只负责拼接代码，不校验网址能否访问，也不检查描述是否与页面内容相符。</li><li>生成的代码要放进页面的 head 区域，放在正文里不会被搜索引擎当作页面标题。</li><li>本工具不生成社交分享用的 og 开头标签，需要的话要另外手写。</li><li>填写内容只在浏览器本地处理，不会上传服务器。</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/url-encoder.html">网址编码与解码</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/word-count.html">统计标题描述字数</a>
+<a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+<a href="https://zhibanku.com/tools/html-to-text.html">网页提取纯文本</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -162,5 +185,21 @@ mark{background:#fde68a;padding:0 1px}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/meta-tags-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

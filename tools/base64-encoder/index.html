@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 编码 — 在线文本转 Base64</title>
+<meta name="description" content="以正确的 UTF-8 处理将任意文本编码为 Base64，本地运行，不上传，无 API。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/base64-encoder.html">
+<meta property="og:title" content="Base64 编码">
+<meta property="og:description" content="以正确的 UTF-8 处理将任意文本编码为 Base64，本地运行，不上传，无 API。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/base64-encoder.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:6px 0}
+pre.out{white-space:pre-wrap;word-break:break-all;min-height:120px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Base64 编码", "url": "https://zhibanku.com/tools/base64-encoder.html", "description": "以正确的 UTF-8 处理将任意文本编码为 Base64，本地运行，不上传，无 API。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "UTF-8 安全吗？", "acceptedAnswer": {"@type": "Answer", "text": "安全，文本先按 UTF-8 编码再 Base64，emoji 与中文均可。"}}, {"@type": "Question", "name": "隐私吗？", "acceptedAnswer": {"@type": "Answer", "text": "完全客户端，数据不出浏览器。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · dev-tools</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/">dev-tools</a> / Base64 编码</nav>
+  <h1>Base64 编码</h1>
+<p class="lead">Base64 编码工具把任意文本转成标准的 Base64 字符串，中文、英文、表情符号都按 UTF-8 处理，不会出现乱码。在页面上方的输入框里直接粘贴或输入要编码的文本，然后点「开始编码」，编码结果会显示在下方的结果框里，点「复制结果」就能拿走。整个过程在浏览器本地完成，文本不会上传到服务器，也不依赖任何接口，关掉页面前记得把结果复制走。</p>
+  <p class="sub">安全将文本转为 Base64，含非拉丁字符。</p>
+  <div class="box">
+<div class="opts"><label>文本</label></div>
+<textarea id="f_text" data-f="text" placeholder="" aria-label="文本" spellcheck="false"></textarea><div class="bar"><button class="btn primary" id="runBtn" type="button">计算</button><button class="btn" id="sampleBtn" type="button">Sample</button><button class="btn" id="clearBtn" type="button">清空</button></div>
+<textarea id="output" readonly placeholder="结果 appears here…" aria-label="输出" spellcheck="false"></textarea>
+<div class="bar"><button class="btn" id="copyBtn" type="button">复制 result</button></div>
+<div class="note" id="live" role="status" aria-live="polite"></div>
+<div class="counts" id="stats"></div>
+</div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>按 UTF-8 处理，如果原文本身是 GBK 等旧编码存下来的，编码出来解回去会是乱码，请先转成 UTF-8</li><li>换行和首尾空格会原样参与编码，从别处粘贴时注意别多带一个回车，否则解码结果会差一个字符</li><li>全程本地运行，不上传也不调接口，但结果不落盘，刷新页面就清空</li><li>几十万字符的长文本编码时会让页面卡住几秒，建议分段处理</li><li>Base64 只是可逆编码不是加密，别拿它当密码或混淆手段用</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>UTF-8 安全吗？</summary><p>安全，文本先按 UTF-8 编码再 Base64，emoji 与中文均可。</p></details><details><summary>隐私吗？</summary><p>完全客户端，数据不出浏览器。</p></details>
+<details><summary>编码后的字符串怎么还原成原文</summary><p>用本站的 Base64 解码功能，把字符串粘进输入框再点解码即可。注意解码时也要按 UTF-8 读取，中文才不会变成乱码。</p></details><details><summary>结果末尾的等号是干什么的</summary><p>那是补位符，用来把长度凑成 4 的倍数。不同长度的原文补的等号数量不同，解码时会自动去掉，不影响实际内容。</p></details><details><summary>中文比英文编码出来长很多正常吗</summary><p>正常。UTF-8 下一个汉字占 3 个字节，英文只占 1 个，编码后大约按 4 比 3 放大，所以中文结果明显比英文长。</p></details><details><summary>想编码图片或二进制文件怎么办</summary><p>文本工具只处理字符内容，二进制文件请改用 Base64 文件编码器，它按字节读取本地文件，还能直接生成 Data URI。</p></details></div></section>
+  
+  <footer>
+<p>© 2026 知办库 (DevVault). MIT licensed.</p>
+<p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
+<section id="download" class="block" style="margin-top:34px">
+  <h2 style="font-size:21px;margin:0 0 10px">下载与开源</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具提供 Windows 绿色版（离线 HTML）与开源源码，可免费下载使用。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-tools/tree/main/tools/base64-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://pan.baidu.com/s/1E6xn7QQN4clzxAyw5hYReg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载</a>
+    <a href="https://pan.quark.cn/s/006b2ef5bf50" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">百度提取码：<b>sbia</b> ｜ 夸克提取码：<b>1323</b> ｜ Windows 绿色版为离线 HTML，解压后双击即可在浏览器运行，无需联网、无需安装。</p>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/base64-file-encoder.html">Base64 文件编码</a>
+<a href="https://zhibanku.com/tools/image-base64.html">图片转 Base64 字符串</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编码与解码</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/md5-sheng-cheng-qi.html">MD5 哈希生成</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+function el(id){return document.getElementById(id);}
+function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
+function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
+function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
+function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
+function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
+
+
+function transform(v){
+  var s=v.text||'';
+  var bytes=new TextEncoder().encode(s);
+  var bin='';for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+  var out=btoa(bin);
+  return {text:out,stats:[['Bytes in',bytes.length],['Base64 len',out.length]]};
+}
+
+function run(){ var v={}; document.querySelectorAll('[data-f]').forEach(function(e){ v[e.getAttribute('data-f')]=e.value; }); try{ var r=transform(v); var done=function(res){ var o=document.getElementById('output'); if(o) o.value=(res&&res.text)||''; renderStats((res&&res.stats)||[]); setLive('已完成',true); }; if(r && typeof r.then==='function'){ r.then(done).catch(function(e){ setLive('处理出错'+((e&&e.message)?e.message:e),false); }); } else { done(r); } }catch(e){ setLive('处理出错'+e.message,false); } }
+function sample(){ var d={'text':'Hello, 世界!'}; for(var k in d){ var e=document.querySelector('[data-f="'+k+'"]'); if(e) e.value=d[k]; } setLive('Sample loaded.',true); }
+function clearAll(){ document.querySelectorAll('[data-f]').forEach(function(e){ e.value=''; }); var o=document.getElementById('output'); if(o) o.value=''; renderStats([]); setLive('Cleared.',true); }
+el('runBtn').addEventListener('click',run);
+el('sampleBtn').addEventListener('click',sample);
+el('clearBtn').addEventListener('click',clearAll);
+el('copyBtn').addEventListener('click',function(){ var o=document.getElementById('output'); if(o&&o.value) copyText(o.value); });
+setLive('已就绪',true);
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>把要编码的文本粘贴进输入框。</li><li>点编码按钮。</li><li>下方立刻生成 Base64 结果，点复制按钮就能拿走。</li><li>想还原时，把字符串贴回输入框，点解码按钮取回原文。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>给接口传参时，把中文字段临时转成 Base64 拼进地址。</li><li>在配置文件里存一段带特殊符号的文本，避免被解析工具截断。</li><li>准备一段带格式的内容，编码后安全地放进单行文本里。</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/006b2ef5bf50" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1E6xn7QQN4clzxAyw5hYReg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>1323</b> ｜ 百度提取码：<b>sbia</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/base64-encoder-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

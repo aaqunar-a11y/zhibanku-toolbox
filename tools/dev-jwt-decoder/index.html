@@ -66,7 +66,7 @@ mark{background:#fde68a;padding:0 1px}
 <body>
 <header>
   <h1>JWT 解码</h1>
-  <p class="lead">粘贴 JWT，立即查看 Header 与 Payload 的 JSON 内容，并把时间戳字段转成可读时间。</p>
+  <p class="lead">JWT 解析工具用来把一长串看不懂的令牌拆开看。把接口返回或浏览器里拿到的完整令牌粘贴到页面上方的输入框，点「开始解析」，下方会分头部、载荷、签名三段展示，其中头部和载荷会自动格式化成缩进清晰的 JSON，并把算法、签发时间、过期时间这些常用字段单独标出来，排查登录失效和调试接口时一眼就能对上。</p>
 </header>
 <main>
   <div class="panel">
@@ -99,6 +99,28 @@ mark{background:#fde68a;padding:0 1px}
     <details><summary>因此能把敏感数据放进 Payload 吗？</summary><p>不能。Payload 是明文可解的。手机号、身份证、密码等敏感信息不应直接写入 JWT，确需携带时应先加密（JWE）。</p></details>
     <details><summary>令牌会上传吗？</summary><p>不会。解码全部在本地完成，页面没有任何网络请求。但仍建议不要在公共电脑上粘贴生产环境令牌。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>复制完整令牌，粘贴到输入框</li><li>点解析按钮</li><li>查看格式化后的头部和载荷内容</li><li>对照下方整理出的常用字段，确认过期时间等信息</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>调试登录接口时确认返回的令牌里带了哪些用户信息</li><li>排查接口报令牌过期，核对过期时间字段</li><li>核对令牌的签名算法是否和后端配置一致</li><li>给同事演示令牌结构，直观看到三段式组成</li></ul>
+</section>
+<section>
+<h2>注意事项</h2>
+<ul><li>只做解码不做验签，签名部分的真伪无法在这里确认</li><li>载荷只是 Base64Url 编码，不是加密，任何人都能解开看到原文</li><li>粘贴的令牌只在浏览器本地解析，不会上传到服务器</li><li>过期时间字段按秒计算，直接当毫秒时间戳读会得到错误日期</li><li>必须是用点号分隔的三段完整令牌，缺签名段或粘贴时带了引号都会解析失败</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/base64-encoder.html">Base64 编码解码</a>
+<a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 格式化与美化</a>
+<a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 合法性校验</a>
+<a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+<a href="https://zhibanku.com/tools/password-generator.html">高强度随机密码生成</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>

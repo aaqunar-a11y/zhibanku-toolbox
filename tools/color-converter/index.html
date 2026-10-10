@@ -46,7 +46,7 @@ footer a{color:#2b6cb0}
 <body>
 <header>
   <h1>颜色格式转换器</h1>
-  <p class="lead">HEX、RGB、HSL、HSV 互转，自动生成明暗色阶，并按 WCAG 标准算出文字与背景的对比度是否达标。</p>
+  <p class="lead">「颜色格式转换器」能把 HEX、RGB、HSL、HSV 四种写法互相转换，还能实时取色、生成明暗色阶，并按 WCAG 标准算出前景色和背景色的对比度够不够。使用时在页面上方的颜色输入框里直接粘贴色值，或者用取色器点选颜色，四种格式的写法会同步更新。想看明暗变化就点「生成色阶」，要查对比度就点「计算对比度」，结果会显示在页面下方的结果区，并标出达到 AA 还是 AAA 级别。</p>
 </header>
 <main>
   <div class="panel">
@@ -90,6 +90,30 @@ footer a{color:#2b6cb0}
     <details><summary>为什么两个颜色看起来差很多，对比度却不高？</summary><p>相对亮度是按人眼敏感度加权的（绿色权重最高 0.7152，蓝色最低 0.0722）。所以深蓝与深红的观感差异不小，亮度却接近，对比度自然偏低。</p></details>
     <details><summary>色阶是干什么用的？</summary><p>给出同一色相从浅到深的 9 档，方便补齐 hover / active / 边框 / 背景等状态色。点击任意一格即可切换为当前颜色。</p></details>
   </section>
+<section>
+<h2>怎么用</h2>
+<ol><li>在取色区选一个颜色，或者直接把 HEX、RGB 数值贴进对应输入框。</li><li>其他格式会自动跟着变，点任意格式即可复制。</li><li>点生成色阶按钮，得到一组由浅到深的同色系颜色。</li><li>分别选好前景色和背景色，下方立刻显示对比度数值和是否达标。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>设计稿里只有 RGB 值，需要填进样式表的十六进制写法。</li><li>检查正文颜色和背景的对比度，确认弱光环境下也看得清。</li><li>为一个主色生成整套明暗色阶，用在按钮、悬停和禁用状态。</li></ul>
+</section>
+<div class="zbk-quick" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="zbkCopy" class="primary" style="cursor:pointer">复制结果</button><button type="button" id="zbkReset" style="cursor:pointer">重置</button></div>
+<div class="bar" style="margin-top:10px"><button class="btn" id="zbkCopy" type="button">复制结果</button><button class="btn" id="zbkReset" type="button">重置</button></div>
+<section>
+<h2>注意事项</h2>
+<ul><li>HEX 输入建议带井号开头，只写 6 位数字也能识别，3 位简写会自动展开，带透明度的 8 位写法只在部分格式间转换</li><li>对比度按 WCAG 2.1 计算，半透明颜色会先与白色底合成再取色，叠在图片上时实际观感可能不同</li><li>色阶默认生成 10 级，起止颜色差得太小会出现色带，差得太大中间几级会显得断层</li><li>所有换算都在浏览器本地完成，你输入的颜色值不会上传到服务器</li><li>这里算的是屏幕用的 RGB 色值，不能直接当印刷 CMYK 色号使用</li><li>取色器依赖浏览器支持，老旧浏览器里可能只能手动输入色值</li></ul>
+</section>
+<section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/css-gradient.html">CSS 渐变生成与预览</a>
+<a href="https://zhibanku.com/tools/image-base64.html">图片转 Base64 编码</a>
+<a href="https://zhibanku.com/tools/meta-tags.html">网页 Meta 标签生成</a>
+<a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+<a href="https://zhibanku.com/tools/base64-encoder.html">文本转 Base64 编码</a>
+</div>
+</section>
 </main>
 <footer>
   <p><a href="https://www.zhibanku.com/tools/">← 返回在线工具</a></p>
@@ -184,6 +208,7 @@ footer a{color:#2b6cb0}
   <div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
 <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/color-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/color-converter" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
 <a href="https://pan.quark.cn/s/32651d60c590" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
 <a href="https://pan.baidu.com/s/1xjsxTlsy7RoytnIkNQG0jw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
 </div>
@@ -191,5 +216,59 @@ footer a{color:#2b6cb0}
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/color-converter-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<script>
+(function(){
+  var c=document.getElementById('zbkCopy'), r=document.getElementById('zbkReset');
+  var SEL='#out, .out, output, #result, .result, #output';
+  function grab(){
+    var el=document.querySelector(SEL);
+    if(!el) return '';
+    return (el.value!==undefined && el.tagName!=='DIV' && el.tagName!=='SPAN')
+      ? el.value : (el.textContent||'').trim();
+  }
+  if(c) c.addEventListener('click', function(){
+    var t=grab();
+    if(!t){ c.textContent='暂无结果'; setTimeout(function(){c.textContent='复制结果';},1200); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){ c.textContent='已复制'; },
+        function(){ c.textContent='复制失败'; });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy'); c.textContent='已复制';}catch(e){c.textContent='复制失败';}
+      document.body.removeChild(ta);
+    }
+    setTimeout(function(){c.textContent='复制结果';},1200);
+  });
+  if(r) r.addEventListener('click', function(){
+    var els=document.querySelectorAll('input, textarea, select');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.id==='zbkCopy'||el.id==='zbkReset') continue;
+      if(el.type==='checkbox'||el.type==='radio'){ el.checked=false; }
+      else if(!el.readOnly && !el.disabled){ el.value=''; }
+      try{
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(e){}
+    }
+  });
+})();
+</script>
+
+<script>document.addEventListener("DOMContentLoaded",function(){
+function zbkPick(){var s='#out, .out, output, #result, .result, #output, pre.out, textarea.out';
+var n=document.querySelector(s);return n?(n.value!==undefined?n.value:n.textContent):'';}
+function zbkSet(v){var n=document.querySelector('#out, .out, output, #result, .result, #output');if(n){if(n.value!==undefined){n.value=v;}else{n.textContent=v;}}}
+var cb=document.getElementById('zbkCopy');if(cb){cb.addEventListener('click',function(){
+var t=zbkPick();if(!t){alert('当前没有可复制的结果');return;}
+if(navigator.clipboard){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}});}
+var rb=document.getElementById('zbkReset');if(rb){rb.addEventListener('click',function(){
+document.querySelectorAll('input,textarea,select').forEach(function(el){
+if(el.type==='button'||el.type==='submit'){return;}
+if(el.type==='checkbox'||el.type==='radio'){el.checked=false;}else{el.value='';}
+el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));});
+zbkSet('');});}
+});</script>
+
 </body>
 </html>

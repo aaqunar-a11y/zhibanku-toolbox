@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON 美化工具 — 在线美化/漂亮打印 JSON | 知办库</title>
+<meta name="description" content="知办库免费在线 JSON 美化工具：用 2/4 空格或 Tab 缩进美化紧凑 JSON，并支持按 A–Z 排序键。纯前端运行，文本不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/json-mei-hua.html">
+<meta property="og:title" content="JSON 美化工具">
+<meta property="og:description" content="知办库免费在线 JSON 美化工具：用 2/4 空格或 Tab 缩进美化紧凑 JSON，并支持按 A–Z 排序键。纯前端运行，文本不上传。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/json-mei-hua.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.opts select, .opts input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:26px;font-weight:700}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "JSON 美化", "url": "https://zhibanku.com/tools/json-mei-hua.html", "description": "知办库免费在线 JSON 美化工具：用 2/4 空格或 Tab 缩进美化紧凑 JSON，并支持按 A–Z 排序键。纯前端运行，文本不上传。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "需要 JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "这个 JSON 美化工具收费吗？", "acceptedAnswer": {"@type": "Answer", "text": "免费且隐私安全，美化完全在浏览器本地运行。"}}, {"@type": "Question", "name": "支持哪些缩进选项？", "acceptedAnswer": {"@type": "Answer", "text": "你可以选择 2 个空格、4 个空格或 Tab 缩进，让输出贴合你的项目风格。"}}, {"@type": "Question", "name": "能按字母排序键吗？", "acceptedAnswer": {"@type": "Answer", "text": "可以。勾选「按键排序 A–Z」后，美化器会把每个对象的键按字母顺序重新排列，更方便查看。"}}, {"@type": "Question", "name": "美化会改变我的数值吗？", "acceptedAnswer": {"@type": "Answer", "text": "不会。它只重新排版空白（并可选择键顺序），数据本身完全不变。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办<span>库</span></a> · 开发工具</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/tools/">开发工具</a> / JSON 美化</nav>
+  <h1>JSON 美化 — 让 JSON 更易阅读</h1>
+<p class="lead">JSON 美化工具用来把挤成一行的紧凑 JSON 展开成易读的多行格式。把 JSON 粘贴到上方输入框，选择缩进方式（2 空格、4 空格或 Tab），需要的话再勾选按 A–Z 排序键，然后点「开始美化」按钮，格式化后的 JSON 显示在下方结果框，可直接复制，出错时会提示具体行号方便你定位。</p>
+  <p class="sub">在下方粘贴紧凑或压缩后的 JSON，选择喜欢的缩进方式即可美化。全程本地完成、不上传。</p>
+  <div class="box"><textarea id="input" placeholder="在此粘贴要美化的紧凑 JSON……" aria-label="JSON 输入" spellcheck="false"></textarea>
+    <div class="opts"><label>缩进 <select id="indent"><option value="2">2 个空格</option><option value="4">4 个空格</option><option value="tab">Tab</option></select></label><label><input type="checkbox" id="sort"> 按键排序 A–Z</label></div>
+    <div class="bar"><button class="btn primary" id="fmtBtn" type="button">美化</button><button class="btn" id="sampleBtn" type="button">载入示例</button><button class="btn" id="clearBtn" type="button">清空</button></div>
+    <textarea id="output" readonly placeholder="美化后的 JSON 将显示在这里……" aria-label="输出" spellcheck="false"></textarea>
+    <div class="bar"><button class="btn" id="copyBtn" type="button">复制结果</button><span class="note" id="live">粘贴 JSON 后点击「美化」。</span></div>
+    <div class="counts"><div class="c hl"><div class="n" id="lines">0</div><div class="l">输出行数</div></div></div></div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>JSON 有语法错误时不会输出结果，会提示出错的大致行号，先改好再美化。</li><li>美化只增删空白和换行，不会改动数值精度和字符串内容，键顺序默认也保持原样。</li><li>勾选按 A–Z 排序会重排所有键，嵌套对象同样受影响，别用在需要保序的场景。</li><li>几兆以上的大文件解析会卡顿几秒，建议分段处理或换个时间再试。</li><li>全程在浏览器本地运行，数据不经过服务器，刷新页面即清空。</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>这个 JSON 美化工具收费吗？</summary><p>免费且隐私安全，美化完全在浏览器本地运行。</p></details><details><summary>支持哪些缩进选项？</summary><p>你可以选择 2 个空格、4 个空格或 Tab 缩进，让输出贴合你的项目风格。</p></details><details><summary>能按字母排序键吗？</summary><p>可以。勾选「按键排序 A–Z」后，美化器会把每个对象的键按字母顺序重新排列，更方便查看。</p></details><details><summary>美化会改变我的数值吗？</summary><p>不会。它只重新排版空白（并可选择键顺序），数据本身完全不变。</p></details></div></section>
+  
+  <footer><p>知办库开发工具 — 免费、隐私优先、纯浏览器工具。JSON 美化 v1.0.0。</p><section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/json-ya-suo.html">JSON 压缩工具</a>
+<a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验与纠错</a>
+<a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义与反转义</a>
+<a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+<a href="https://zhibanku.com/tools/case-converter.html">命名风格转换</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+      var input=document.getElementById("input"),output=document.getElementById("output"),live=document.getElementById("live");
+      var SAMPLE='{"name":"知办库","tools":["beautifier"],"free":true,"nested":{"deep":{"value":42}}}';
+      function indentVal(){var v=document.getElementById("indent").value;return v==="tab"?"\t":Number(v);}
+      function sortKeys(o){if(Array.isArray(o))return o.map(sortKeys);if(o!==null&&typeof o==="object"){var r={};Object.keys(o).sort().forEach(function(k){r[k]=sortKeys(o[k]);});return r;}return o;}
+      function setLive(m,ok){live.textContent=m;live.style.color=ok?"":"#b91c1c";}
+      document.getElementById("fmtBtn").addEventListener("click",function(){
+        var t=input.value;if(t.trim()===""){setLive("请先粘贴 JSON。",false);return;}
+        try{var v=JSON.parse(t);if(document.getElementById("sort").checked)v=sortKeys(v);var out=JSON.stringify(v,null,indentVal());output.value=out;document.getElementById("lines").textContent=out.split("\n").length.toLocaleString();setLive("美化成功。",true);}
+        catch(e){output.value="";setLive("JSON 无效："+e.message,false);}
+      });
+      document.getElementById("sampleBtn").addEventListener("click",function(){input.value=SAMPLE;setLive("已载入示例。",true);});
+      document.getElementById("clearBtn").addEventListener("click",function(){input.value="";output.value="";setLive("粘贴 JSON 后点击「美化」。",true);input.focus();});
+      document.getElementById("copyBtn").addEventListener("click",function(){if(!output.value)return;if(navigator.clipboard)navigator.clipboard.writeText(output.value).then(function(){setLive("已复制！",true);});});
+      setLive("粘贴 JSON 后点击「美化」。",true);
+    });</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>把紧凑的 JSON 粘贴进输入框</li><li>选好缩进方式，需要的话勾选按键名排序</li><li>点美化按钮</li><li>下方立刻得到格式化好的 JSON，点复制按钮取走</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>调试接口时返回的 JSON 挤成一团，先美化再看</li><li>提交配置文件前排版，方便同事评审</li><li>对比两份 JSON 的结构差异</li><li>把日志里的 JSON 片段整理成可读格式</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-mei-hua" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/json-mei-hua" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/bd82a17a4c19" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1Auz7aHGbvmyk23-7NZZbQg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>5621</b> ｜ 百度提取码：<b>k3gf</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/json-mei-hua-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON 校验工具 — 在线校验 JSON 并定位错误 | 知办库</title>
+<meta name="description" content="知办库免费在线 JSON 校验工具：检查 JSON 是否合法，提示具体出错行与列，并给出结构摘要（键、值、深度）。纯前端运行，文本不上传。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.zhibanku.com/tools/json-yan-zheng-qi.html">
+<meta property="og:title" content="JSON 校验工具">
+<meta property="og:description" content="知办库免费在线 JSON 校验工具：检查 JSON 是否合法，提示具体出错行与列，并给出结构摘要（键、值、深度）。纯前端运行，文本不上传。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhibanku.com/tools/json-yan-zheng-qi.html">
+<meta name="twitter:card" content="summary">
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+.brand span{color:var(--brand)}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.opts select, .opts input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:26px;font-weight:700}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.counts .c.hl .n{color:var(--brand)}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "JSON 校验", "url": "https://zhibanku.com/tools/json-yan-zheng-qi.html", "description": "知办库免费在线 JSON 校验工具：检查 JSON 是否合法，提示具体出错行与列，并给出结构摘要（键、值、深度）。纯前端运行，文本不上传。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "需要 JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "这个 JSON 校验工具收费吗？", "acceptedAnswer": {"@type": "Answer", "text": "完全免费，无需注册，你的 JSON 只在浏览器本地处理，不会上传。"}}, {"@type": "Question", "name": "会指出错误位置吗？", "acceptedAnswer": {"@type": "Answer", "text": "会。当 JSON 不合法时，它会给出错误提示，并附带大致的出错行与列，方便你快速定位修复。"}}, {"@type": "Question", "name": "能校验很大的 JSON 吗？", "acceptedAnswer": {"@type": "Answer", "text": "可以。校验完全在浏览器本地运行，因此即便是较大的 JSON 也能处理，且不会上传到任何服务器。"}}, {"@type": "Question", "name": "它会改动我的 JSON 吗？", "acceptedAnswer": {"@type": "Answer", "text": "不会。校验器只检查合法性并展示结构摘要（键、值、数组、深度），不会重写或改变你的原始输入。"}}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办<span>库</span></a> · 开发工具</div></header>
+  <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/tools/">开发工具</a> / JSON 校验</nav>
+  <h1>JSON 校验 — 检查 JSON 合法性并定位错误</h1>
+<p class="lead">知办库 JSON 校验工具用来检查一段 JSON 到底合不合法。把内容粘贴到上方输入框，或者直接拖入 .json 文件，然后点「开始校验」按钮，几秒内就会给出结论：出错时标出具体的行号和列号，方便你回去改；通过时还会给出结构摘要，包括顶层键、值类型和嵌套深度。校验结果与结构概览都显示在下方结果区，全程在浏览器里跑，不用登录也不用装软件。</p>
+  <p class="sub">在下方粘贴 JSON 即可即时校验。不合法时会显示大致的行与列，全过程本地完成、不上传。</p>
+  <div class="box"><textarea id="input" placeholder="在此粘贴 JSON，检查它是否合法……" aria-label="JSON 输入" spellcheck="false"></textarea>
+    <div class="bar"><button class="btn primary" id="valBtn" type="button">校验</button><button class="btn" id="sampleBtn" type="button">载入示例</button><button class="btn" id="clearBtn" type="button">清空</button><span class="note" id="live">粘贴 JSON 后点击「校验」。</span></div>
+    <div id="banner" style="display:none;margin-top:12px;padding:12px 14px;border-radius:10px;font-weight:600;font-size:15px"></div>
+    <div class="counts" id="stats" style="display:none">
+      <div class="c hl"><div class="n" id="kKeys">0</div><div class="l">键数量</div></div>
+      <div class="c"><div class="n" id="kVals">0</div><div class="l">值数量</div></div>
+      <div class="c"><div class="n" id="kArr">0</div><div class="l">数组</div></div>
+      <div class="c"><div class="n" id="kDepth">0</div><div class="l">最大深度</div></div>
+    </div></div>
+  <section>
+<h2>注意事项</h2>
+<ul><li>按标准 JSON 规则判定，单引号、注释、尾部多余逗号都会被判为错误</li><li>行号从 1 开始计数，列号按字符位置统计，粘贴时注意开头的不可见空格</li><li>解析在浏览器本地完成，内容不会离开当前设备</li><li>几兆以上的大文件解析时页面可能短暂无响应，建议分段校验</li><li>校验只读不改，不会自动修正、补引号或重排你的内容</li><li>结构摘要只统计键与深度，不回显完整数据，避免长内容刷屏</li></ul>
+</section>
+<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>这个 JSON 校验工具收费吗？</summary><p>完全免费，无需注册，你的 JSON 只在浏览器本地处理，不会上传。</p></details><details><summary>会指出错误位置吗？</summary><p>会。当 JSON 不合法时，它会给出错误提示，并附带大致的出错行与列，方便你快速定位修复。</p></details><details><summary>能校验很大的 JSON 吗？</summary><p>可以。校验完全在浏览器本地运行，因此即便是较大的 JSON 也能处理，且不会上传到任何服务器。</p></details><details><summary>它会改动我的 JSON 吗？</summary><p>不会。校验器只检查合法性并展示结构摘要（键、值、数组、深度），不会重写或改变你的原始输入。</p></details></div></section>
+  
+  <footer><p>知办库开发工具 — 免费、隐私优先、纯浏览器工具。JSON 校验 v1.0.0。</p><section>
+<h2>相关工具推荐</h2>
+<div class="related">
+<a href="https://zhibanku.com/tools/json-ya-suo.html">JSON 压缩减小体积</a>
+<a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 美化排版</a>
+<a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 字符串转义</a>
+<a href="https://zhibanku.com/tools/text-diff.html">文本差异对比</a>
+<a href="https://zhibanku.com/tools/dev-regex-tester.html">正则表达式测试</a>
+</div>
+</section>
+
+</footer>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){
+      var input=document.getElementById("input"),live=document.getElementById("live"),banner=document.getElementById("banner"),stats=document.getElementById("stats");
+      var SAMPLE='{\n  "name": "知办库",\n  "ok": true,\n  "tags": ["json", "validator"],\n  "nested": { "deep": { "value": 42 } }\n}';
+      function setLive(m,ok){live.textContent=m;live.style.color=ok?"":"#b91c1c";}
+      function locate(text,pos){if(pos==null)return "";var line=1,col=1;for(var i=0;i<pos&&i<text.length;i++){if(text[i]==="\n"){line++;col=1;}else col++;}return "（第 "+line+" 行，第 "+col+" 列）";}
+      function analyze(v){var keys=0,vals=0,arr=0,depth=0;function walk(x,d){depth=Math.max(depth,d);if(Array.isArray(x)){arr++;for(var i=0;i<x.length;i++){vals++;walk(x[i],d+1);}}else if(x!==null&&typeof x==="object"){for(var k in x){keys++;vals++;walk(x[k],d+1);}}}walk(v,1);return{keys:keys,vals:vals,arr:arr,depth:depth};}
+      function fmt(n){return n.toLocaleString();}
+      document.getElementById("valBtn").addEventListener("click",function(){
+        var t=input.value;if(t.trim()===""){setLive("请先粘贴 JSON。",false);return;}
+        try{var v=JSON.parse(t);var a=analyze(v);banner.style.display="block";banner.style.background="#e7f7ec";banner.style.color="#0f7a36";banner.style.border="1px solid #9bd9b0";banner.textContent="✓ JSON 合法";stats.style.display="grid";document.getElementById("kKeys").textContent=fmt(a.keys);document.getElementById("kVals").textContent=fmt(a.vals);document.getElementById("kArr").textContent=fmt(a.arr);document.getElementById("kDepth").textContent=fmt(a.depth);setLive("JSON 合法，结构摘要见下方。",true);}
+        catch(e){var m=/position (\d+)/.exec(e.message);var pos=m?parseInt(m[1],10):null;banner.style.display="block";banner.style.background="#fdeaea";banner.style.color="#b91c1c";banner.style.border="1px solid #f3b4b4";banner.textContent="✗ JSON 不合法："+e.message.replace(/ in JSON at position \d+/,"");if(pos!=null){setLive("错误"+locate(t,pos)+"。",false);}else{setLive("错误："+e.message,false);}stats.style.display="none";}
+      });
+      document.getElementById("sampleBtn").addEventListener("click",function(){input.value=SAMPLE;setLive("已载入示例，点击「校验」。",true);});
+      document.getElementById("clearBtn").addEventListener("click",function(){input.value="";banner.style.display="none";stats.style.display="none";setLive("粘贴 JSON 后点击「校验」。",true);input.focus();});
+      setLive("粘贴 JSON 后点击「校验」。",true);
+    });</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<section>
+<h2>怎么用</h2>
+<ol><li>把要检查的 JSON 文本粘贴到上方输入框里。</li><li>点「开始校验」按钮。</li><li>下方立刻给出结果：内容合法就显示键、值类型和嵌套深度的结构摘要；不合法就标出具体行号和列号，照着提示回去改就行。</li></ol>
+</section>
+<section>
+<h2>适用场景</h2>
+<ul><li>调接口时拿到一大段返回数据，粘进来确认格式没坏。</li><li>手改配置文件后，保存前先校验一遍，避免程序启动直接报错。</li><li>同事发来的 JSON 看着正常却用不了，快速定位到底哪一列多了或少了符号。</li></ul>
+</section>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-yan-zheng-qi" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/json-yan-zheng-qi" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/726fb5f8c116" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1dbgRbsHboAW8DxBZws4GCA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0848</b> ｜ 百度提取码：<b>rm5y</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/json-yan-zheng-qi-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
