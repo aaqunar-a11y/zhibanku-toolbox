@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>时区转换 — 全球时区时间互转与夏令时对照 | 知办库</title>
+<meta name="description" content="输入日期时间即可在全球时区之间互转，显示目标时区完整日期、时差、UTC 偏移、夏令时状态与常见城市同一时刻对照。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/timezone.html">
+<style>
+:root{
+  --bg:#f5f7fa;--card:#ffffff;--ink:#171b22;--muted:#5c6675;--line:#e2e7ef;
+  --brand:#1a5fe0;--brand-d:#1449b0;--brand-soft:#eaf1ff;--ok:#0d7a4f;--warn:#a8590a;
+  --radius:14px;--shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.75;font-size:16px}
+main{max-width:920px;margin:0 auto;padding:32px 18px 8px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:30px;line-height:1.35;margin:6px 0 14px;letter-spacing:.5px}
+h2{font-size:22px;margin:44px 0 14px;padding-left:12px;border-left:5px solid var(--brand);line-height:1.4}
+h3{font-size:17px;margin:0 0 6px}
+h4{font-size:15px;margin:22px 0 8px;color:var(--muted);font-weight:600}
+.lead{font-size:16.5px;color:#39414f;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px;margin:0 0 26px;box-shadow:var(--shadow)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 20px;box-shadow:var(--shadow);margin-bottom:22px}
+.eyebrow{font-size:13px;letter-spacing:2px;color:var(--muted);margin:0 0 10px;font-weight:600}
+.presets{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.chip{border:1px solid var(--brand);background:#fff;color:var(--brand-d);border-radius:999px;
+  padding:8px 15px;font-size:14.5px;cursor:pointer;transition:.15s;font-family:inherit}
+.chip:hover{background:var(--brand-soft)}
+.chip:active{transform:translateY(1px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:600;color:#333b48}
+.field select,.field input{width:100%;padding:11px 12px;border:1px solid #cfd6e2;border-radius:10px;
+  font-size:15.5px;background:#fff;color:var(--ink);font-family:inherit}
+.field select:focus,.field input:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+.hint{font-size:13px;color:var(--muted);margin:4px 0 0}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.btn{border:0;border-radius:10px;padding:12px 24px;font-size:15.5px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:.15s}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-d)}
+.btn-ghost{background:#fff;color:#33404f;border:1px solid #cfd6e2}
+.btn-ghost:hover{background:#f1f4f9}
+.btn-small{padding:8px 16px;font-size:14px;background:var(--brand-soft);color:var(--brand-d);border:1px solid #cddcff}
+.btn-small:hover{background:#dce8ff}
+.err{display:none;margin:16px 0 0;padding:11px 14px;border-radius:10px;background:#fdecec;
+  color:#a32020;font-size:14.5px;border:1px solid #f6cfcf}
+.err.show{display:block}
+.result{border-top:4px solid var(--brand)}
+.res-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.res-date{margin:16px 0 2px;font-size:17px;color:#33404f}
+.res-time{margin:0;font-size:40px;font-weight:700;letter-spacing:1px;line-height:1.2;color:var(--brand-d)}
+.res-week{margin:6px 0 0;font-size:15px;color:var(--muted)}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0 4px}
+.res-grid div{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.res-grid dt{font-size:13px;color:var(--muted);margin-bottom:3px}
+.res-grid dd{margin:0;font-size:15.5px;font-weight:600}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:440px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f2f5fa;font-weight:600;color:#39414f}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+.status{min-height:22px;font-size:14px;color:var(--ok);margin:12px 0 0}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 14px 46px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:30px;height:30px;
+  border-radius:50%;background:var(--brand);color:#fff;font-size:15px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+ul.notes{padding-left:20px;margin:0}
+ul.notes li{margin-bottom:11px;color:#33404f}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0;margin-bottom:12px}
+summary{cursor:pointer;padding:15px 18px;font-weight:600;font-size:15.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"＋";color:var(--brand);margin-right:9px;font-weight:700}
+details[open] summary::before{content:"－"}
+details p{margin:0;padding:0 18px 16px 42px;color:#414a58;font-size:15px}
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.links a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;font-size:15px;box-shadow:var(--shadow)}
+.links a:hover{border-color:var(--brand);background:var(--brand-soft);text-decoration:none}
+.scene{display:flex;flex-wrap:wrap;gap:9px;padding:0;margin:0;list-style:none}
+.scene li{background:#eef7f2;color:#146c4a;border:1px solid #cfe8dc;border-radius:999px;
+  padding:6px 14px;font-size:14px}
+footer{max-width:920px;margin:0 auto;padding:26px 18px 44px;border-top:1px solid var(--line);
+  font-size:14.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+@media(max-width:640px){
+  h1{font-size:25px}.grid{grid-template-columns:1fr}.res-time{font-size:32px}
+  main{padding:24px 14px 6px}.card{padding:18px 15px}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>时区转换：全球时区时间互转工具</h1>
+  <p class="lead">时区转换工具用来把任意日期时间在全球各个时区之间互转，解决跨国会议、海外直播、国际航班排期对不上的烦恼。你只需在下方表单里选择源时区、填写要换算的日期和时间，再选好目标时区，点击「开始转换」按钮，结果就会立刻出现在结果卡片中，包含目标时区的完整日期、星期、具体时刻、与源时区的时差、UTC 偏移以及是否处于夏令时，同时附带一张常见城市同一时刻对照表，可一键复制结果。</p>
+
+  <section class="card">
+    <p class="eyebrow">快捷预设</p>
+    <div class="presets">
+      <button type="button" class="chip" data-from="Asia/Shanghai" data-to="America/New_York">北京 → 纽约</button>
+      <button type="button" class="chip" data-from="Asia/Shanghai" data-to="Europe/London">北京 → 伦敦</button>
+      <button type="button" class="chip" data-from="Asia/Shanghai" data-to="Asia/Tokyo">北京 → 东京</button>
+      <button type="button" class="chip" data-from="Asia/Shanghai" data-to="America/Los_Angeles">北京 → 洛杉矶</button>
+      <button type="button" class="chip" data-now="1">此刻全球对照</button>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="srcZone">源时区（时间属于哪里）</label>
+        <select id="srcZone"></select>
+      </div>
+      <div class="field">
+        <label for="dstZone">目标时区（换算到哪里）</label>
+        <select id="dstZone"></select>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label for="dateTime">日期和时间</label>
+        <input type="datetime-local" id="dateTime" step="60">
+        <p class="hint">按源时区的当地时间填写，精确到分钟即可。</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="convertBtn">开始转换</button>
+      <button type="button" class="btn btn-ghost" id="nowBtn">填入当前时间</button>
+      <button type="button" class="btn btn-ghost" id="resetBtn">重置</button>
+    </div>
+    <p class="err" id="errMsg"></p>
+  </section>
+
+  <section class="card result" id="resultCard" hidden>
+    <div class="res-head">
+      <h3>换算结果</h3>
+      <button type="button" class="btn btn-small" id="copyBtn">复制结果</button>
+    </div>
+    <p class="res-date" id="resDate">—</p>
+    <p class="res-time" id="resTime">—</p>
+    <p class="res-week" id="resWeek">—</p>
+    <dl class="res-grid">
+      <div><dt>源时间</dt><dd id="resSrc">—</dd></div>
+      <div><dt>时差</dt><dd id="resDiff">—</dd></div>
+      <div><dt>UTC 偏移</dt><dd id="resUtc">—</dd></div>
+      <div><dt>夏令时</dt><dd id="resDst">—</dd></div>
+    </dl>
+    <h4>同一时刻常见城市对照</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>城市</th><th>当地时间</th><th>星期</th><th>与源时区时差</th></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <p class="status" id="statusMsg" role="status"></p>
+  </section>
+
+  <h2>快捷用法</h2>
+  <ul class="notes">
+    <li>跨国约会：源时区选你所在城市并填入会议时间，目标时区选对方城市，直接读出对方的当地时刻。</li>
+    <li>海外直播与赛事：把主办方公布的当地时间填进源时区，目标选北京时间，得到国内观众的收看时间。</li>
+    <li>国际航班：出发地时间换算到目的地时区，一眼看出是否跨天，方便安排接机与住宿。</li>
+    <li>邮件与任务定时：先看对方时区的上班时段，再反推回本地时间设定发送或执行时刻。</li>
+  </ul>
+
+  <h2>适用场景</h2>
+  <ul class="scene">
+    <li>跨境团队站会排期</li>
+    <li>海外客户沟通时间</li>
+    <li>国际航班与转机</li>
+    <li>外贸客服值班排班</li>
+    <li>海外直播开播提醒</li>
+    <li>颁奖礼与球赛收看</li>
+    <li>服务器日志时间核对</li>
+    <li>跨时区网课与考试</li>
+  </ul>
+
+  <h2>注意事项</h2>
+  <ul class="notes">
+    <li>时区与夏令时规则来自浏览器内置的时区数据库，若某国临时调整夏令时政策，需要更新浏览器内核后才能反映最新规则。</li>
+    <li>夏令时切换当天会出现「跳时」或「重复时」：春季凌晨常直接跳过一小时，填写不存在的时刻会按规则顺延；秋季重复的时刻只取其中一个结果。</li>
+    <li>本工具按标准时区库换算，不覆盖个别国家的特殊规定，例如中国全境统一使用北京时间、部分国家全年固定夏令时不随季节切换。</li>
+    <li>日期和时间必须填写完整并精确到分钟，只填日期或只填小时无法换算；跨天时结果中的日期会自动加减一天，请以结果卡片显示的日期为准。</li>
+    <li>部分国家采用半小时或四分之三小时时区，时差会出现 30 或 45 分钟，这是真实偏移，不会被四舍五入成整小时。</li>
+    <li>全部换算在浏览器本地完成，不发起任何网络请求，填写的时间不会离开你的设备；刷新或关闭页面后结果不会保留。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在「源时区」下拉框里选择这份时间所属的时区，然后在「日期和时间」输入框里填入要换算的具体时刻，可点「填入当前时间」快速带入此刻。</li>
+    <li>在「目标时区」下拉框里选择要换算到的时区；也可以直接点上方任一快捷预设按钮，两端时区会自动填好并立即完成换算。</li>
+    <li>点击「开始转换」按钮，下方结果卡片会显示目标时区的年月日、星期、具体时刻、与源时区的时差、UTC 偏移和夏令时状态。</li>
+    <li>需要把结果发给别人时点「复制结果」按钮，结果会以纯文本复制到剪贴板；想从头再来点「重置」按钮即可恢复默认设置。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>夏令时在结果里是怎么体现的</summary>
+    <p>结果卡片会单独标注目标时区当前是否处于夏令时，并给出实际生效的 UTC 偏移。处于夏令时的时段，时差通常会比标准时差多一小时，排会议时以卡片显示的偏移为准。</p>
+  </details>
+  <details>
+    <summary>为什么换算结果差了半小时</summary>
+    <p>印度、尼泊尔、澳大利亚中部等地区采用半小时时区，缅甸采用四分之三小时时区，与相邻时区天然相差 30 或 45 分钟，本工具按真实偏移计算，不会凑成整小时。</p>
+  </details>
+  <details>
+    <summary>换算结果可以直接发给同事吗</summary>
+    <p>可以。点结果卡片右上角的「复制结果」按钮，会把目标时间、星期、时差、UTC 偏移与夏令时说明整理成一段纯文本，直接粘贴到聊天窗口或邮件正文即可。</p>
+  </details>
+  <details>
+    <summary>手机浏览器上能正常使用吗</summary>
+    <p>页面采用响应式布局，手机与平板都能完整操作。夏令时规则依赖手机系统自带的时区数据库，建议保持系统与浏览器为最新版本，避免出现过时的时间换算。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <ul class="links">
+    <li><a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳与日期互转工具</a></li>
+    <li><a href="https://zhibanku.com/tools/dev-cron-parser.html">定时任务表达式解析</a></li>
+    <li><a href="https://zhibanku.com/tools/pomodoro.html">番茄钟专注计时提醒</a></li>
+    <li><a href="https://zhibanku.com/tools/stopwatch.html">秒表计时与分段记录</a></li>
+    <li><a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验与错误定位</a></li>
+  </ul>
+</main>
+
+<footer>
+  <a href="https://www.zhibanku.com/tools/">返回在线工具</a>
+  <span>本页所有时区换算均在浏览器本地完成，无需联网即可运行。</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var ZONES = [
+    ["Asia/Shanghai","北京 · 上海"],
+    ["Asia/Hong_Kong","香港"],
+    ["Asia/Taipei","台北"],
+    ["Asia/Tokyo","东京"],
+    ["Asia/Seoul","首尔"],
+    ["Asia/Singapore","新加坡"],
+    ["Asia/Bangkok","曼谷"],
+    ["Asia/Kolkata","孟买"],
+    ["Asia/Dubai","迪拜"],
+    ["Europe/London","伦敦"],
+    ["Europe/Paris","巴黎"],
+    ["Europe/Berlin","柏林"],
+    ["Europe/Moscow","莫斯科"],
+    ["Europe/Istanbul","伊斯坦布尔"],
+    ["America/New_York","纽约"],
+    ["America/Chicago","芝加哥"],
+    ["America/Denver","丹佛"],
+    ["America/Los_Angeles","洛杉矶"],
+    ["America/Vancouver","温哥华"],
+    ["America/Sao_Paulo","圣保罗"],
+    ["Australia/Sydney","悉尼"],
+    ["Pacific/Auckland","奥克兰"],
+    ["Pacific/Honolulu","檀香山"],
+    ["UTC","协调世界时"]
+  ];
+
+  var COMPARE = ["Asia/Shanghai","Asia/Tokyo","Asia/Dubai","Europe/London","Europe/Paris","America/New_York","America/Los_Angeles","Australia/Sydney"];
+
+  var srcSel = document.getElementById("srcZone");
+  var dstSel = document.getElementById("dstZone");
+  var dtInput = document.getElementById("dateTime");
+  var errBox = document.getElementById("errMsg");
+  var card = document.getElementById("resultCard");
+  var statusMsg = document.getElementById("statusMsg");
+  var lastText = "";
+
+  function nameOf(id){
+    for(var i=0;i<ZONES.length;i++){ if(ZONES[i][0]===id) return ZONES[i][1]; }
+    return id;
+  }
+
+  function fillSelect(sel, def){
+    var html = "";
+    for(var i=0;i<ZONES.length;i++){
+      html += '<option value="'+ZONES[i][0]+'"'+(ZONES[i][0]===def?" selected":"")+'>'+ZONES[i][1]+'</option>';
+    }
+    sel.innerHTML = html;
+    sel.value = def;
+  }
+
+  function pad(n){ return (n<10?"0":"")+n; }
+
+  function tzParts(ts, tz){
+    var dtf = new Intl.DateTimeFormat("zh-CN",{timeZone:tz,hourCycle:"h23",
+      year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    var arr = dtf.formatToParts(ts), o = {};
+    for(var i=0;i<arr.length;i++){ if(arr[i].type!=="literal") o[arr[i].type]=arr[i].value; }
+    return o;
+  }
+
+  function weekdayOf(ts, tz){
+    return new Intl.DateTimeFormat("zh-CN",{timeZone:tz,weekday:"long"}).format(ts);
+  }
+
+  function tzOffset(ts, tz){
+    var sec = Math.floor(ts/1000)*1000;
+    var p = tzParts(sec, tz);
+    var asUTC = Date.UTC(+p.year, +p.month-1, +p.day, +p.hour, +p.minute, +p.second);
+    return asUTC - sec;
+  }
+
+  function offsetLabel(min){
+    var sign = min < 0 ? "-" : "+";
+    var a = Math.abs(min);
+    return "UTC" + sign + pad(Math.floor(a/60)) + ":" + pad(a%60);
+  }
+
+  function wallToInstant(w, tz){
+    var guess = Date.UTC(w.y, w.mo-1, w.d, w.h, w.mi, w.s);
+    var off = tzOffset(guess, tz);
+    var utc = guess - off;
+    off = tzOffset(utc, tz);
+    return guess - off;
+  }
+
+  function isDST(ts, tz){
+    var y = +tzParts(ts, tz).year;
+    var o1 = tzOffset(Date.UTC(y,0,15), tz);
+    var o2 = tzOffset(Date.UTC(y,6,15), tz);
+    return tzOffset(ts, tz) > Math.min(o1,o2);
+  }
+
+  function diffText(min){
+    if(min === 0) return "与源时区相同";
+    var sign = min > 0 ? "快" : "慢";
+    var a = Math.abs(min), h = Math.floor(a/60), m = a%60, s;
+    if(h && m) s = h + " 小时 " + m + " 分";
+    else if(h) s = h + " 小时";
+    else s = m + " 分钟";
+    return "目标比源" + sign + " " + s;
+  }
+
+  function showError(msg){
+    errBox.textContent = msg;
+    errBox.classList.add("show");
+    card.hidden = true;
+    statusMsg.textContent = "";
+  }
+  function clearError(){ errBox.classList.remove("show"); errBox.textContent = ""; }
+
+  function nowValue(){
+    var d = new Date();
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
+  }
+
+  function parseWall(v){
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(v || "");
+    if(!m) return null;
+    var w = {y:+m[1], mo:+m[2], d:+m[3], h:+m[4], mi:+m[5], s:+(m[6]||0)};
+    if(w.mo<1||w.mo>12||w.d<1||w.d>31||w.h>23||w.mi>59||w.s>59) return null;
+    var chk = new Date(Date.UTC(w.y, w.mo-1, w.d));
+    if(chk.getUTCMonth() !== w.mo-1 || chk.getUTCDate() !== w.d) return null;
+    return w;
+  }
+
+  function convert(){
+    clearError();
+    statusMsg.textContent = "";
+    var from = srcSel.value, to = dstSel.value;
+    if(!from || !to){ showError("请先选择源时区和目标时区。"); return; }
+    if(!dtInput.value){ showError("请填写要换算的日期和时间，或点「填入当前时间」。"); return; }
+    var w = parseWall(dtInput.value);
+    if(!w){ showError("日期时间格式不正确，请按 年-月-日 时:分 的形式填写。"); return; }
+
+    var ts = wallToInstant(w, from);
+    var p = tzParts(ts, to);
+    var sp = tzParts(ts, from);
+    var offS = tzOffset(ts, from), offT = tzOffset(ts, to);
+
+    document.getElementById("resDate").textContent = p.year + "年" + (+p.month) + "月" + (+p.day) + "日";
+    document.getElementById("resTime").textContent = p.hour + ":" + p.minute + ":" + p.second;
+    document.getElementById("resWeek").textContent = weekdayOf(ts, to) + "（" + nameOf(to) + "）";
+    document.getElementById("resSrc").textContent = sp.year + "年" + (+sp.month) + "月" + (+sp.day) + "日 " + sp.hour + ":" + sp.minute + "（" + nameOf(from) + "）";
+    document.getElementById("resDiff").textContent = diffText(offT - offS);
+    document.getElementById("resUtc").textContent = "源 " + offsetLabel(offS) + " ／ 目标 " + offsetLabel(offT);
+    document.getElementById("resDst").textContent = (isDST(ts, to) ? "目标时区当前处于夏令时" : "目标时区当前未处于夏令时");
+
+    var rows = "";
+    for(var i=0;i<COMPARE.length;i++){
+      var z = COMPARE[i];
+      var q = tzParts(ts, z);
+      var oz = tzOffset(ts, z);
+      rows += "<tr><td>" + nameOf(z) + "</td><td>" + (+q.month) + "月" + (+q.day) + "日 " + q.hour + ":" + q.minute +
+              "</td><td>" + weekdayOf(ts, z) + "</td><td>" + diffText(oz - offS) + "</td></tr>";
+    }
+    document.getElementById("tableBody").innerHTML = rows;
+
+    lastText = "时区换算结果\n" +
+      "源时间：" + sp.year + "年" + (+sp.month) + "月" + (+sp.day) + "日 " + sp.hour + ":" + sp.minute + "（" + nameOf(from) + "，" + offsetLabel(offS) + "）\n" +
+      "目标时间：" + p.year + "年" + (+p.month) + "月" + (+p.day) + "日 " + p.hour + ":" + p.minute + " " + weekdayOf(ts, to) + "（" + nameOf(to) + "，" + offsetLabel(offT) + "）\n" +
+      "时差：" + diffText(offT - offS) + "\n" +
+      "夏令时：" + (isDST(ts, to) ? "目标时区当前处于夏令时" : "目标时区当前未处于夏令时");
+
+    card.hidden = false;
+  }
+
+  function copyResult(){
+    if(!lastText){ statusMsg.textContent = "请先点「开始转换」生成结果。"; return; }
+    function done(){ statusMsg.textContent = "结果已复制到剪贴板。"; }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = lastText;
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+      document.body.removeChild(ta);
+      statusMsg.textContent = ok ? "结果已复制到剪贴板。" : "复制未成功，请手动选中结果文字后复制。";
+    }
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(lastText).then(done, fallback);
+    }else{ fallback(); }
+  }
+
+  function resetAll(){
+    fillSelect(srcSel, "Asia/Shanghai");
+    fillSelect(dstSel, "America/New_York");
+    dtInput.value = nowValue();
+    clearError();
+    card.hidden = true;
+    lastText = "";
+    statusMsg.textContent = "";
+  }
+
+  var chips = document.querySelectorAll(".chip");
+  for(var i=0;i<chips.length;i++){
+    chips[i].addEventListener("click", function(){
+      clearError();
+      if(this.getAttribute("data-now")){ dtInput.value = nowValue(); }
+      else{
+        srcSel.value = this.getAttribute("data-from");
+        dstSel.value = this.getAttribute("data-to");
+        if(!dtInput.value) dtInput.value = nowValue();
+      }
+      convert();
+    });
+  }
+
+  document.getElementById("convertBtn").addEventListener("click", convert);
+  document.getElementById("nowBtn").addEventListener("click", function(){
+    dtInput.value = nowValue();
+    clearError();
+    statusMsg.textContent = "已填入当前时间，点「开始转换」查看结果。";
+  });
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    resetAll();
+    statusMsg.textContent = "已重置为默认设置。";
+  });
+  document.getElementById("copyBtn").addEventListener("click", copyResult);
+
+  fillSelect(srcSel, "Asia/Shanghai");
+  fillSelect(dstSel, "America/New_York");
+  dtInput.value = nowValue();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/timezone" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/timezone" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/2a509c435112" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1TnTKM5rOzMXIP53kUhod5w" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7471</b> ｜ 百度提取码：<b>i7e4</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/timezone-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
