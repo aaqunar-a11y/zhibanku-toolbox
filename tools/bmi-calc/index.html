@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI 计算器 — 身高体重算体重指数 | 知办库</title>
+<meta name="description" content="免费 BMI 计算器：输入身高体重一键算出身体质量指数，按中国标准判断体重区间，给出健康体重参考范围。浏览器本地计算，不上传。">
+<meta name="keywords" content="bmi计算器,bmi,身体质量指数,体重指数,身高体重,bmi在线计算,标准体重">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="canonical" href="https://www.zhibanku.com/tools/bmi-calc.html">
+<meta property="og:title" content="BMI 计算器">
+<meta property="og:description" content="输入身高体重一键算 BMI，按中国标准判断体重区间。浏览器本地计算，不上传。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.zhibanku.com/tools/bmi-calc.html">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "BMI 计算器", "url": "https://www.zhibanku.com/tools/bmi-calc.html", "description": "输入身高体重一键算出身体质量指数，按中国标准判断体重区间。浏览器本地计算，不上传。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "BMI 结果准确吗？", "acceptedAnswer": {"@type": "Answer", "text": "BMI 是群体统计指标，不区分肌肉与脂肪。健身人群和孕妇建议结合腰围、体脂率一起看。"}}, {"@type": "Question", "name": "输入的数据会被上传吗？", "acceptedAnswer": {"@type": "Answer", "text": "不会。计算在浏览器本地完成，不发送任何网络请求，断网也能用。"}}]}</script>
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:700;letter-spacing:.3px}
+.brand a{color:var(--ink);text-decoration:none}
+nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
+nav.crumbs a{color:var(--brand);text-decoration:none}
+h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
+.lead{font-size:15px;color:#374151;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:15px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+textarea{width:100%;min-height:110px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input[type=text],input[type=number],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;background:#fff}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.presets button{font-size:13px;padding:6px 12px;border-radius:999px;background:#f5f3ff;border:1px solid #ddd6fe;color:#3730a3;cursor:pointer}
+.presets button:hover{background:#ede9fe}
+.result{margin-top:14px;border:1px dashed var(--line);border-radius:12px;padding:18px;background:#fff;text-align:center}
+.bmi-num{font-size:42px;font-weight:800;line-height:1.1}
+.bmi-tag{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:999px;font-size:14px;font-weight:700}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.counts .c .n{font-size:20px;font-weight:700;word-break:break-all}
+.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+section.block{margin-top:34px}
+h2{font-size:21px;margin:0 0 10px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
+.faq summary{cursor:pointer;padding:13px 0;font-weight:600;font-size:15px}
+.faq p{margin:0 0 13px;color:#374151;font-size:14px}
+.related{display:flex;flex-wrap:wrap;gap:10px}
+.related a{font-size:14px;color:var(--brand);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.related a:hover{background:var(--brand-soft)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:6px 0}
+ul.tips{margin:0;padding-left:20px;color:#374151;font-size:14px}
+ul.tips li{margin:6px 0}
+.scale{margin-top:14px;text-align:left}
+.scale-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13.5px}
+.scale-bar{flex:1;height:8px;border-radius:4px}
+.scale-row b{min-width:120px;font-weight:600}
+@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}.bmi-num{font-size:34px}}</style>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?" + "c8526b35b208a98d6dbda7d00e43a95e";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<div class="wrap">
+  <header class="top"><div class="brand"><a href="https://www.zhibanku.com/">知办库</a> · 实用工具</div></header>
+  <nav class="crumbs"><a href="https://www.zhibanku.com/tools/">在线工具</a> / BMI 计算器</nav>
+  <h1>⚖️ BMI 计算器</h1>
+  <p class="lead">BMI 计算器用身高和体重算出你的身体质量指数（BMI），并按中国成人标准判断体重区间。在下方输入框里填身高（厘米）和体重（公斤），点「计算 BMI」按钮，结果和体重区间会立刻显示出来，同时给出健康体重参考范围。整个过程在浏览器本地完成，输入的数字不会上传到任何服务器。</p>
+  <p class="sub">本地计算 · 不上传 · 中国成人标准</p>
+
+  <div class="box">
+    <div class="opts">
+      <label>身高 <input type="number" id="height" value="170" min="100" max="230" style="width:90px"> 厘米</label>
+      <label>体重 <input type="number" id="weight" value="65" min="20" max="300" step="0.1" style="width:90px"> 公斤</label>
+      <label>标准
+        <select id="std">
+          <option value="cn" selected>中国成人标准</option>
+          <option value="who">WHO 国际标准</option>
+        </select>
+      </label>
+    </div>
+    <div class="bar">
+      <button class="btn primary" id="runBtn" type="button">计算 BMI</button>
+      <button class="btn" id="clearBtn" type="button">清空</button>
+    </div>
+    <div class="presets" id="presets">
+      <button data-h="160" data-w="50">160cm / 50kg</button>
+      <button data-h="165" data-w="55">165cm / 55kg</button>
+      <button data-h="170" data-w="65">170cm / 65kg</button>
+      <button data-h="175" data-w="75">175cm / 75kg</button>
+      <button data-h="180" data-w="85">180cm / 85kg</button>
+    </div>
+    <div class="result">
+      <div class="bmi-num" id="bmiNum">--</div>
+      <div><span class="bmi-tag" id="bmiTag">填写身高体重后点「计算 BMI」</span></div>
+      <div class="scale" id="scale"></div>
+      <div class="note" id="live" role="status" aria-live="polite"></div>
+    </div>
+    <div class="counts" id="stats"></div>
+  </div><section class="block" id="opensource-dl" style="margin-top:34px">
+  <h2>📦 开源与下载</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具完全开源，提供 Windows 绿色版（离线单文件 HTML，解压即用、无需联网）与源码仓库，全部免费下载。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/bmi-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/bmi-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">Gitee 开源仓库（国内）</a>
+    <a href="https://pan.quark.cn/s/f45eb1b68bd2" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载（提取码 0049）</a>
+    <a href="https://pan.baidu.com/s/1RtX28Z2HMuVW02EDRCBMHA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载（提取码 rpnh）</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">Windows 绿色版为单个 HTML 文件压缩包，解压后双击即可在浏览器离线运行，无需安装、无需联网、无广告。也可查看 <a href="/tools/bmi-calc-download.html" style="color:#2563eb;text-decoration:none">绿色版下载页</a> 了解详情。</p>
+</section>
+
+
+  <section>
+    <h2>怎么用</h2>
+    <ol style="margin:0;padding-left:20px;color:#374151;font-size:14px"><li>在输入框里填身高（厘米）和体重（公斤），也可以点上方预设按钮一键填入常见组合。</li><li>选判定标准：默认中国成人标准，与国际对比可切 WHO。</li><li>点「计算 BMI」按钮，上方立刻显示 BMI 数值和体重区间。</li><li>下方三张卡片给出健康体重范围、距区间下限的差距和建议，供参考。</li></ol>
+  </section>
+
+  <section>
+    <h2>注意事项</h2>
+    <ul class="tips"><li>BMI 是群体统计指标，不区分肌肉和脂肪：健身人群、运动员常常 BMI 偏高但体脂很低</li><li>孕妇、儿童青少年、老年人都不适用成人 BMI 标准，需用专门的生长曲线或孕期增重指南</li><li>中国标准与 WHO 标准的分界值略有差别（如超重线中国 24、WHO 25），跨国对比数据时注意口径</li><li>本工具只做指数计算和区间提示，不构成医疗建议，健康问题请咨询医生</li><li>输入请填净身高净体重，穿厚衣服和鞋子称出来的数值会明显偏高</li></ul>
+  </section>
+
+  <section class="block"><h2>常见问题</h2><div class="faq">
+<details><summary>BMI 结果准确吗？</summary><p>作为群体筛查指标它是可靠的，但个体层面有局限：同样 BMI 24 的人，一个可能是肌肉型一个可能是脂肪型。建议结合腰围和体脂率一起看。</p></details>
+<details><summary>输入的数据会被上传吗？</summary><p>不会。计算在浏览器本地完成，不发送任何网络请求，断网状态下也能正常使用。</p></details>
+<details><summary>健康体重范围怎么算出来的？</summary><p>按 BMI 18.5 到 23.9（中国标准）反推你的身高对应的体重区间，即 18.5×身高² 到 23.9×身高² 公斤，中间值就是健康体重。</p></details>
+<details><summary>为什么我和体检报告的区间不一样？</summary><p>可能是标准口径不同（中国标准 vs WHO），或报告用了年龄修正。本工具默认中国成人标准，可切换 WHO 对比查看。</p></details></div></section>
+
+  <section>
+    <h2>适用场景</h2>
+    <ul class="tips"><li>减肥或增重前先算清自己的区间和目标差距</li><li>体检后对照报告数字，确认自己的体重处于什么水平</li><li>给家人（成年人）快速估算，老人孩子请改用专用标准</li><li>写健康类内容时引用权威区间做配图说明</li></ul>
+  </section>
+
+  <section class="block"><h2>相关工具推荐</h2><div class="related">
+<a href="https://www.zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+<a href="https://www.zhibanku.com/tools/unit-converter.html">单位换算器</a>
+<a href="https://www.zhibanku.com/tools/loan-calc.html">贷款计算器</a>
+<a href="https://www.zhibanku.com/tools/date-diff.html">日期差计算</a>
+<a href="https://www.zhibanku.com/tools/countdown-timer.html">倒计时器</a>
+</div></section>
+
+  <footer>
+<p>© 2026 知办库 (DevVault). MIT licensed.</p>
+<p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，数据不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
+</footer>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var hEl = document.getElementById('height');
+  var wEl = document.getElementById('weight');
+  var numEl = document.getElementById('bmiNum');
+  var tagEl = document.getElementById('bmiTag');
+  var scaleEl = document.getElementById('scale');
+  var liveEl = document.getElementById('live');
+  var statsEl = document.getElementById('stats');
+
+  function setLive(msg, ok){ liveEl.textContent = msg; liveEl.style.color = ok ? '' : '#b91c1c'; }
+  function renderStats(pairs){
+    if (!pairs || !pairs.length){ statsEl.innerHTML=''; return; }
+    var h='';
+    pairs.forEach(function(p){ h += '<div class="c"><div class="n">'+p[1]+'</div><div class="l">'+p[0]+'</div></div>'; });
+    statsEl.innerHTML = h;
+  }
+
+  // 区间定义：[下限, 上限, 名称, 颜色]
+  function bands(std){
+    if (std === 'who') return [[0,18.5,'偏瘦','#60a5fa'],[18.5,25,'正常','#22c55e'],[25,30,'超重','#f59e0b'],[30,999,'肥胖','#ef4444']];
+    return [[0,18.5,'偏瘦','#60a5fa'],[18.5,24,'正常','#22c55e'],[24,28,'超重','#f59e0b'],[28,999,'肥胖','#ef4444']];
+  }
+
+  function calc(){
+    var h = parseFloat(hEl.value), w = parseFloat(wEl.value);
+    if (!h || !w || h < 100 || h > 230 || w < 20 || w > 300){
+      numEl.textContent = '--'; tagEl.textContent = '请填写有效的身高体重';
+      tagEl.style.background = '#f1f5f9'; tagEl.style.color = '#475569';
+      scaleEl.innerHTML = ''; renderStats([]);
+      setLive('身高请填 100-230 厘米，体重请填 20-300 公斤', false);
+      return;
+    }
+    var std = document.getElementById('std').value;
+    var bmi = w / Math.pow(h / 100, 2);
+    var bs = bands(std);
+    var band = bs[0];
+    for (var i = 0; i < bs.length; i++){ if (bmi >= bs[i][0] && bmi < bs[i][1]) { band = bs[i]; break; } }
+    numEl.textContent = bmi.toFixed(1);
+    tagEl.textContent = band[2] + '（' + std.toUpperCase() + ' 标准）';
+    tagEl.style.background = band[3]; tagEl.style.color = '#fff';
+    // 区间条
+    var rows = '';
+    bs.forEach(function(b){
+      rows += '<div class="scale-row"><b>' + b[2] + '</b><div class="scale-bar" style="background:' + b[3] + '"></div><span>' + b[0] + (b[1] > 900 ? '+' : ' ~ ' + b[1]) + '</span></div>';
+    });
+    scaleEl.innerHTML = rows;
+    // 健康体重范围（按当前标准的正常带上限反推）
+    var normal = bs[1];
+    var loW = normal[0] * Math.pow(h / 100, 2);
+    var hiW = normal[1] * Math.pow(h / 100, 2);
+    var gap = w > hiW ? ('超出 ' + (w - hiW).toFixed(1) + ' 公斤') : (w < loW ? ('低于 ' + (loW - w).toFixed(1) + ' 公斤') : '在健康范围内');
+    renderStats([['健康体重范围', loW.toFixed(1) + ' ~ ' + hiW.toFixed(1) + ' 公斤'], ['当前差距', gap], ['判定标准', std === 'cn' ? '中国成人' : 'WHO']]);
+    setLive('计算完成', true);
+  }
+
+  document.getElementById('runBtn').addEventListener('click', calc);
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    hEl.value = ''; wEl.value = '';
+    numEl.textContent = '--'; tagEl.textContent = '填写身高体重后点「计算 BMI」';
+    tagEl.style.background = '#f1f5f9'; tagEl.style.color = '#475569';
+    scaleEl.innerHTML = ''; renderStats([]); setLive('已清空', true);
+  });
+  document.querySelectorAll('#presets button').forEach(function(b){
+    b.addEventListener('click', function(){
+      hEl.value = b.getAttribute('data-h');
+      wEl.value = b.getAttribute('data-w');
+      calc();
+    });
+  });
+  [hEl, wEl].forEach(function(el){ el.addEventListener('input', calc); });
+
+  setLive('已就绪，点「计算 BMI」开始', true);
+  calc();
+});
+</script>
+<nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/bmi-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/bmi-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/f45eb1b68bd2" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1RtX28Z2HMuVW02EDRCBMHA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0049</b> ｜ 百度提取码：<b>rpnh</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/bmi-calc-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
