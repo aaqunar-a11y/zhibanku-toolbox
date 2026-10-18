@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个税计算器 — 工资个税与五险一金计算</title>
+<meta name="description" content="按年度累计预扣法计算工资个税，支持五险一金扣除与专项附加扣除，结果明细清晰。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/salary-tax.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa;
+    color: #1f2d3d;
+    line-height: 1.7;
+  }
+  .zbk-topnav a { font-size: 14px; }
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a2b4a;
+    margin: 16px 0 8px;
+    text-align: center;
+  }
+  .lead {
+    background: #eef4ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    color: #2c3e5e;
+    margin-bottom: 28px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .card h2 {
+    font-size: 20px;
+    color: #1a2b4a;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8edf5;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-item label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a4a6a;
+    margin-bottom: 6px;
+  }
+  .form-item input, .form-item select {
+    padding: 10px 12px;
+    border: 1px solid #d0d7e5;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fafbfc;
+    transition: border 0.2s;
+  }
+  .form-item input:focus, .form-item select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #fff;
+  }
+  .form-item .hint {
+    font-size: 12px;
+    color: #8a9ab5;
+    margin-top: 4px;
+  }
+  .full-width { grid-column: 1 / -1; }
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: #3b82f6;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-secondary {
+    background: #e8edf5;
+    color: #1f2d3d;
+  }
+  .btn-secondary:hover { background: #d5deeb; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #c0c9d8;
+    color: #3a4a6a;
+  }
+  .btn-outline:hover { background: #f0f3f8; }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .preset-btn {
+    padding: 6px 14px;
+    border: 1px solid #c7d2e0;
+    border-radius: 20px;
+    background: #f8fafc;
+    font-size: 13px;
+    cursor: pointer;
+    color: #2c3e5e;
+    transition: all 0.2s;
+  }
+  .preset-btn:hover {
+    background: #e0eaff;
+    border-color: #3b82f6;
+  }
+  .result-box {
+    background: #f0f7ff;
+    border: 1px solid #cfe0ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #d0e0f5;
+    font-size: 15px;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item .label { color: #4a5a7a; }
+  .result-item .value { font-weight: 700; color: #1a2b4a; }
+  .result-item .value.highlight { color: #e11d48; font-size: 18px; }
+  .result-item .value.green { color: #059669; }
+  .btn-row-result {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+  }
+  .note-list {
+    padding-left: 20px;
+  }
+  .note-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #3a4a6a;
+  }
+  .steps {
+    padding-left: 20px;
+  }
+  .steps li {
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  details {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: #1a2b4a;
+    font-size: 15px;
+  }
+  details p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #4a5a7a;
+  }
+  .tool-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .tool-links a {
+    display: block;
+    padding: 10px 14px;
+    background: #f4f8ff;
+    border: 1px solid #cddffa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #1449b0;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .tool-links a:hover {
+    background: #e0eaff;
+    border-color: #3b82f6;
+  }
+  footer {
+    text-align: center;
+    padding: 24px 16px;
+    color: #8a9ab5;
+    font-size: 13px;
+    border-top: 1px solid #e2e8f0;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  footer a {
+    color: #1a5fe0;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main>
+  <h1>个税计算器</h1>
+  <p class="lead">本工具按年度累计预扣法计算工资薪金个人所得税，同时支持扣除五险一金个人缴纳部分与专项附加扣除。您只需在下方输入税前月薪、社保公积金、专项附加扣除等数据，点击「开始计算」按钮，即可在结果区查看每月应纳税额、累计预扣税额与实际到手工资。结果明细清晰，方便您核对工资条或做年度税务规划。</p>
+
+  <div class="card">
+    <h2>输入工资信息</h2>
+    <div class="form-grid">
+      <div class="form-item">
+        <label for="monthlySalary">税前月薪（元）</label>
+        <input type="number" id="monthlySalary" placeholder="例如 15000" min="0" step="100">
+        <span class="hint">指应发工资总额（含绩效、津贴等）</span>
+      </div>
+      <div class="form-item">
+        <label for="socialSecurity">五险一金个人缴纳（元/月）</label>
+        <input type="number" id="socialSecurity" placeholder="例如 2000" min="0" step="50">
+        <span class="hint">个人承担的养老、医疗、失业、公积金等</span>
+      </div>
+      <div class="form-item">
+        <label for="specialDeduction">专项附加扣除（元/月）</label>
+        <input type="number" id="specialDeduction" placeholder="例如 2000" min="0" step="100">
+        <span class="hint">子女教育、房贷利息、赡养老人等合计</span>
+      </div>
+      <div class="form-item">
+        <label for="otherDeduction">其他扣除（元/月）</label>
+        <input type="number" id="otherDeduction" placeholder="例如 0" min="0" step="50">
+        <span class="hint">企业年金、商业健康险等</span>
+      </div>
+      <div class="form-item">
+        <label for="city">所在城市</label>
+        <select id="city">
+          <option value="5000">一般城市（起征点 5000）</option>
+          <option value="5000">北上广深（起征点 5000）</option>
+        </select>
+        <span class="hint">目前全国个税起征点统一为 5000 元/月</span>
+      </div>
+      <div class="form-item">
+        <label for="months">已累计发放月数</label>
+        <input type="number" id="months" placeholder="例如 6" min="1" max="12" step="1" value="1">
+        <span class="hint">当前是第几个月（1-12）</span>
+      </div>
+    </div>
+
+    <div class="preset-row">
+      <span style="font-size:13px;color:#6b7a96;align-self:center;">快捷预设：</span>
+      <button class="preset-btn" onclick="setPreset(8000,1000,0,0)">月薪 8千</button>
+      <button class="preset-btn" onclick="setPreset(12000,1800,1000,0)">月薪 1.2万</button>
+      <button class="preset-btn" onclick="setPreset(18000,3000,2000,0)">月薪 1.8万</button>
+      <button class="preset-btn" onclick="setPreset(25000,4500,3000,0)">月薪 2.5万</button>
+      <button class="preset-btn" onclick="setPreset(35000,6500,4000,0)">月薪 3.5万</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calculate()">开始计算</button>
+      <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h3 style="font-size:17px;color:#1a2b4a;margin-bottom:12px;">计算结果</h3>
+      <div id="resultContent"></div>
+      <div class="btn-row-result">
+        <button class="btn btn-outline" onclick="copyResult()">复制结果</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>注意事项</h2>
+    <ul class="note-list">
+      <li>本工具按「年度累计预扣法」计算，即每月累计收入减累计扣除后，按年度税率表计算累计应纳税额，再减去已预缴税额得出当月应补税额。</li>
+      <li>五险一金个人缴纳部分需您自行填写，不同城市、不同缴费基数差异较大，请以工资条或当地社保局数据为准。</li>
+      <li>专项附加扣除包括子女教育、继续教育、大病医疗、住房贷款利息、住房租金、赡养老人等六项，请按实际可享受金额填写。</li>
+      <li>计算结果仅供参考，不构成税务建议。实际扣税以税务部门核定为准，年终奖、股权激励等特殊收入未纳入计算。</li>
+      <li>所有数据仅在您的浏览器本地计算，不会上传到任何服务器，请放心使用。</li>
+      <li>本工具支持 1-12 月任意月份计算，但需注意「已累计发放月数」应不大于当前实际月份数。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol class="steps">
+      <li>在「税前月薪」输入框填写您的应发工资总额，在「五险一金个人缴纳」填写个人每月承担的社保公积金合计金额。</li>
+      <li>如有专项附加扣除，在对应输入框填写每月可扣除金额；没有则填 0。</li>
+      <li>选择或输入「已累计发放月数」，即当前是今年第几个月。</li>
+      <li>点击蓝色「开始计算」按钮，下方结果区会立即显示当月应纳税额、累计预扣税额和税后到手工资。</li>
+      <li>如需重新计算，点击「重置」按钮清空所有输入，或直接修改数据后再次点击「开始计算」。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>常见问题</h2>
+    <details>
+      <summary>为什么我算出来的税和工资条上不一样</summary>
+      <p>工资条上的个税可能包含年终奖分摊、补扣上期差额、特殊津贴等，本工具仅按标准工资薪金计算，未包含这些特殊项目。</p>
+    </details>
+    <details>
+      <summary>五险一金个人缴纳部分怎么填</summary>
+      <p>请查看您的工资条，找到养老保险、医疗保险、失业保险、住房公积金个人缴纳金额，四项相加填入即可。</p>
+    </details>
+    <details>
+      <summary>专项附加扣除最多能扣多少</summary>
+      <p>六项专项附加扣除合计每月最高约 5000 元，具体额度取决于您的实际情况，如子女教育每月 2000、赡养老人每月 3000 等。</p>
+    </details>
+    <details>
+      <summary>年终奖怎么算个税</summary>
+      <p>年终奖可选择单独计税或并入综合所得计税，本工具未包含年终奖计算，如需精确计算请咨询税务专业人士。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>相关工具推荐</h2>
+    <div class="tool-links">
+      <a href="https://zhibanku.com/tools/loan-calc.html">贷款月供计算器</a>
+      <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+      <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+      <a href="https://zhibanku.com/tools/number-to-chinese.html">数字转中文大写</a>
+      <a href="https://zhibanku.com/tools/word-count.html">字数统计</a>
+      <a href="https://zhibanku.com/tools/password-generator.html">密码生成器</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具纯本地运行，数据不会离开您的浏览器
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // 年度税率表（综合所得适用）
+  const TAX_BRACKETS = [
+    { upper: 36000, rate: 0.03, quick: 0 },
+    { upper: 144000, rate: 0.10, quick: 2520 },
+    { upper: 300000, rate: 0.20, quick: 16920 },
+    { upper: 420000, rate: 0.25, quick: 31920 },
+    { upper: 660000, rate: 0.30, quick: 52920 },
+    { upper: 960000, rate: 0.35, quick: 85920 },
+    { upper: Infinity, rate: 0.45, quick: 181920 }
+  ];
+
+  const MONTHLY_THRESHOLD = 5000;
+
+  function getInputVal(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) || v < 0 ? 0 : v;
+  }
+
+  function getMonths() {
+    const el = document.getElementById('months');
+    let v = parseInt(el.value, 10);
+    if (isNaN(v) || v < 1) v = 1;
+    if (v > 12) v = 12;
+    return v;
+  }
+
+  function calcTaxForMonth(monthlySalary, socialSecurity, specialDeduction, otherDeduction, months) {
+    // 累计收入
+    const cumulativeIncome = monthlySalary * months;
+    // 累计免税收入（起征点）
+    const cumulativeThreshold = MONTHLY_THRESHOLD * months;
+    // 累计专项扣除（五险一金）
+    const cumulativeSocial = socialSecurity * months;
+    // 累计专项附加扣除
+    const cumulativeSpecial = specialDeduction * months;
+    // 累计其他扣除
+    const cumulativeOther = otherDeduction * months;
+
+    // 累计应纳税所得额
+    const taxableIncome = cumulativeIncome - cumulativeThreshold - cumulativeSocial - cumulativeSpecial - cumulativeOther;
+
+    // 累计应纳税额（按年度税率表）
+    let cumulativeTax = 0;
+    if (taxableIncome > 0) {
+      for (const bracket of TAX_BRACKETS) {
+        if (taxableIncome <= bracket.upper) {
+          cumulativeTax = taxableIncome * bracket.rate - bracket.quick;
+          break;
+        }
+      }
+      if (cumulativeTax < 0) cumulativeTax = 0;
+    }
+
+    // 当月应纳税额 = 累计应纳税额 - 上月累计已预缴
+    // 上月累计已预缴 = 按 (months-1) 计算
+    let prevTax = 0;
+    if (months > 1) {
+      const prevMonths = months - 1;
+      const prevIncome = monthlySalary * prevMonths;
+      const prevThreshold = MONTHLY_THRESHOLD * prevMonths;
+      const prevSocial = socialSecurity * prevMonths;
+      const prevSpecial = specialDeduction * prevMonths;
+      const prevOther = otherDeduction * prevMonths;
+      const prevTaxable = prevIncome - prevThreshold - prevSocial - prevSpecial - prevOther;
+      if (prevTaxable > 0) {
+        for (const bracket of TAX_BRACKETS) {
+          if (prevTaxable <= bracket.upper) {
+            prevTax = prevTaxable * bracket.rate - bracket.quick;
+            break;
+          }
+        }
+        if (prevTax < 0) prevTax = 0;
+      }
+    }
+
+    const currentMonthTax = Math.max(0, cumulativeTax - prevTax);
+    const netSalary = monthlySalary - socialSecurity - currentMonthTax;
+
+    return {
+      cumulativeTax: Math.round(cumulativeTax * 100) / 100,
+      currentMonthTax: Math.round(currentMonthTax * 100) / 100,
+      netSalary: Math.round(netSalary * 100) / 100,
+      taxableIncome: Math.round(taxableIncome * 100) / 100
+    };
+  }
+
+  window.setPreset = function(salary, social, special, other) {
+    document.getElementById('monthlySalary').value = salary;
+    document.getElementById('socialSecurity').value = social;
+    document.getElementById('specialDeduction').value = special;
+    document.getElementById('otherDeduction').value = other;
+    document.getElementById('months').value = 1;
+  };
+
+  window.calculate = function() {
+    const salary = getInputVal('monthlySalary');
+    const social = getInputVal('socialSecurity');
+    const special = getInputVal('specialDeduction');
+    const other = getInputVal('otherDeduction');
+    const months = getMonths();
+
+    if (salary <= 0) {
+      alert('请输入税前月薪');
+      return;
+    }
+
+    const result = calcTaxForMonth(salary, social, special, other, monthsipse);
+
+    const box = document.getElementById('resultBox');
+    const content = document.getElementById('resultContent');
+
+    const html = `
+      <div class="result-item">
+        <span class="label">税前月薪</span>
+        <span class="value">${salary.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">五险一金个人缴纳</span>
+        <span class="value">${social.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">专项附加扣除</span>
+        <span class="value">${special.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">其他扣除</span>
+        <span class="value">${other.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">已累计发放月数</span>
+        <span class="value">${months} 个月</span>
+      </div>
+      <div class="result-item">
+        <span class="label">累计应纳税所得额</span>
+        <span class="value">${result.taxableIncome.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">累计已预缴个税</span>
+        <span class="value">${result.cumulativeTax.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">当月应缴个税</span>
+        <span class="value highlight">${result.currentMonthTax.toFixed(2)} 元</span>
+      </div>
+      <div class="result-item">
+        <span class="label">税后到手工资</span>
+        <span class="value green">${result.netSalary.toFixed(2)} 元</span>
+      </div>
+    `;
+
+    content.innerHTML = html;
+    box.classList.add('show');
+  };
+
+  window.resetForm = function() {
+    document.getElementById('monthlySalary').value = '';
+    document.getElementById('socialSecurity').value = '';
+    document.getElementById('specialDeduction').value = '';
+    document.getElementById('otherDeduction').value = '';
+    document.getElementById('months').value = '1';
+    document.getElementById('resultBox').classList.remove('show');
+  };
+
+  window.copyResult = function() {
+    const box = document.getElementById('resultBox');
+    if (!box.classList.contains('show')) {
+      alert('请先点击「开始计算」');
+      return;
+    }
+    const content = document.getElementById('resultContent');
+    const text = content.innerText.replace(/\s+/g, ' ').trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        alert('结果已复制到剪贴板');
+      }).catch(function() {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('结果已复制到剪贴板');
+    } catch (e) {
+      alert('复制失败，请手动复制');
+    }
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/salary-tax" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/salary-tax" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/80d01e5b8a81" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1TeZZ5k0bSdWmNI6-XjdKCA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7537</b> ｜ 百度提取码：<b>d7tt</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/salary-tax-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

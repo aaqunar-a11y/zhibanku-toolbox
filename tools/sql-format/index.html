@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL 格式化工具 - 在线美化 SQL 语句</title>
+    <meta name="description" content="SQL 格式化与压缩，关键字大写，支持 MySQL、SQL Server、Oracle 等常见方言。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/sql-format.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+            line-height: 1.6;
+        }
+        .zbk-topnav {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 12px 16px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .zbk-topnav a {
+            display: inline-block;
+            padding: 7px 14px;
+            border: 1px solid #cddffa;
+            background: #f4f8ff;
+            color: #1449b0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .zbk-topnav a:last-child {
+            background: transparent;
+            border: none;
+            color: #1a5fe0;
+            font-weight: 400;
+            padding-left: 0;
+        }
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f1c3d;
+            margin-bottom: 8px;
+        }
+        .lead {
+            font-size: 1rem;
+            color: #4a5568;
+            background: #ffffff;
+            border-left: 4px solid #1a5fe0;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .tool-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+        .tool-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f1c3d;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eef2f7;
+        }
+        .preset-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .preset-btn {
+            padding: 8px 16px;
+            background: #eef4ff;
+            border: 1px solid #c5d8f5;
+            border-radius: 20px;
+            color: #1a5fe0;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            background: #dbe8ff;
+            border-color: #1a5fe0;
+        }
+        .preset-btn.active {
+            background: #1a5fe0;
+            color: #fff;
+            border-color: #1a5fe0;
+        }
+        .input-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 14px;
+            border: 1px solid #d1d9e6;
+            border-radius: 8px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            resize: vertical;
+            background: #fafbfc;
+            color: #1a1a2e;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #1a5fe0;
+            box-shadow: 0 0 0 3px rgba(26, 95, 224, 0.12);
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #1a5fe0;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1449b0;
+        }
+        .btn-secondary {
+            background: #eef2f7;
+            color: #2d3748;
+            border: 1px solid #d1d9e6;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        .btn-success {
+            background: #0e9f6e;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #0b7d57;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+        }
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 14px 0;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            color: #2d3748;
+        }
+        .option-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1a5fe0;
+        }
+        .option-item select {
+            padding: 4px 8px;
+            border: 1px solid #d1d9e6;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: #fff;
+        }
+        .result-area {
+            margin-top: 16px;
+        }
+        .result-area .output {
+            background: #0f1c3d;
+            color: #d4e0f5;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 120px;
+            max-height: 400px;
+            overflow: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .result-area .output.error {
+            background: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .info-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .info-item .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a5fe0;
+        }
+        .info-item .label {
+            font-size: 0.8125rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+        .note-list {
+            padding-left: 20px;
+        }
+        .note-list li {
+            margin-bottom: 8px;
+            font-size: 0.9375rem;
+            color: #2d3748;
+        }
+        .step-list {
+            padding-left: 20px;
+            counter-reset: step;
+        }
+        .step-list li {
+            margin-bottom: 10px;
+            font-size: 0.9375rem;
+            color: #2d3748;
+            position: relative;
+            padding-left: 8px;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        summary {
+            font-weight: 600;
+            color: #0f1c3d;
+            cursor: pointer;
+            font-size: 0.9375rem;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .related-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .related-links a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #eef4ff;
+            border: 1px solid #c5d8f5;
+            border-radius: 8px;
+            color: #1a5fe0;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .related-links a:hover {
+            background: #dbe8ff;
+            border-color: #1a5fe0;
+        }
+        footer {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            text-align: center;
+            color: #718096;
+            font-size: 0.8125rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        footer a {
+            color: #1a5fe0;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        @media (max-width: 600px) {
+            main {
+                padding: 16px 12px 32px;
+            }
+            .tool-card {
+                padding: 16px;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6">
+        <a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a>
+        <a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a>
+    </nav>
+
+    <main>
+        <h1>SQL 格式化工具</h1>
+        <p class="lead">本工具用于美化 SQL 语句，将杂乱的 SQL 整理成缩进清晰、关键字大写的规范格式，同时支持压缩成单行紧凑形式。您只需在下方输入框中粘贴原始 SQL，选择需要的方言类型和格式选项，点击「格式化 SQL」按钮，结果会立即显示在下方输出区域。支持 MySQL、SQL Server、Oracle 等常见数据库方言，所有处理均在浏览器本地完成，不会上传任何数据。</p>
+
+        <div class="tool-card">
+            <h2>SQL 格式化</h2>
+            <div class="preset-row">
+                <span style="font-size:0.875rem;color:#718096;align-self:center;">快捷预设：</span>
+                <button class="preset-btn" data-preset="select">简单查询</button>
+                <button class="preset-btn" data-preset="insert">插入语句</button>
+                <button class="preset-btn" data-preset="update">更新语句</button>
+                <button class="preset-btn" data-preset="join">多表联查</button>
+                <button class="preset-btn" data-preset="complex">复杂示例</button>
+            </div>
+
+            <label class="input-label" for="sqlInput">输入 SQL 语句</label>
+            <textarea id="sqlInput" placeholder="在此粘贴或输入需要格式化的 SQL 语句，例如：SELECT id,name FROM users WHERE age>18 ORDER BY id DESC"></textarea>
+
+            <div class="options-row">
+                <div class="option-item">
+                    <label for="dialect">方言类型：</label>
+                    <select id="dialect">
+                        <option value="mysql">MySQL</option>
+                        <option value="sqlserver">SQL Server</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="sqlite">SQLite</option>
+                    </select>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="keywordUpper" checked>
+                    <label for="keywordUpper">关键字大写</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="indentSpaces" checked>
+                    <label for="indentSpaces">使用空格缩进</label>
+                </div>
+                <div class="option-item">
+                    <label for="indentSize">缩进宽度：</label>
+                    <select id="indentSize">
+                        <option value="2">2 空格</option>
+                        <option value="4" selected>4 空格</option>
+                        <option value="8">8 空格</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="formatBtn">格式化 SQL</button>
+                <button class="btn btn-secondary" id="compressBtn">压缩成单行</button>
+                <button class="btn btn-success" id="copyBtn">复制结果</button>
+                <button class="btn btn-warning" id="resetBtn">重置</button>
+            </div>
+
+            <div class="result-area">
+                <label class="input-label">格式化结果</label>
+                <div class="output" id="output">格式化后的 SQL 将显示在这里</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="num" id="charCount">0</div>
+                        <div class="label">字符数</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="num" id="lineCount">0</div>
+                        <div class="label">行数</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="num" id="keywordCount">0</div>
+                        <div class="label">关键字数</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <h2>注意事项</h2>
+            <ul class="note-list">
+                <li>所有处理均在浏览器本地完成，您的 SQL 语句不会上传到任何服务器，可放心处理敏感数据。</li>
+                <li>格式化基于词法分析，对复杂嵌套子查询、CTE 表达式、存储过程等高级语法可能无法完美还原缩进层级。</li>
+                <li>字符串内的内容不会被格式化，保持原样输出，避免破坏字符串字面量的内容。</li>
+                <li>不同数据库方言的专有语法（如 MySQL 的 LIMIT、Oracle 的 CONNECT BY）在格式化时可能无法完全识别。</li>
+                <li>压缩成单行时，注释会被保留，但多余的空格和换行会被移除，请确认压缩后的语句在目标数据库可正常执行。</li>
+                <li>如果输入包含语法错误或括号不匹配，工具会给出错误提示，但不会自动修复 SQL 逻辑问题。</li>
+            </ul>
+        </div>
+
+        <div class="tool-card">
+            <section class="block" id="opensource-dl" style="margin-top:34px">
+  <h2>📦 开源与下载</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具完全开源，提供 Windows 绿色版（离线单文件 HTML，解压即用、无需联网）与源码仓库，全部免费下载。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/sql-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/sql-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">Gitee 开源仓库（国内）</a>
+    <a href="https://pan.quark.cn/s/2af5e3b31293" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载（提取码 7529）</a>
+    <a href="https://pan.baidu.com/s/1JLNO5lxEEW1fjQDDjP13Jg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载（提取码 1al2）</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">Windows 绿色版为单个 HTML 文件压缩包，解压后双击即可在浏览器离线运行，无需安装、无需联网、无广告。也可查看 <a href="/tools/sql-format-download.html" style="color:#2563eb;text-decoration:none">绿色版下载页</a> 了解详情。</p>
+</section>
+<h2>怎么用</h2>
+            <ol class="step-list">
+                <li>在「输入 SQL 语句」文本框中粘贴或输入需要格式化的原始 SQL 代码。</li>
+                <li>根据需要选择方言类型（MySQL、SQL Server 等）、是否关键字大写、缩进宽度等选项。</li>
+                <li>点击「格式化 SQL」按钮，工具会立即处理并显示格式化结果；如需压缩成单行，点击「压缩成单行」按钮。</li>
+                <li>格式化结果会显示在下方输出区域，同时展示字符数、行数、关键字数等统计信息。</li>
+                <li>点击「复制结果」按钮可将格式化后的 SQL 复制到剪贴板，方便粘贴到其他编辑器或数据库工具中。</li>
+            </ol>
+        </div>
+
+        <div class="tool-card">
+            <h2>常见问题</h2>
+            <details>
+                <summary>格式化后 SQL 能否直接执行</summary>
+                <p>格式化只调整空格、换行和关键字大小写，不改变 SQL 逻辑结构，理论上可以直接执行。但建议先检查缩进层级是否清晰，确认无语法错误后再执行。</p>
+            </details>
+            <details>
+                <summary>为什么我的存储过程格式化效果不好</summary>
+                <p>存储过程包含 BEGIN...END、DECLARE、游标等复杂结构，词法分析器难以完美处理所有嵌套层级。建议手动检查关键部分的缩进，或使用数据库自带的格式化工具。</p>
+            </details>
+            <details>
+                <summary>支持哪些 SQL 方言</summary>
+                <p>内置支持 MySQL、SQL Server、Oracle、PostgreSQL、SQLite 五种常见方言，可识别各自的关键字和专有语法，但高级特性可能无法完全识别。</p>
+            </details>
+            <details>
+                <summary>数据会被上传到服务器吗</summary>
+                <p>不会。本工具完全在浏览器本地运行，所有处理逻辑都在 JavaScript 中完成，不发起任何网络请求，您的数据不会离开您的设备。</p>
+            </details>
+        </div>
+
+        <div class="tool-card">
+            <h2>相关工具推荐</h2>
+            <div class="related-links">
+                <a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 美化与格式化</a>
+                <a href="https://zhibanku.com/tools/json-ya-suo.html">JSON 压缩工具</a>
+                <a href="https://zhibanku.com/tools/html-entity.html">HTML 实体编解码</a>
+                <a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+                <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+                <a href="https://zhibanku.com/tools/word-count.html">在线字数统计</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <a href="/tools/">返回在线工具</a>
+        <span>本工具完全在浏览器本地运行，无需联网即可使用</span>
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // 关键字列表（按方言分组）
+            const KEYWORDS = {
+                common: [
+                    'SELECT', 'FROM', 'WHERE', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE',
+                    'CREATE', 'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW', 'TRIGGER', 'PROCEDURE',
+                    'FUNCTION', 'DATABASE', 'SCHEMA', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL',
+                    'OUTER', 'CROSS', 'ON', 'AS', 'AND', 'OR', 'NOT', 'NULL', 'IS', 'IN', 'EXISTS',
+                    'BETWEEN', 'LIKE', 'ORDER', 'BY', 'GROUP', 'HAVING', 'LIMIT', 'OFFSET',
+                    'DISTINCT', 'ALL', 'UNION', 'ALL', 'INTERSECT', 'EXCEPT', 'CASE', 'WHEN',
+                    'THEN', 'ELSE', 'END', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'DEFAULT',
+                    'UNIQUE', 'CHECK', 'CONSTRAINT', 'AUTO_INCREMENT', 'COMMENT', 'IF', 'ELSE',
+                    'BEGIN', 'END', 'DECLARE', 'RETURN', 'PRINT', 'EXEC', 'EXECUTE', 'TOP',
+                    'WITH', 'TIES', 'PERCENT', 'DESC', 'ASC', 'NULLS', 'FIRST', 'LAST',
+                    'OVER', 'PARTITION', 'ROWS', 'RANGE', 'CURRENT', 'ROW', 'PRECEDING',
+                    'FOLLOWING', 'UNBOUNDED', 'LAG', 'LEAD', 'RANK', 'DENSE_RANK', 'ROW_NUMBER',
+                    'NTILE', 'CUME_DIST', 'PERCENT_RANK', 'FIRST_VALUE', 'LAST_VALUE', 'NTH_VALUE',
+                    'CAST', 'CONVERT', 'COALESCE', 'NULLIF', 'ISNULL', 'COUNT', 'SUM', 'AVG',
+                    'MAX', 'MIN', 'ABS', 'ROUND', 'CEIL', 'FLOOR', 'MOD', 'POWER', 'SQRT',
+                    'LENGTH', 'CHAR_LENGTH', 'SUBSTRING', 'REPLACE', 'TRIM', 'LTRIM', 'RTRIM',
+                    'UPPER', 'LOWER', 'CONCAT', 'NOW', 'CURDATE', 'CURTIME', 'DATE', 'TIME',
+                    'YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'INTERVAL', 'EXTRACT',
+                    'TO_DATE', 'TO_CHAR', 'TO_NUMBER', 'SYSDATE', 'SYSTIMESTAMP', 'CURRENT_DATE',
+                    'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'LOCALTIME', 'LOCALTIMESTAMP',
+                    'TRANSACTION', 'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'GRANT', 'REVOKE',
+                    'USER', 'IDENTIFIED', 'BY', 'PASSWORD', 'PRIVILEGES', 'FLUSH', 'SHOW',
+                    'DESCRIBE', 'EXPLAIN', 'USE', 'SET', 'LOCK', 'UNLOCK', 'TABLES', 'COLUMNS',
+                    'STATUS', 'VARIABLES', 'PROCESSLIST', 'ENGINE', 'CHARSET', 'COLLATE',
+                    'UNSIGNED', 'ZEROFILL', 'SIGNED', 'INTEGER', 'INT', 'BIGINT', 'SMALLINT',
+                    'TINYINT', 'MEDIUMINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'DOUBLE', 'REAL',
+                    'BIT', 'BOOLEAN', 'BOOL', 'CHAR', 'VARCHAR', 'TEXT', 'TINYTEXT', 'MEDIUMTEXT',
+                    'LONGTEXT', 'BLOB', 'TINYBLOB', 'MEDIUMBLOB', 'LONGBLOB', 'BINARY', 'VARBINARY',
+                    'DATE', 'TIME', 'DATETIME', 'TIMESTAMP', 'YEAR', 'ENUM', 'SET', 'JSON',
+                    'UUID', 'SERIAL', 'MONEY', 'SMALLMONEY', 'UNIQUEIDENTIFIER', 'IMAGE', 'NTEXT',
+                    'XML', 'ROWVERSION', 'TIMESTAMP', 'HIERARCHYID', 'GEOGRAPHY', 'GEOMETRY'
+                ],
+                mysql: ['AUTO_INCREMENT', 'ENGINE', 'CHARSET', 'COLLATE', 'UNSIGNED', 'ZEROFILL', 'LIMIT', 'OFFSET', 'DUPLICATE', 'IGNORE', 'REPLACE', 'DELAYED', 'LOW_PRIORITY', 'HIGH_PRIORITY', 'STRAIGHT_JOIN', 'SQL_SMALL_RESULT', 'SQL_BIG_RESULT', 'SQL_BUFFER_RESULT', 'SQL_CACHE', 'SQL_NO_CACHE', 'SQL_CALC_FOUND_ROWS', 'FORCE', 'USE', 'INDEX', 'KEY'],
+                sqlserver: ['TOP', 'TIES', 'PERCENT', 'WITH', 'TABLOCK', 'HOLDLOCK', 'UPDLOCK', 'XLOCK', 'ROWLOCK', 'PAGLOCK', 'NOLOCK', 'NOWAIT', 'READPAST', 'OPTIMISTIC', 'OUTPUT', 'INTO', 'MERGE', 'WHEN', 'MATCHED', 'THEN', 'OUTPUT', 'IDENTITY', 'SCOPE_IDENTITY', '@@IDENTITY', 'GO', 'PRINT', 'RAISERROR', 'TRY', 'CATCH', 'THROW', 'WAITFOR', 'DELAY', 'TIME'],
+                oracle: ['CONNECT', 'PRIOR', 'START', 'CONNECT', 'BY', 'LEVEL', 'ROWNUM', 'SYSDATE', 'SYSTIMESTAMP', 'DUAL', 'NVL', 'NVL2', 'DECODE', 'MINUS', 'SYNONYM', 'SEQUENCE', 'TRIGGER', 'PACKAGE', 'BODY', 'PROCEDURE', 'FUNCTION', 'CURSOR', 'REF', 'TYPE', 'RECORD', 'TABLE', 'VARRAY', 'NESTED', 'BULK', 'COLLECT', 'INTO', 'IMMEDIATE', 'EXECUTE', 'OPEN', 'FETCH', 'CLOSE', 'LOOP', 'EXIT', 'CONTINUE', 'GOTO', 'NULL', 'RAISE', 'PRAGMA', 'EXCEPTION', 'WHEN', 'OTHERS', 'SQLERRM', 'SQLCODE'],
+                postgresql: ['SERIAL', 'BIGSERIAL', 'SMALLSERIAL', 'UUID', 'JSONB', 'JSON', 'ARRAY', 'ILIKE', 'SIMILAR', 'TO', 'REGEXP', 'SIMILAR', 'ESCAPE', 'RETURNING', 'ON', 'CONFLICT', 'DO', 'NOTHING', 'UPDATE', 'DELETE', 'CASCADE', 'RESTRICT', 'NO', 'ACTION', 'INHERITS', 'PARTITION', 'BY', 'RANGE', 'LIST', 'HASH', 'GENERATED', 'ALWAYS', 'AS', 'IDENTITY', 'STORED', 'VIRTUAL', 'LATERAL', 'CROSS', 'APPLY', 'OUTER', 'FILTER', 'WITHIN', 'GROUP', 'OVERLAPS', 'ISNULL', 'NOTNULL'],
+                sqlite: ['AUTOINCREMENT', 'TEMP', 'TEMPORARY', 'VACUUM', 'ATTACH', 'DETACH', 'PRAGMA', 'REINDEX', 'ANALYZE', 'EXPLAIN', 'QUERY', 'PLAN', 'RAISE', 'ABORT', 'FAIL', 'IGNORE', 'ROLLBACK', 'CONFLICT', 'REPLACE', 'ON', 'CONSTRAINT', 'COLLATE', 'NOCASE', 'RTRIM', 'BINARY', 'BLOB', 'INTEGER', 'REAL', 'TEXT', 'NUMERIC', 'BOOLEAN', 'DATE', 'DATETIME']
+            };
+
+            // 获取所有关键字
+            function getAllKeywords() {
+                const all = new Set(KEYWORDS.common);
+                Object.values(KEYWORDS).forEach(list => {
+                    list.forEach(kw => all.add(kw));
+                });
+                return all;
+            }
+
+            const ALL_KEYWORDS = getAllKeywords();
+
+            // DOM 元素
+            const sqlInput = document.getElementById('sqlInput');
+            const output = document.getElementById('output');
+            const formatBtn = document.getElementById('formatBtn');
+            const compressBtn = document.getElementById('compressBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const dialectSelect = document.getElementById('dialect');
+            const keywordUpperCheck = document.getElementById('keywordUpper');
+            const indentSpacesCheck = document.getElementById('indentSpaces');
+            const indentSizeSelect = document.getElementById('indentSize');
+            const charCount = document.getElementById('charCount');
+            const lineCount = document.getElementById('lineCount');
+            const keywordCount = document.getElementById('keywordCount');
+
+            // 预设 SQL 示例
+            const PRESETS = {
+                select: 'SELECT id, name, email, created_at FROM users WHERE status = 1 AND age > 18 ORDER BY created_at DESC LIMIT 10;',
+                insert: 'INSERT INTO users (name, email, age, status) VALUES (\'张三\', \'zhangsan@example.com\', 25, 1), (\'李四\', \'lisi@example.com\', 30, 1);',
+                update: 'UPDATE users SET status = 0, updated_at = NOW() WHERE last_login < DATE_SUB(NOW(), INTERVAL 90 DAY);',
+                join: 'SELECT u.name, o.order_no, o.total_amount FROM users u INNER JOIN orders o ON u.id = o.user_id LEFT JOIN order_items oi ON o.id = oi.order_id WHERE o.status = \'paid\' AND o.total_amount > 100 ORDER BY o.created_at DESC;',
+                complex: 'WITH recent_orders AS (SELECT user_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY user_id HAVING COUNT(*) > 3) SELECT u.name, u.email, r.order_count, r.total_spent, CASE WHEN r.total_spent > 5000 THEN \'VIP\' WHEN r.total_spent > 1000 THEN \'重点客户\' ELSE \'普通客户\' END AS customer_level FROM users u INNER JOIN recent_orders r ON u.id = r.user_id WHERE u.status = 1 ORDER BY r.total_spent DESC LIMIT 20;'
+            };
+
+            // 预设按钮绑定
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.preset;
+                    if (PRESETS[key]) {
+                        sqlInput.value = PRESETS[key];
+                        this.classList.add('active');
+                        setTimeout(() => this.classList.remove('active'), 300);
+                    }
+                });
+            });
+
+            // 格式化主函数
+            function formatSQL(sql, options) {
+                if (!sql || !sql.trim()) {
+                    return { error: '请输入需要格式化的 SQL 语句' };
+                }
+
+                const {
+                    dialect = 'mysql',
+                    keywordUpper = true,
+                    useSpaces = true,
+                    indentSize = 4
+                } = options;
+
+                // 预处理：去除多余空白但保留字符串内容
+                let tokens = tokenize(sql);
+                if (!tokens) {
+                    return { error: 'SQL 语句存在未闭合的字符串或括号，请检查后重试' };
+                }
+
+                // 检查括号匹配
+                let balance = 0;
+                for (const token of tokens) {
+                    if (token.type === 'open_paren') balance++;
+                    if (token.type === 'close_paren') balance--;
+                    if (balance < 0) {
+                        return { error: '括号不匹配：存在多余的右括号' };
+                    }
+                }
+                if (balance > 0) {
+                    return { error: '括号不匹配：存在未闭合的左括号' };
+                }
+
+                // 格式化
+                let result = formatTokens(tokens, {
+                    dialect,
+                    keywordUpper,
+                    useSpaces,
+                    indentSize
+                });
+
+                return { sql: result };
+            }
+
+            // 词法分析
+            function tokenize(sql) {
+                const tokens = [];
+                let i = 0;
+                const len = sql.length;
+                let current = '';
+
+                while (i < len) {
+                    const ch = sql[i];
+
+                    // 字符串处理
+                    if (ch === '\'' || ch === '"' || ch === '`') {
+                        const quote = ch;
+                        let str = ch;
+                        i++;
+                        let closed = false;
+                        while (i < len) {
+                            if (sql[i] === '\\' && i + 1 < len) {
+                                str += sql[i] + sql[i + 1];
+                                i += 2;
+                                continue;
+                            }
+                            if (sql[i] === quote) {
+                                str += quote;
+                                i++;
+                                closed = true;
+                                break;
+                            }
+                            str += sql[i];
+                            i++;
+                        }
+                        if (!closed) return null;
+                        tokens.push({ type: 'string', value: str });
+                        continue;
+                    }
+
+                    // 注释处理
+                    if (ch === '-' && sql[i + 1] === '-') {
+                        let comment = '--';
+                        i += 2;
+                        while (i < len && sql[i] !== '\n') {
+                            comment += sql[i];
+                            i++;
+                        }
+                        tokens.push({ type: 'comment', value: comment });
+                        continue;
+                    }
+
+                    if (ch === '/' && sql[i + 1] === '*') {
+                        let comment = '/*';
+                        i += 2;
+                        let closed = false;
+                        while (i < len) {
+                            if (sql[i] === '*' && sql[i + 1] === '/') {
+                                comment += '*/';
+                                i += 2;
+                                closed = true;
+                                break;
+                            }
+                            comment += sql[i];
+                            i++;
+                        }
+                        if (!closed) return null;
+                        tokens.push({ type: 'comment', value: comment });
+                        continue;
+                    }
+
+                    // 括号
+                    if (ch === '(') {
+                        tokens.push({ type: 'open_paren', value: '(' });
+                        i++;
+                        continue;
+                    }
+                    if (ch === ')') {
+                        tokens.push({ type: 'close_paren', value: ')' });
+                        i++;
+                        continue;
+                    }
+
+                    // 逗号
+                    if (ch === ',') {
+                        tokens.push({ type: 'comma', value: ',' });
+                        i++;
+                        continue;
+                    }
+
+                    // 分号
+                    if (ch === ';') {
+                        tokens.push({ type: 'semicolon', value: ';' });
+                        i++;
+                        continue;
+                    }
+
+                    // 空白
+                    if (/\s/.test(ch)) {
+                        i++;
+                        continue;
+                    }
+
+                    // 操作符
+                    if ('=<>!+-*/%&|^~'.includes(ch)) {
+                        let op = ch;
+                        i++;
+                        // 复合操作符
+                        if (i < len && '=<>!'.includes(sql[i]) && (ch === '=' || ch === '<' || ch === '>' || ch === '!' || ch === '<' || ch === '>')) {
+                            op += sql[i];
+                            i++;
+                        }
+                        tokens.push({ type: 'operator', value: op });
+                        continue;
+                    }
+
+                    // 数字
+                    if (/\d/.test(ch)) {
+                        let num = '';
+                        while (i < len && /[\d.]/.test(sql[i])) {
+                            num += sql[i];
+                            i++;
+                        }
+                        tokens.push({ type: 'number', value: num });
+                        continue;
+                    }
+
+                    // 标识符或关键字
+                    if (/[a-zA-Z_]/.test(ch)) {
+                        let word = '';
+                        while (i < len && /[a-zA-Z0-9_$]/.test(sql[i])) {
+                            word += sql[i];
+                            i++;
+                        }
+                        const upper = word.toUpperCase();
+                        if (ALL_KEYWORDS.has(upper)) {
+                            tokens.push({ type: 'keyword', value: word, upper: upper });
+                        } else {
+                            tokens.push({ type: 'identifier', value: word });
+                        }
+                        continue;
+                    }
+
+                    // 其他字符
+                    tokens.push({ type: 'other', value: ch });
+                    i++;
+                }
+
+                return tokens;
+            }
+
+            // 格式化 token 序列
+            function formatTokens(tokens, options) {
+                const {
+                    dialect,
+                    keywordUpper,
+                    useSpaces,
+                    indentSize
+                } = options;
+
+                const indentUnit = useSpaces ? ' '.repeat(indentSize) : '\t';
+                let result = '';
+                let indentLevel = 0;
+                let lineStart = true;
+                let prevType = null     ;
+                let pendingNewline = false;
+                let pendingIndent = false;
+
+                // 需要换行的关键字
+                const newlineBeforeKeywords = new Set([
+                    'SELECT', 'FROM', 'WHERE', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET',
+                    'DELETE', 'CREATE', 'ALTER', 'DROP', 'JOIN', 'INNER', 'LEFT', 'RIGHT',
+                    'FULL', 'OUTER', 'CROSS', 'ON', 'AND', 'OR', 'ORDER', 'GROUP', 'HAVING',
+                    'UNION', 'INTERSECT', 'EXCEPT', 'LIMIT', 'OFFSET', 'WHEN', 'THEN', 'ELSE',
+                    'END', 'CASE', 'WITH', 'HAVING', 'RETURNING', 'CONFLICT', 'DO', 'NOTHING',
+                    'EXEC', 'EXECUTE', 'DECLARE', 'BEGIN', 'IF', 'ELSE', 'LOOP', 'WHILE',
+                    'FOR', 'CURSOR', 'OPEN', 'FETCH', 'CLOSE', 'MERGE', 'WHEN', 'MATCHED',
+                    'OUTPUT', 'VALUES', 'DEFAULT', 'PRIMARY', 'FOREIGN', 'UNIQUE', 'CHECK',
+                    'CONSTRAINT', 'INDEX', 'KEY', 'REFERENCES', 'CONNECT', 'START', 'PRIOR',
+                    'LEVEL', 'ROWNUM', 'MINUS', 'INTERSECT', 'SYNONYM', 'SEQUENCE', 'TRIGGER',
+                    'PACKAGE', 'BODY', 'PROCEDURE', 'FUNCTION', 'TYPE', 'RECORD', 'VARRAY',
+                    'BULK', 'COLLECT', 'IMMEDIATE', 'EXCEPTION', 'RAISE', 'PRAGMA', 'GOTO',
+                    'VACUUM', 'ATTACH', 'DETACH', 'PRAGMA', 'REINDEX', 'ANALYZE', 'EXPLAIN',
+                    'QUERY', 'PLAN', 'ABORT', 'FAIL', 'IGNORE', 'ROLLBACK', 'REPLACE',
+                    'GRANT', 'REVOKE', 'COMMIT', 'TRANSACTION', 'SAVEPOINT', 'SHOW', 'USE',
+                    'LOCK', 'UNLOCK', 'FLUSH', 'DESCRIBE', 'EXPLAIN', 'ANALYZE', 'COMMENT'
+                ]);
+
+                // 逗号后换行（在 SELECT 列表、INSERT 值等场景）
+                const commaNewlineContexts = ['select_list', 'insert_values', 'column_list'];
+
+                // 简单状态跟踪
+                let context = 'general';
+                let parenStack = [];
+
+                for (let idx = 0; idx < tokens.length; idx++) {
+                    const token = tokens[idx];
+                    let text = token.value;
+
+                    // 关键字大小写处理
+                    if (token.type === 'keyword' && keywordUpper) {
+                        text = token.upper;
+                    }
+
+                    // 处理换行逻辑
+                    if (token.type === 'keyword' && newlineBeforeKeywords.has(token.upper)) {
+                        // 特殊情况：AND/OR 在括号内且是简单条件时不换行（简化处理，直接换行）
+                        if (idx > 0 && tokens[idx - 1].type === 'open_paren') {
+                            // 括号后的 AND/OR 不换行
+                        } else {
+                            if (result && !result.endsWith('\n')) {
+                                result += '\n';
+                                lineStart = true;
+                            }
+                        }
+                    }
+
+                    // 逗号处理
+                    if (token.type === 'comma') {
+                        result += ',';
+                        // 在 SELECT 列表、INSERT VALUES 等场景逗号后换行
+                        if (context === 'select_list' || context === 'insert_values' || context === 'column_list') {
+                            result += '\n';
+                            lineStart = true;
+                        }
+                        prevType = 'comma';
+                        continue;
+                    }
+
+                    // 左括号
+                    if (token.type === 'open_paren') {
+                        if (prevType === 'keyword' || prevType === 'identifier' || prevType === 'close_paren') {
+                            result += ' ';
+                        }
+                        result += '(';
+                        indentLevel++;
+                        parenStack.push(context);
+                        // 判断上下文
+                        if (prevType === 'keyword' && tokens[idx - 1] && tokens[idx - 1].upper === 'VALUES') {
+                            context = 'insert_values';
+                        } else if (prevType === 'keyword' && tokens[idx - 1] && ['SELECT', 'INSERT', 'UPDATE', 'DELETE'].includes(tokens[idx - 1].upper)) {
+                            context = 'select_list';
+                        } else {
+                            context = 'general';
+                        }
+                        lineStart = false;
+                        prevType = 'open_paren';
+                        continue;
+                    }
+
+                    // 右括号
+                    if (token.type === 'close_paren') {
+                        if (indentLevel > 0) indentLevel--;
+                        if (parenStack.length > 0) {
+                            context = parenStack.pop();
+                        }
+                        result += ')';
+                        lineStart = false;
+                        prevType = 'close_paren';
+                        continue;
+                    }
+
+                    // 分号
+                    if (token.type === 'semicolon') {
+                        result += ';';
+                        result += '\n';
+                        lineStart = true;
+                        prevType = 'semicolon';
+                        continue;
+                    }
+
+                    // 注释
+                    if (token.type === 'comment') {
+                        if (!lineStart) {
+                            result += '\n';
+                        }
+                        result += text;
+                        result += '\n';
+                        lineStart = true;
+                        prevType = 'comment';
+                        continue;
+                    }
+
+                    // 字符串、数字、标识符、操作符等
+                    if (lineStart) {
+                        result += indentUnit.repeat(indentLevel);
+                        lineStart = false;
+                    } else if (prevType === 'identifier' || prevType === 'number' || prevType === 'string' || prevType === 'close_paren') {
+                        if (token.type === 'identifier' || token.type === 'number' || token.type === 'keyword' || token.type === 'string') {
+                            result += ' ';
+                        }
+                    } else if (prevType === 'keyword') {
+                        if (token.type === 'identifier' || token.type === 'number' || token.type === 'string' || token.type === 'keyword') {
+                            result += ' ';
+                        }
+                    } else if (prevType === 'operator') {
+                        result += ' ';
+                    }
+
+                    result += text;
+                    prevType = token.type;
+                }
+
+                // 清理多余空行
+                result = result.replace(/\n{3,}/g, '\n\n');
+                // 清理行尾空格
+                result = result.split('\n').map(line => line.replace(/\s+$/, '')).join('\n');
+                // 清理开头空行
+                result = result.replace(/^\n+/, '');
+                // 清理结尾多余换行
+                result = result.replace(/\n+$/, '\n');
+
+                return result;
+            }
+
+            // 压缩成单行
+            function compressSQL(sql) {
+                if (!sql || !sql.trim()) {
+                    return { error: '请输入需要压缩的 SQL 语句' };
+                }
+
+                const tokens = tokenize(sql);
+                if (!tokens) {
+                    return { error: 'SQL 语句存在未闭合的字符串或注释，请检查后重试' };
+                }
+
+                let result = '';
+                let prevType = null;
+
+                for (const token of tokens) {
+                    if (token.type === 'comment') {
+                        // 保留注释但加空格
+                        if (result && !result.endsWith(' ')) result += ' ';
+                        result += token.value;
+                        result += ' ';
+                        prevType = 'comment';
+                        continue;
+                    }
+
+                    if (token.type === 'open_paren') {
+                        if (prevType && prevType !== 'operator' && prevType !== 'open_paren') {
+                            result += ' ';
+                        }
+                        result += '(';
+                        prevType = 'open_paren';
+                        continue;
+                    }
+
+                    if (token.type === 'close_paren') {
+                        result += ')';
+                        prevType = 'close_paren';
+                        continue;
+                    }
+
+                    if (token.type === 'comma') {
+                        result += ', ';
+                        prevType = 'comma';
+                        continue;
+                    }
+
+                    if (token.type === 'semicolon') {
+                        result += '; ';
+                        prevType = 'semicolon';
+                        continue;
+                    }
+
+                    if (token.type === 'operator') {
+                        result += ' ' + token.value + ' ';
+                        prevType = 'operator';
+                        continue;
+                    }
+
+                    // 关键字、标识符、字符串、数字
+                    if (prevType === 'keyword' || prevType === 'identifier' || prevType === 'number' || prevType === 'string' || prevType === 'close_paren') {
+                        if (token.type === 'keyword' || token.type === 'identifier' || token.type === 'number' || token.type === 'string') {
+                            result += ' ';
+                        }
+                    }
+
+                    result += token.value;
+                    prevType = token.type;
+                }
+
+                // 清理多余空格
+                result = result.replace(/\s+/g, ' ').trim();
+                // 逗号后空格
+                result = result.replace(/\s*,\s*/g, ', ');
+                // 分号后空格
+                result = result.replace(/\s*;\s*/g, '; ');
+                // 括号内空格
+                result = result.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+                // 操作符周围空格
+                result = result.replace(/\s*=\s*/g, ' = ').replace(/\s*>\s*/g, ' > ').replace(/\s*<\s*/g, ' < ');
+
+                return { sql: result };
+            }
+
+            // 更新统计信息
+            function updateStats(text) {
+                charCount.textContent = text.length;
+                lineCount.textContent = text.split('\n').length;
+                // 统计关键字
+                const tokens = tokenize(text);
+                let kwCount = 0;
+                if (tokens) {
+                    tokens.forEach(t => {
+                        if (t.type === 'keyword') kwCount++;
+                    });
+                }
+                keywordCount.textContent = kwCount;
+            }
+
+            // 格式化按钮
+            formatBtn.addEventListener('click', function() {
+                const sql = sqlInput.value;
+                const options = {
+                    dialect: dialectSelect.value,
+                    keywordUpper: keywordUpperCheck.checked,
+                    useSpaces: indentSpacesCheck.checked,
+                    indentSize: parseInt(indentSizeSelect.value, 10)
+                };
+
+                const result = formatSQL(sql, optionsapse);
+                if (result.error) {
+                    output.textContent = result.error;
+                    output.classList.add('出错了');
+                    updateStats('');
+                } else {
+                    output.textContent = result.sql;
+                    output.classList.remove('出错了');
+                    updateStats(result.sql);
+                }
+            });
+
+            // 压缩按钮
+            compressBtn.addEventListener('click', function() {
+                const sql = sqlInput.value;
+                const result = compressSQL(sql);
+                if (result.error) {
+                    output.textContent = result.error;
+                    output.classList.add('出错了');
+                    updateStats('');
+                } else {
+                    output.textContent = result.sql;
+                    output.classList.remove('出错了');
+                    updateStats(result.sql);
+                }
+            });
+
+            // 复制按钮
+            copyBtn.addEventListener('click', function() {
+                const text = output.textContent;
+                if (!text || text === '格式化后的 SQL 将显示在这里') {
+                    alert('没有可复制的内容，请先执行格式化或压缩操作');
+                    return;
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const original = copyBtn.textContent;
+                        copyBtn.textContent = '已复制';
+                        setTimeout(() => {
+                            copyBtn.textContent = original;
+                        }, 2000);
+                    }).catch(() => {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            });
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    const original = copyBtn.textContent;
+                    copyBtn.textContent = '已复制';
+                    setTimeout(() => {
+                        copyBtn.textContent = original;
+                    }, 2000);
+                } catch (err) {
+                    alert('复制失败，请手动选择文本复制');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            // 重置按钮
+            resetBtn.addEventListener('click', function() {
+                sqlInput.value = '';
+                output.textContent = '格式化后的 SQL 将显示在这里';
+                output.classList.remove('出错了');
+                charCount.textContent = '0';
+                lineCount.textContent = '0';
+                keywordCount.textContent = '0';
+                keywordUpperCheck.checked = true;
+                indentSpacesCheck.checked = true;
+                indentSizeSelect.value = '4';
+                dialectSelect.value = 'mysql';
+            });
+
+            // 初始统计
+            updateStats('');
+
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/sql-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/sql-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/2af5e3b31293" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1JLNO5lxEEW1fjQDDjP13Jg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7529</b> ｜ 百度提取码：<b>1al2</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/sql-format-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
