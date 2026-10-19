@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zhibanku.com/tools/countdown-timer.html">
 <meta name="twitter:card" content="summary">
-<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb}
+<style>:root{--bg:#f7f8fa;--card:#fff;--ink:#1f2933;--muted:#6b7280;--brand:#2563eb;--brand-soft:#eff4ff;--line:#e5e7eb;--danger:#dc2626}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -25,22 +25,93 @@ nav.crumbs{font-size:13px;color:var(--muted);margin-bottom:18px}
 nav.crumbs a{color:var(--brand);text-decoration:none}
 h1{font-size:29px;line-height:1.3;margin:6px 0 6px}
 .sub{color:var(--muted);margin:0 0 20px;font-size:15px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
-textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
-textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
-input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+input[type=text],input[type=datetime-local],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;outline:none}
+input:focus{border-color:var(--brand)}
 .bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
-.opts{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;align-items:center;font-size:14px;color:#374151}
-.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
-.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 15px;font-size:14px;cursor:pointer;font-family:inherit}
 .btn:hover{border-color:var(--brand);color:var(--brand)}
 .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-.counts .c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-.counts .c .n{font-size:24px;font-weight:700;word-break:break-all}
-.counts .c .l{font-size:13px;color:var(--muted);margin-top:2px}
-.counts .c.hl .n{color:var(--brand)}
-.note{font-size:13px;color:var(--muted);margin-top:10px}
+.btn.warn{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);font-weight:600}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.preset{font-size:13px;padding:7px 12px}
+.cd-main{display:flex;flex-wrap:wrap;gap:22px;align-items:center;align-content:center;justify-content:center;width:100%;position:relative;margin:6px 0 4px}
+.dial-wrap{flex:0 0 auto}
+.dial{width:230px;height:230px}
+.dial text{font-family:inherit}
+.cd-right{flex:1 1 300px;min-width:260px;text-align:center}
+.bigtime{font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:2px;line-height:1.05;color:var(--ink);display:flex;align-items:baseline;justify-content:center;gap:6px;flex-wrap:wrap}
+.bigtime .seg{font-size:clamp(52px,11vw,104px)}
+.bigtime .colon{font-size:clamp(38px,8vw,72px);color:var(--muted);font-weight:400}
+.bigtime .unit{font-size:clamp(14px,2.4vw,20px);color:var(--muted);font-weight:400;margin-left:2px;margin-right:6px}
+.bigtime.done .seg{color:var(--danger)}
+.bigtime.done .colon{color:var(--danger)}
+.subline{font-size:15px;color:var(--muted);margin-top:8px;min-height:24px}
+.subline b{color:var(--brand);font-weight:600}
+.days-line{font-size:16px;color:#374151;margin-top:2px}
+.days-line b{font-size:26px;color:var(--brand);font-weight:700;margin:0 2px}
+.progress{height:8px;background:#eef1f5;border-radius:99px;overflow:hidden;margin-top:14px}
+.progress>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#2563eb,#38bdf8);border-radius:99px;transition:width .3s linear}
+.progress.done>i{background:var(--danger)}
+.ring-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center;font-size:14px;color:#374151}
+.ring-group label{display:inline-flex;gap:6px;align-items:center;cursor:pointer;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff}
+.ring-group label.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:600}
+.ring-title{font-size:13px;color:var(--muted);width:100%;margin-bottom:2px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+.live{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px}
+.live.err{color:var(--danger)}
+.ringbox{display:none;margin-top:12px;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;background:#fafbfc}
+.ringbox.show{display:block}
+.ringbox .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;margin-bottom:8px}
+input[type=range]{accent-color:var(--brand)}
+.banner{display:none;margin-top:12px;background:#fef2f2;border:1px solid #fecaca;color:var(--danger);border-radius:12px;padding:14px 16px;font-size:17px;font-weight:600;text-align:center;animation:pulse 1s ease-in-out infinite}
+.banner.show{display:block}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+:fullscreen,:fullscreen body{overflow:hidden !important;height:100% !important;max-height:100% !important}
+:fullscreen body>*:not(.wrap){display:none !important}
+:fullscreen .wrap{padding:0;max-width:none;margin:0;display:flex;align-items:center;justify-content:center;width:100vw;height:100vh;height:100dvh;background:var(--bg)}
+:fullscreen .wrap>*:not(.box):not(#fsMenu){display:none !important}
+:fullscreen .box{border:0;box-shadow:none;background:transparent;padding:0;max-width:none;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+:fullscreen .box>*:not(.cd-main){display:none !important}
+:fullscreen .cd-main{width:100%;height:100%;gap:calc(min(5vh,3.5vw,70px) * var(--fs-scale,1));margin:0;padding:var(--fs-pt,0px) min(3vw,28px) var(--fs-pb,0px);overflow:visible;align-content:center}
+:fullscreen .dial{width:calc(min(42vh,30vw,480px) * var(--fs-scale,1));height:calc(min(42vh,30vw,480px) * var(--fs-scale,1))}
+:fullscreen .bigtime{flex-wrap:wrap;justify-content:center;max-width:100%}
+:fullscreen .bigtime .seg{font-size:calc(min(14vh,8.5vw,170px) * var(--fs-scale,1));color:var(--fs-ink,#1f2933)}
+@media (max-width:600px){:fullscreen .bigtime .seg{font-size:calc(min(13vh,150px) * var(--fs-scale,1))}:fullscreen .cd-main{gap:calc(min(3vh,24px) * var(--fs-scale,1))}:fullscreen .bigtime .colon{font-size:calc(min(9vh,100px) * var(--fs-scale,1))}:fullscreen .bigtime .unit{font-size:calc(min(3.2vh,28px) * var(--fs-scale,1))}}
+:fullscreen .bigtime .colon{font-size:calc(min(10vh,6vw,120px) * var(--fs-scale,1));color:var(--fs-ink,#6b7280)}
+:fullscreen .bigtime .unit{font-size:calc(min(3.6vh,2.4vw,36px) * var(--fs-scale,1));color:var(--fs-ink,#6b7280)}
+:fullscreen .days-line{font-size:min(4vh,36px);color:var(--fs-ink,#374151)}
+:fullscreen .days-line b{font-size:min(6vh,58px);color:var(--fs-ink,#2563eb)}
+:fullscreen .subline{display:none}
+:fullscreen .progress{display:none}
+:fullscreen #dialText,:fullscreen #dialSub{display:none}
+:fullscreen .days-line{display:none !important}
+:fullscreen #fsTip{display:none !important}
+.cd-right{position:static}
+:fullscreen .fs-custom{font-size:min(calc(var(--fst-size,60) * 0.14vh), 18vh)}
+.fs-custom{display:block;position:absolute;left:var(--fst-x,50%);top:var(--fst-y,50%);transform:translateX(var(--fst-tx,-50%));font-size:calc(var(--fst-size,60) * 1px);color:var(--fst-color,#1f2933);font-weight:600;letter-spacing:1px;line-height:1.3;margin:0;word-break:break-word;max-width:var(--fst-maxw,80vw);cursor:move;user-select:none;touch-action:none;z-index:5;text-align:var(--fst-align,center)}
+.fs-custom.v{writing-mode:vertical-rl;text-orientation:upright;letter-spacing:3px;max-height:80vh;white-space:nowrap}
+.fs-custom:empty{display:none !important}
+.fs-custom.dragging{outline:2px dashed #2563eb;outline-offset:4px;opacity:.9}
+.dir-btn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+:fullscreen .banner{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.97);z-index:100;border:0;border-radius:0;margin:0;font-size:min(5vh,44px);padding:min(5vh,36px);text-align:center}
+:fullscreen .banner.show{display:flex !important;flex-direction:column;gap:min(4vh,28px)}
+:fullscreen .banner .stop-inline{margin-left:0;font-size:min(3.6vh,28px);padding:min(2vh,14px) min(6vh,44px);border:2px solid #dc2626;border-radius:99px;background:#fff;color:#dc2626;font-weight:600;cursor:pointer}
+:fullscreen .fs-drag{position:absolute !important;inset:auto !important;cursor:move;z-index:6}
+.fs-panel{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:#374151;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:10px;background:#fafbfc}
+.fs-panel .t{font-size:12.5px;color:#6b7280;width:100%}
+.fs-grid{display:grid;grid-template-columns:repeat(3,26px);grid-template-rows:repeat(3,26px);gap:3px}
+.fs-grid button{border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;padding:0;font-size:10px;color:#9aa5b5}
+.fs-grid button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.fs-menu{display:none;position:fixed;z-index:1000;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 16px rgba(16,24,40,.12);padding:6px;min-width:132px}
+.fs-menu.show{display:block !important}
+.fs-menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;font-size:14px;border-radius:7px;cursor:pointer;color:var(--ink);font-family:inherit}
+.fs-menu button:hover{background:var(--brand-soft);color:var(--brand)}
+#fsTip{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:13px;color:#8a93a3;background:rgba(255,255,255,.9);border:1px solid #e5e7eb;border-radius:99px;padding:7px 18px;z-index:999;transition:opacity .6s}
+.center-sec{text-align:center}
+.center-sec ol,.center-sec ul{display:inline-block;text-align:left;padding-left:1.2em;margin:0 auto}
+.center-sec li{margin:4px 0}
 section.block{margin-top:34px}
 h2{font-size:21px;margin:0 0 10px}
 .faq details{border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 14px;margin-bottom:10px}
@@ -51,10 +122,11 @@ h2{font-size:21px;margin:0 0 10px}
 .related a:hover{background:var(--brand-soft)}
 footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 footer p{margin:6px 0}
-pre.out{white-space:pre-wrap;word-break:break-all;min-height:120px}
-@media (max-width:560px){.counts{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}</style>
+@media (max-width:560px){h1{font-size:24px}.dial{width:190px;height:190px}.bigtime .seg{font-size:52px}.bigtime .colon{font-size:38px}}
+@media (prefers-reduced-motion:reduce){.banner{animation:none}}
+</style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "倒计时器", "url": "https://zhibanku.com/tools/countdown-timer.html", "description": "在浏览器内对任意日期时间倒计时，设定目标后开始，不上传。", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"}, "browserRequirements": "Requires JavaScript"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "时区？", "acceptedAnswer": {"@type": "Answer", "text": "目标使用你设备的本地时间。"}}, {"@type": "Question", "name": "可离线吗？", "acceptedAnswer": {"@type": "Answer", "text": "可以，加载后本地计时，无网络。"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "时区？", "acceptedAnswer": {"@type": "Answer", "text": "目标使用你设备的本地时间。"}}, {"@type": "Question", "name": "可离线吗？", "acceptedAnswer": {"@type": "Answer", "text": "可以，加载后本地计时，无网络。"}}, {"@type": "Question", "name": "提示音怎么选？", "acceptedAnswer": {"@type": "Answer", "text": "内置经典闹铃、急促蜂鸣、柔和提示三种铃声，也可以上传本地音频文件作为自定义铃声，均只在浏览器本地播放。"}}, {"@type": "Question", "name": "可以全屏吗？", "acceptedAnswer": {"@type": "Answer", "text": "点全屏按钮后倒计时和表盘会放大铺满屏幕，适合会议投屏或远距离查看。"}}]}</script>
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -73,41 +145,142 @@ crossorigin="anonymous"></script>
   <header class="top"><div class="brand"><a href="https://zhibanku.com/">知办库</a> · dev-tools</div></header>
   <nav class="crumbs"><a href="https://zhibanku.com/tools/">在线工具</a> / <a href="https://zhibanku.com/">dev-tools</a> / 倒计时器</nav>
   <h1>倒计时器</h1>
-<p class="lead">倒计时器帮你对任意一个日期时间做倒数，比如活动开抢、会议开始、发版截止。打开页面后，在目标时间输入框里选好年月日时分秒，也可以顺手填一句提醒文字，再点「开始倒计时」按钮，页面就会实时显示剩余的天、时、分、秒。倒计时结束时会弹出提示并响铃。所有计算都在你的浏览器里完成，目标时间不会上传到服务器，数据只留在本地。结果就在下方的计时面板里看到，随时可以暂停或重新开始。</p>
-  <p class="sub">追踪距离事件的剩余时间。</p>
-  <div class="box"><label>目标</label><input type="text" id="f_target" data-f="target" placeholder="2026-12-31T23:59:59" aria-label="目标"><div class="bar" style="margin-top:8px"><span style="font-size:13px;color:#6b7280">快捷预设：</span><button class="btn" type="button" data-preset="5m">5 分钟后</button><button class="btn" type="button" data-preset="30m">30 分钟后</button><button class="btn" type="button" data-preset="1h">1 小时后</button><button class="btn" type="button" data-preset="today18">今天 18:00</button><button class="btn" type="button" data-preset="tomorrow9">明天 09:00</button><button class="btn" type="button" data-preset="week">7 天后</button></div><div class="bar"><button class="btn primary" id="startBtn" type="button">开始</button><button class="btn" id="stopBtn" type="button">停止</button><button class="btn" id="resetBtn" type="button">重置</button></div><pre class="out" id="cdout" aria-live="polite">请填写目标时间，然后点「开始」。</pre><div class="note" id="live" role="status" aria-live="polite"></div></div>
-  <section>
+<p class="lead">倒计时器帮你对任意时长或目标时刻做倒数，比如番茄工作、会议发言、活动开抢、发版截止。选一个快捷时长，或在目标时间框里选好年月日时分秒，点「开始」后大数字和表盘会实时显示剩余时间。倒计时结束时会全屏提醒并响铃，内置三种合成铃声，也可以上传自己的音频当铃声，还能一键全屏投屏使用。所有计算都在你的浏览器里完成，目标时间不会上传到服务器。</p>
+  <p class="sub">大数字倒计时 + 表盘模拟 + 响铃提醒 + 全屏模式。</p>
+  <div class="box">
+    <div class="cd-main">
+      <div class="dial-wrap">
+        <svg class="dial" viewBox="0 0 200 200" role="img" aria-label="倒计时表盘，外圈为剩余进度，中心显示剩余时间">
+          <circle cx="100" cy="100" r="92" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
+          <g id="dialTicks" stroke="#c7cedb" stroke-width="2"></g>
+          <circle id="ringBg" cx="100" cy="100" r="84" fill="none" stroke="#eef1f5" stroke-width="7"/>
+          <circle id="ringFg" cx="100" cy="100" r="84" fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round" stroke-dasharray="527.8" stroke-dashoffset="527.8" transform="rotate(-90 100 100)"/>
+          <line id="handSec" x1="100" y1="100" x2="100" y2="34" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round"/>
+          <line id="handMin" x1="100" y1="100" x2="100" y2="52" stroke="#1f2933" stroke-width="3.4" stroke-linecap="round"/>
+          <line id="handHour" x1="100" y1="100" x2="100" y2="68" stroke="#1f2933" stroke-width="4.6" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="5" fill="#1f2933"/>
+          <text id="dialText" x="100" y="128" text-anchor="middle" font-size="17" font-weight="600" fill="#1f2933">待开始</text>
+          <text id="dialSub" x="100" y="146" text-anchor="middle" font-size="11" fill="#6b7280"></text>
+        </svg>
+      </div>
+      <div class="cd-right">
+        <div class="fs-custom" id="fsCustom"></div>
+        <div class="bigtime" id="bigtime" aria-live="off">
+          <span class="seg" id="segH">00</span><span class="unit">时</span><span class="colon">:</span><span class="seg" id="segM">00</span><span class="unit">分</span><span class="colon">:</span><span class="seg" id="segS">00</span><span class="unit">秒</span>
+        </div>
+        <div class="days-line" id="daysLine" style="display:none">还剩 <b id="daysNum">0</b> 天</div>
+        <div class="subline" id="subline">选择时长或目标时间，点「开始」</div>
+        <div class="progress" id="progWrap"><i id="progBar"></i></div>
+      </div>
+    </div>
+
+    <div class="ring-title">快捷时长</div>
+    <div class="bar" id="presetBar" style="margin-top:0">
+      <button class="btn preset" type="button" data-min="1">1 分钟</button>
+      <button class="btn preset" type="button" data-min="3">3 分钟</button>
+      <button class="btn preset" type="button" data-min="5">5 分钟</button>
+      <button class="btn preset" type="button" data-min="10">10 分钟</button>
+      <button class="btn preset" type="button" data-min="15">15 分钟</button>
+      <button class="btn preset" type="button" data-min="25">25 分钟（番茄）</button>
+      <button class="btn preset" type="button" data-min="30">30 分钟</button>
+      <button class="btn preset" type="button" data-min="45">45 分钟</button>
+      <button class="btn preset" type="button" data-min="60">60 分钟</button>
+    </div>
+
+    <div class="bar" style="margin-top:14px">
+      <span style="font-size:13px;color:#6b7280">或设定目标时刻：</span>
+      <input type="datetime-local" id="f_target" aria-label="目标时刻">
+      <button class="btn preset" type="button" id="useTarget">设为目标</button>
+    </div>
+
+    <div class="bar">
+      <button class="btn primary" id="startBtn" type="button">开始</button>
+      <button class="btn" id="pauseBtn" type="button" disabled>暂停</button>
+      <button class="btn" id="resetBtn" type="button">重置</button>
+      <button class="btn" id="fsBtn" type="button">全屏</button>
+    </div>
+
+    <div class="fs-panel" id="fsPanel">
+      <span class="t">全屏显示设置（进入全屏生效，自动保存）</span>
+      <label style="display:inline-flex;gap:6px;align-items:center;flex:1 1 100%">自定义文字
+        <input type="text" id="fsText" maxlength="30" placeholder="例如：会议倒计时 / 考试剩余时间（留空则不显示）" style="flex:1 1 200px;min-width:180px">
+      </label>
+      <label style="display:inline-flex;gap:6px;align-items:center">文字颜色 <input type="color" id="fsTextColor" value="#1f2933" style="width:36px;height:28px;border:1px solid var(--line);border-radius:6px;padding:0;cursor:pointer"></label>
+      <label style="display:inline-flex;gap:8px;align-items:center">文字大小 <input type="range" id="fsTextSize" min="16" max="200" value="60" style="width:90px"> <span id="fsTextSizeVal" style="font-variant-numeric:tabular-nums;width:48px;display:inline-block">60px</span></label>
+      <span style="display:inline-flex;gap:6px;align-items:center">文字方向
+        <button class="btn preset dir-btn on" type="button" data-dir="h" id="dirH">横排</button>
+        <button class="btn preset dir-btn" type="button" data-dir="v" id="dirV">竖排</button>
+      </span>
+      <label style="display:inline-flex;gap:6px;align-items:center">时间颜色 <input type="color" id="fsColor" value="#1f2933" style="width:36px;height:28px;border:1px solid var(--line);border-radius:6px;padding:0;cursor:pointer"></label>
+      <label style="display:inline-flex;gap:8px;align-items:center">整体大小 <input type="range" id="fsScale" min="50" max="120" value="100" style="width:90px"> <span id="fsScaleVal" style="font-variant-numeric:tabular-nums;width:44px;display:inline-block">100%</span></label>
+      <span style="display:inline-flex;gap:8px;align-items:center">位置
+        <span class="fs-grid" id="fsGrid">
+          <button data-pos="tl" title="左上">↖</button><button data-pos="tc" title="上中">↑</button><button data-pos="tr" title="右上">↗</button>
+          <button data-pos="ml" title="左中">←</button><button data-pos="mc" title="居中">·</button><button data-pos="mr" title="右中">→</button>
+          <button data-pos="bl" title="左下">↙</button><button data-pos="bc" title="下中">↓</button><button data-pos="br" title="右下">↘</button>
+        </span>
+      </span>
+      <button class="btn preset" id="fsResetPos" type="button">恢复拖动位置</button>
+    </div>
+
+    <div class="banner" id="banner" role="alert">时间到！倒计时已结束<button class="stop-inline" id="stopInlineBtn" type="button">停止响铃</button></div>
+
+    <div class="ringbox show" id="ringBox">
+      <div class="row" style="margin-bottom:10px">
+        <span style="font-size:13px;color:#6b7280;width:100%">结束铃声（本地播放，不上传）</span>
+        <label class="on" id="lb1" data-ring="classic"><input type="radio" name="ring" value="classic" checked hidden>经典闹铃</label>
+        <label id="lb2" data-ring="beep"><input type="radio" name="ring" value="beep" hidden>急促蜂鸣</label>
+        <label id="lb3" data-ring="soft"><input type="radio" name="ring" value="soft" hidden>柔和提示</label>
+        <label id="lb4" data-ring="custom"><input type="radio" name="ring" value="custom" hidden>自定义铃声</label>
+      </div>
+      <div class="row">
+        <button class="btn preset" id="tryBtn" type="button">试听铃声</button>
+        <button class="btn preset" id="stopRingBtn" type="button">停止响铃</button>
+        <label style="display:inline-flex;gap:6px;align-items:center;font-size:13.5px;color:#374151"><input type="checkbox" id="loopChk" checked>循环播放</label>
+        <label style="display:inline-flex;gap:8px;align-items:center;font-size:13.5px;color:#374151">音量 <input type="range" id="volRange" min="0" max="100" value="70" style="width:110px"></label>
+      </div>
+      <div class="row" id="customRow" style="display:none">
+        <input type="file" id="ringFile" accept="audio/*" style="font-size:13px">
+        <span style="font-size:12.5px;color:#6b7280" id="customName">未选择文件（仅本地读取，不会上传）</span>
+      </div>
+      <div class="hint">快捷键：空格 开始/暂停 ｜ R 重置 ｜ F 全屏。全屏中：双击或右键可退出，也可按 ESC。页面切到后台时倒计时按系统时间自动补算。</div>
+    </div>
+
+    <div class="live" id="live" role="status" aria-live="polite">已就绪</div>
+  </div>
+  <div class="fs-menu" id="fsMenu"><button type="button" id="fsMenuExit">退出全屏</button></div>
+  <section class="center-sec">
 <h2>注意事项</h2>
-<ul><li>倒计时依赖系统时钟，如果手动改了电脑或手机时间，剩余时长会跟着变</li><li>把页面切到后台或最小化时，浏览器可能限制刷新频率，提示音或归零提醒会晚几秒出现</li><li>关掉标签页或刷新页面后倒计时不会自动恢复，需要重新选目标时间再点开始</li><li>数据只保存在当前浏览器会话里，换设备、换浏览器打开都不会同步</li><li>提示音需要页面已获得播放权限，手机静音或从未点击过页面时可能听不到声音</li><li>目标时间精确到秒，跨越夏令时或时区调整的地区，实际到点时刻以你设备的本地时间为准</li></ul>
+<ul><li>倒计时依赖系统时钟，如果手动改了电脑或手机时间，剩余时长会跟着变</li><li>把页面切到后台或最小化时，浏览器可能限制刷新频率，提示音或归零提醒会晚几秒出现</li><li>关掉标签页或刷新页面后倒计时不会自动恢复，需要重新选目标时间再点开始</li><li>自定义铃声只在你当前浏览器里读取和播放，文件不会上传到任何服务器</li><li>提示音需要页面已获得播放权限，手机静音或从未点击过页面时可能听不到声音</li><li>全屏模式适合投屏或远距离查看，按退出全屏按钮或再按一次全屏即可恢复</li></ul>
 </section>
-<section class="block"><h2>常见问题</h2><div class="faq"><details><summary>时区？</summary><p>目标使用你设备的本地时间。</p></details><details><summary>可离线吗？</summary><p>可以，加载后本地计时，无网络。</p></details>
-<details><summary>倒计时归零之后会自动停下来吗</summary><p>会。剩余时间减到零后刷新停止，页面弹出醒目的结束提示并播放提示音，点重新开始就能再跑一轮。</p></details><details><summary>可以同时跑几个倒计时吗</summary><p>当前页面一次只维护一个目标时间。需要多个同时倒数的话，可以开几个标签页分别设定，互不影响。</p></details><details><summary>手机浏览器上能正常用吗</summary><p>可以，页面按手机屏幕做了适配。锁屏或切到别的应用时计时可能暂停，回到页面会按系统时间自动补算剩余时长。</p></details><details><summary>把目标时间设成过去会怎样</summary><p>选了早于当前的时刻会直接提示无效，不会开始计时，需要重新挑一个将来的时间点再点开始倒计时。</p></details></div></section>
-  
-  <section class="block" id="opensource-dl" style="margin-top:34px">
+<section class="block center-sec"><h2>常见问题</h2><div class="faq"><details><summary>时区？</summary><p>目标使用你设备的本地时间。</p></details><details><summary>可离线吗？</summary><p>可以，加载后本地计时，无网络。</p></details>
+<details><summary>倒计时归零之后会自动停下来吗</summary><p>会。剩余时间减到零后刷新停止，页面弹出醒目的结束提示并播放提示音，默认循环播放直到你点「停止响铃」，也可取消勾选循环播放只响一次。</p></details><details><summary>可以同时跑几个倒计时吗</summary><p>当前页面一次只维护一个目标时间。需要多个同时倒数的话，可以开几个标签页分别设定，互不影响。</p></details><details><summary>手机浏览器上能正常用吗</summary><p>可以，页面按手机屏幕做了适配。锁屏或切到别的应用时计时可能暂停，回到页面会按系统时间自动补算剩余时长。</p></details><details><summary>把目标时间设成过去会怎样</summary><p>选了早于当前的时刻会直接提示无效，不会开始计时，需要重新挑一个将来的时间点再点开始倒计时。</p></details><details><summary>自定义铃声支持哪些格式</summary><p>支持浏览器能播放的常见音频格式，如 MP3、WAV、OGG、M4A。文件仅在本机内存中读取，刷新页面后需重新选择。</p></details></div></div></section>
+
+  <section class="block center-sec" id="opensource-dl" style="margin-top:34px">
   <h2>📦 开源与下载</h2>
   <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具完全开源，提供 Windows 绿色版（离线单文件 HTML，解压即用、无需联网）与源码仓库，全部免费下载。</p>
   <div style="display:flex;flex-wrap:wrap;gap:10px">
     <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
     <a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">Gitee 开源仓库（国内）</a>
-    <a href="https://pan.quark.cn/s/d80a1611d7e8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载（提取码 8602）</a>
-    <a href="https://pan.baidu.com/s/1CVxPiyWNMe7-alHvVT2Fkg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载（提取码 0a4z）</a>
+    <a href="https://pan.quark.cn/s/557661fe5c36" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载（提取码 5990）</a>
+    <a href="https://pan.baidu.com/s/1l-g-5kTqtI4r74tk4wmEsw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载（提取码 0a4z）</a>
   </div>
   <p style="font-size:13px;color:#6b7280;margin-top:10px">Windows 绿色版为单个 HTML 文件压缩包，解压后双击即可在浏览器离线运行，无需安装、无需联网、无广告。也可查看 <a href="/tools/countdown-timer-download.html" style="color:#2563eb;text-decoration:none">绿色版下载页</a> 了解详情。</p>
 </section>
 <footer>
 <p>© 2026 知办库 (DevVault). MIT licensed.</p>
 <p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
-<section id="download" class="block" style="margin-top:34px">
+<section id="download" class="block center-sec" style="margin-top:34px">
   <h2 style="font-size:21px;margin:0 0 10px">下载与开源</h2>
   <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具提供 Windows 绿色版（离线 HTML）与开源源码，可免费下载使用。</p>
   <div style="display:flex;flex-wrap:wrap;gap:10px">
-    <a href="https://github.com/aaqunar-a11y/zhibanku-tools/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
-    <a href="https://pan.baidu.com/s/1CVxPiyWNMe7-alHvVT2Fkg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载</a>
-    <a href="https://pan.quark.cn/s/d80a1611d7e8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载</a>
+    <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://pan.baidu.com/s/1l-g-5kTqtI4r74tk4wmEsw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载</a>
+    <a href="https://pan.quark.cn/s/557661fe5c36" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载</a>
   </div>
-  <p style="font-size:13px;color:#6b7280;margin-top:10px">百度提取码：<b>0a4z</b> ｜ 夸克提取码：<b>8602</b> ｜ Windows 绿色版为离线 HTML，解压后双击即可在浏览器运行，无需联网、无需安装。</p>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">百度提取码：<b>dp1z</b> ｜ 夸克提取码：<b>5990</b> ｜ Windows 绿色版为离线 HTML，解压后双击即可在浏览器运行，无需联网、无需安装。</p>
 </section>
-<section>
+<section class="center-sec">
 <h2>相关工具推荐</h2>
 <div class="related">
 <a href="https://zhibanku.com/tools/date-diff.html">日期差计算与间隔</a>
@@ -120,57 +293,15 @@ crossorigin="anonymous"></script>
 
 </footer>
 </div>
-<script>document.addEventListener("DOMContentLoaded",function(){
-function el(id){return document.getElementById(id);}
-function bcount(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length;}}
-function setLive(m,ok){var l=el('live');if(l){l.textContent=m;l.style.color=ok?'':'#b91c1c';}}
-function copyText(t){if(!t)return;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){setLive('已复制到剪贴板',true);}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}
-function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');setLive('已复制到剪贴板',true);}catch(e){setLive('复制失败，请手动选中复制',false);}document.body.removeChild(ta);}
-function renderStats(stats){var c=el('stats');if(!c)return;if(!stats||!stats.length){c.innerHTML='';return;}var h='';stats.forEach(function(s){h+='<div class="c"><div class="n">'+String(s[1])+'</div><div class="l">'+s[0]+'</div></div>';});c.innerHTML=h;}
-
-
-var cdTimer=null;
-function cdTick(){var t=el('f_target').value;var tg=new Date(t).getTime();var now=Date.now();var d=tg-now;
-  var o=el('cdout');if(isNaN(tg)){o.textContent='目标时间格式不对，请检查后重填。';return;}
-  if(d<=0){o.textContent='时间到！';setLive('已结束',true);if(cdTimer){clearInterval(cdTimer);cdTimer=null;}return;}
-  var s=Math.floor(d/1000);var dd=Math.floor(s/86400);var hh=Math.floor((s%86400)/3600);var mm=Math.floor((s%3600)/60);var ss=s%60;
-  o.textContent=dd+'d '+hh+'h '+mm+'m '+ss+'s';}
-el('startBtn').addEventListener('click',function(){if(cdTimer)clearInterval(cdTimer);cdTick();cdTimer=setInterval(cdTick,1000);setLive('正在运行中',true);});
-el('stopBtn').addEventListener('click',function(){if(cdTimer){clearInterval(cdTimer);cdTimer=null;}setLive('已停止',true);});
-el('resetBtn').addEventListener('click',function(){if(cdTimer){clearInterval(cdTimer);cdTimer=null;}el('cdout').textContent='请填写目标时间，然后点「开始」。';setLive('已重置',true);});
-setLive('已就绪',true);
-});
-</script>
 <nav class="cat-nav" aria-label="分类导航"><a href="/software/">软件</a><a href="/ai/">AI</a><a href="/github/">GitHub</a><a href="/tools/">工具</a><a href="/templates/">模板</a></nav>
-<section>
+<section class="center-sec">
 <h2>怎么用</h2>
-<ol><li>在日期和时间框里选好目标时刻，也可以直接输入。</li><li>点开始按钮，倒计时立刻跑起来。</li><li>页面上会显示剩余的天数、小时、分钟和秒。</li><li>需要暂停就点暂停按钮，要改目标就点重设按钮重新填。</li></ol>
+<ol><li>在快捷时长里选一个，或在目标时刻框里选好具体时间点「设为目标」。</li><li>点「开始」按钮，倒计时立刻跑起来，大数字和表盘同步显示。</li><li>需要暂停就点「暂停」，要重新设定就点「重置」。</li><li>要投屏或远距离查看就点「全屏」，倒计时会放大铺满屏幕。</li><li>时间到会自动响铃并弹出提醒，默认循环播放，点「停止响铃」结束。</li></ol>
 </section>
-<section>
+<section class="center-sec">
 <h2>适用场景</h2>
-<ul><li>盯产品上线时间，随时看到还剩多久。</li><li>考试或比赛前设定节点，避免错过开始时间。</li><li>记录某个纪念日还有多少天，打开页面就能看。</li></ul>
+<ul><li>番茄工作法：选 25 分钟专注，休息选 5 分钟，培养节奏感。</li><li>会议发言或直播控场：设定时长，全屏投屏让所有人看到剩余时间。</li><li>考试、比赛、烹饪、泡面等生活计时，到点响铃提醒。</li><li>盯产品上线或活动开始时间，随时看到还剩多久。</li></ul>
 </section>
-
-<script>document.addEventListener("DOMContentLoaded",function(){
-function p2(n){return n<10?'0'+n:''+n;}
-function fmt(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T'+p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds());}
-document.querySelectorAll('[data-preset]').forEach(function(b){
-b.addEventListener('click',function(){
-var n=new Date(),k=b.getAttribute('data-preset'),t;
-if(k==='5m'){t=new Date(n.getTime()+5*60000);}
-else if(k==='30m'){t=new Date(n.getTime()+30*60000);}
-else if(k==='1h'){t=new Date(n.getTime()+3600000);}
-else if(k==='today18'){t=new Date(n);t.setHours(18,0,0,0);if(t<=n){t.setDate(t.getDate()+1);}}
-else if(k==='tomorrow9'){t=new Date(n);t.setDate(t.getDate()+1);t.setHours(9,0,0,0);}
-else if(k==='week'){t=new Date(n.getTime()+7*86400000);}
-else{t=n;}
-var s=fmt(t);
-var inp=document.getElementById('f_target');
-if(inp){inp.value=s;inp.dispatchEvent(new Event('input',{bubbles:true}));}
-var live=document.getElementById('live');
-if(live){live.textContent='已填入 '+s.replace('T',' ')+'，点「开始」即可。';live.style.color='';}
-});});
-});</script>
 
 <div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
 <b style="color:#374151">开源仓库与下载</b>
@@ -178,11 +309,494 @@ if(live){live.textContent='已填入 '+s.replace('T',' ')+'，点「开始」即
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
 <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
 <a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/countdown-timer" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
-<a href="https://pan.quark.cn/s/d80a1611d7e8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
-<a href="https://pan.baidu.com/s/1CVxPiyWNMe7-alHvVT2Fkg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+<a href="https://pan.quark.cn/s/557661fe5c36" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1l-g-5kTqtI4r74tk4wmEsw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
 </div>
-<div style="margin-top:8px">夸克提取码：<b>8602</b> ｜ 百度提取码：<b>0a4z</b></div>
+<div style="margin-top:8px">夸克提取码：<b>5990</b> ｜ 百度提取码：<b>dp1z</b></div>
 <div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/countdown-timer-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
 </div>
+<script>
+(function(){
+"use strict";
+function el(id){return document.getElementById(id);}
+function pad2(n){return n<10?'0'+n:''+n;}
+function setLive(m,err){var l=el('live');if(l){l.textContent=m;l.className='live'+(err?' err':'');}}
+
+/* ---------- 表盘刻度 ---------- */
+(function(){
+  var g=el('dialTicks');if(!g)return;var h='';
+  for(var i=0;i<60;i++){
+    var a=i*6*Math.PI/180,major=(i%5===0);
+    var r1=major?76:80,r2=83;
+    var x1=100+r1*Math.sin(a),y1=100-r1*Math.cos(a);
+    var x2=100+r2*Math.sin(a),y2=100-r2*Math.cos(a);
+    h+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+(major?'#9aa5b5':'#d6dce5')+'" stroke-width="'+(major?2.4:1.2)+'"/>';
+  }
+  g.innerHTML=h;
+})();
+
+/* ---------- 状态 ---------- */
+var RING_LEN=527.8;
+var state={mode:'idle',endAt:0,pausedLeft:0,total:0,rafId:null};
+var audioCtx=null,customAudio=null,customURL='';
+var ringing=null;
+
+function ringType(){
+  var r=document.querySelector('input[name=ring]:checked');
+  return r?r.value:'classic';
+}
+function volume(){
+  var v=parseInt(el('volRange').value||'70',10)/100;
+  return isNaN(v)?0.7:v;
+}
+function ensureCtx(){
+  if(!audioCtx){
+    var AC=window.AudioContext||window.webkitAudioContext;
+    if(AC)audioCtx=new AC();
+  }
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  return audioCtx;
+}
+function beep(ctx,freq,start,dur,type,vol){
+  var o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type||'square';o.frequency.value=freq;
+  g.gain.setValueAtTime(0,ctx.currentTime+start);
+  g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.02);
+  g.gain.setValueAtTime(vol,ctx.currentTime+start+dur-0.03);
+  g.gain.linearRampToValueAtTime(0,ctx.currentTime+start+dur);
+  o.connect(g);g.connect(ctx.destination);
+  o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.02);
+}
+function synthPattern(ctx,type){
+  var v=volume();
+  if(type==='classic'){
+    beep(ctx,880,0,0.22,'square',v);beep(ctx,660,0.26,0.22,'square',v);
+    beep(ctx,988,0.52,0.22,'square',v);beep(ctx,784,0.78,0.22,'square',v);
+  }else if(type==='beep'){
+    for(var i=0;i<6;i++)beep(ctx,1180,i*0.13,0.09,'square',v);
+  }else{
+    beep(ctx,659.25,0,0.3,'sine',v);beep(ctx,880,0.32,0.42,'sine',v);
+  }
+}
+function startRinging(){
+  stopRinging();
+  var type=ringType();
+  if(type==='custom'){
+    if(customAudio){
+      customAudio.loop=el('loopChk').checked;
+      customAudio.volume=volume();
+      customAudio.currentTime=0;
+      customAudio.play().catch(function(){setLive('自定义铃声播放失败，请重新选择文件',true);});
+      ringing={custom:true};
+    }else{
+      setLive('请先在下方选择自定义铃声文件',true);
+      return false;
+    }
+    return true;
+  }
+  var ctx=ensureCtx();
+  if(!ctx){setLive('当前浏览器不支持音频播放',true);return false;}
+  var loop=el('loopChk').checked;
+  var play=function(){synthPattern(ctx,type);};
+  play();
+  if(loop){ringing={timer:setInterval(play,1200)};}
+  return true;
+}
+function stopRinging(){
+  if(ringing){
+    if(ringing.timer)clearInterval(ringing.timer);
+    ringing=null;
+  }
+  if(customAudio){try{customAudio.pause();customAudio.currentTime=0;}catch(e){}}
+}
+function notify(){
+  try{
+    if(window.Notification&&Notification.permission==='granted'){
+      new Notification('倒计时结束',{body:'时间到！你设定的倒计时已完成。'});
+    }
+  }catch(e){}
+}
+
+/* ---------- 渲染 ---------- */
+function paint(msLeft,total){
+  var s=Math.max(0,Math.ceil(msLeft/1000));
+  var dd=Math.floor(s/86400),hh=Math.floor((s%86400)/3600),mm=Math.floor((s%3600)/60),ss=s%60;
+  el('segH').textContent=pad2(hh);
+  el('segM').textContent=pad2(mm);
+  el('segS').textContent=pad2(ss);
+  var dl=el('daysLine');
+  if(dd>0){dl.style.display='';el('daysNum').textContent=dd;}else{dl.style.display='none';}
+  var pct=total>0?Math.max(0,Math.min(1,msLeft/total)):0;
+  el('ringFg').style.strokeDashoffset=String(RING_LEN*(1-pct));
+  var remainSec=msLeft/1000;
+  var secAngle=(remainSec%60)*6;
+  var minAngle=((remainSec%3600)/60)*6;
+  var hourAngle=((remainSec%43200)/720)*6;
+  el('handSec').setAttribute('transform','rotate('+secAngle+' 100 100)');
+  el('handMin').setAttribute('transform','rotate('+minAngle+' 100 100)');
+  el('handHour').setAttribute('transform','rotate('+hourAngle+' 100 100)');
+  el('dialText').textContent=pad2(mm)+':'+pad2(ss);
+  el('dialSub').textContent=dd>0?(dd+' 天 '+hh+' 时'):(hh>0?(hh+' 时剩余'):'');
+  el('progBar').style.width=(pct*100).toFixed(2)+'%';
+  if(msLeft>0){document.title='⏳ '+pad2(hh)+':'+pad2(mm)+':'+pad2(ss)+' — 倒计时';}
+}
+function tick(){
+  if(state.mode!=='run')return;
+  var left=state.endAt-Date.now();
+  if(left<=0){
+    paint(0,state.total);
+    finish();
+    return;
+  }
+  paint(left,state.total);
+}
+function finish(){
+  state.mode='done';
+  if(state.rafId){clearInterval(state.rafId);state.rafId=null;}
+  document.title='时间到 — 倒计时';
+  el('bigtime').classList.add('done');
+  el('progWrap').classList.add('done');
+  el('ringFg').setAttribute('stroke','#dc2626');
+  el('handSec').setAttribute('stroke','#dc2626');
+  el('banner').classList.add('show');
+  setLive('倒计时结束，正在响铃',false);
+  el('startBtn').textContent='重新开始';
+  el('pauseBtn').disabled=true;
+  startRinging();
+  notify();
+}
+function resetUI(){
+  state.mode='idle';state.endAt=0;state.pausedLeft=0;state.total=0;
+  if(state.rafId){clearInterval(state.rafId);state.rafId=null;}
+  document.title='倒计时器 — 在线事件倒计时';
+  el('bigtime').classList.remove('done');
+  el('progWrap').classList.remove('done');
+  el('ringFg').setAttribute('stroke','#2563eb');
+  el('handSec').setAttribute('stroke','#2563eb');
+  el('banner').classList.remove('show');
+  el('segH').textContent='00';el('segM').textContent='00';el('segS').textContent='00';
+  el('daysLine').style.display='none';
+  el('ringFg').style.strokeDashoffset=String(RING_LEN);
+  el('progBar').style.width='0%';
+  el('dialText').textContent='待开始';el('dialSub').textContent='';
+  el('startBtn').textContent='开始';
+  el('pauseBtn').disabled=true;el('pauseBtn').textContent='暂停';
+  setLive('已重置，选择时长或目标后点「开始」');
+  stopRinging();
+}
+function begin(ms,total){
+  stopRinging();
+  state.mode='run';state.endAt=Date.now()+ms;state.total=total||ms;
+  el('banner').classList.remove('show');
+  el('bigtime').classList.remove('done');
+  el('progWrap').classList.remove('done');
+  el('startBtn').textContent='重新开始';
+  el('pauseBtn').disabled=false;el('pauseBtn').textContent='暂停';
+  ensureCtx();
+  paint(ms,state.total);
+  setLive('正在倒计时，可在后台运行');
+  if(state.rafId)clearInterval(state.rafId);
+  state.rafId=setInterval(tick,100);
+}
+
+/* ---------- 交互 ---------- */
+Array.prototype.forEach.call(document.querySelectorAll('[data-min]'),function(b){
+  b.addEventListener('click',function(){
+    var m=parseFloat(b.getAttribute('data-min'));
+    var ms=m*60000;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-min]'),function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    begin(ms,ms);
+    setLive('已开始 '+m+' 分钟倒计时');
+  });
+});
+el('useTarget').addEventListener('click',function(){
+  var v=el('f_target').value;
+  if(!v){setLive('请先选择一个目标时刻',true);return;}
+  var tg=new Date(v).getTime();
+  if(isNaN(tg)){setLive('目标时刻格式不对',true);return;}
+  var left=tg-Date.now();
+  if(left<=0){setLive('目标时刻已过，请选将来的时间',true);return;}
+  begin(left,left);
+  setLive('已按目标时刻开始倒计时');
+});
+el('startBtn').addEventListener('click',function(){
+  if(state.mode==='paused'){begin(state.pausedLeft,state.total);return;}
+  if(state.mode==='run'){begin(state.endAt-Date.now(),state.total);return;}
+  if(state.mode==='done'){resetUI();return;}
+  setLive('请先选快捷时长或设定目标时刻',true);
+});
+el('pauseBtn').addEventListener('click',function(){
+  if(state.mode!=='run')return;
+  state.pausedLeft=Math.max(0,state.endAt-Date.now());
+  state.mode='paused';
+  if(state.rafId){clearInterval(state.rafId);state.rafId=null;}
+  el('pauseBtn').textContent='继续';
+  el('startBtn').textContent='开始';
+  setLive('已暂停，剩余 '+Math.ceil(state.pausedLeft/1000)+' 秒');
+});
+el('resetBtn').addEventListener('click',resetUI);
+el('fsBtn').addEventListener('click',function(){
+  var d=document;
+  if(!d.fullscreenElement&&!d.webkitFullscreenElement){
+    var e=d.documentElement;
+    if(e.requestFullscreen){e.requestFullscreen();}
+    else if(e.webkitRequestFullscreen){e.webkitRequestFullscreen();}
+  }else{
+    if(d.exitFullscreen){d.exitFullscreen();}
+    else if(d.webkitExitFullscreen){d.webkitExitFullscreen();}
+  }
+});
+
+/* ---------- 全屏显示设置：颜色/大小/九宫格位置/拖动 ---------- */
+var TXT_POS={
+  tl:[8,8,'left'],   tc:[50,8,'center'],  tr:[92,8,'right'],
+  ml:[8,50,'left'],  mc:[50,50,'center'], mr:[92,50,'right'],
+  bl:[8,92,'left'],  bc:[50,92,'center'], br:[92,92,'right']
+};
+var FS_POS=TXT_POS;
+var fsCfg={color:'#1f2933',scale:100,pos:'mc',dragX:null,dragY:null,text:'',textColor:'#1f2933',textSize:60,textX:50,textY:12,textDir:'h',dragged:false};
+function fsLoad(){
+  try{
+    var VER='v9-bigtext';
+    var s=JSON.parse(localStorage.getItem('zbk_cd_fs')||'{}');
+    if(localStorage.getItem('zbk_cd_ver')!==VER){
+      s.pos='mc';s.dragX=null;s.dragY=null;s.textY=6;if(!s.textSize||s.textSize<45){s.textSize=60;}
+      localStorage.setItem('zbk_cd_ver',VER);
+      localStorage.setItem('zbk_cd_fs',JSON.stringify(s));
+    }
+    if(s.color)fsCfg.color=s.color;
+    if(s.scale)fsCfg.scale=(s.scale>120?120:(s.scale<50?50:s.scale));
+    if(s.pos)fsCfg.pos=s.pos;
+    if(typeof s.dragX==='number')fsCfg.dragX=s.dragX;
+    if(typeof s.dragY==='number')fsCfg.dragY=s.dragY;
+    if(typeof s.text==='string')fsCfg.text=s.text;
+    if(s.textColor)fsCfg.textColor=s.textColor;
+    if(s.textSize)fsCfg.textSize=(s.textSize<16?16:(s.textSize>200?200:s.textSize));
+    if(typeof s.textX==='number')fsCfg.textX=s.textX;
+    if(typeof s.textY==='number')fsCfg.textY=(s.textY<1?1:(s.textY>94?94:s.textY));
+    if(s.textDir)fsCfg.textDir=s.textDir;
+  }catch(e){}
+}
+function fsSave(){
+  try{localStorage.setItem('zbk_cd_fs',JSON.stringify(fsCfg));}catch(e){}
+}
+function fsApply(){
+  var wrap=document.querySelector('.wrap');
+  var main=document.querySelector('.cd-main');
+  if(!wrap||!main)return;
+  wrap.style.setProperty('--fs-ink',fsCfg.color);
+  wrap.style.setProperty('--fs-scale',String(fsCfg.scale/100));
+  wrap.style.setProperty('--fst-color',fsCfg.textColor);
+  wrap.style.setProperty('--fst-size',String(fsCfg.textSize));
+  wrap.style.setProperty('--fst-x',fsCfg.textX+'%');
+  wrap.style.setProperty('--fst-y',fsCfg.textY+'%');
+  var fc=el('fsCustom');
+  if(fc){
+    fc.textContent=fsCfg.text||'';
+    fc.classList.toggle('v',fsCfg.textDir==='v');
+  }
+  var dh=el('dirH'),dv=el('dirV');
+  if(dh&&dv){
+    dh.classList.toggle('on',fsCfg.textDir!=='v');
+    dv.classList.toggle('on',fsCfg.textDir==='v');
+  }
+  var isFsNow=!!((document.fullscreenElement)||(document.webkitFullscreenElement));
+  main.classList.remove('fs-drag');
+  main.style.left='';main.style.top='';
+  if(fsCfg.dragged){
+    wrap.style.setProperty('--fst-x',fsCfg.textX+'%');
+    wrap.style.setProperty('--fst-y',fsCfg.textY+'%');
+    wrap.style.setProperty('--fst-tx','-50%');
+    wrap.style.setProperty('--fst-align','center');
+    wrap.style.setProperty('--fst-maxw','80vw');
+  }else{
+    var tp=TXT_POS[fsCfg.pos]||TXT_POS.mc;
+    var _tx=(tp[2]==='left')?'0%':((tp[2]==='right')?'-100%':'-50%');
+    wrap.style.setProperty('--fst-x',tp[0]+'%');
+    wrap.style.setProperty('--fst-y',tp[1]+'%');
+    wrap.style.setProperty('--fst-tx',_tx);
+    wrap.style.setProperty('--fst-align',tp[2]);
+    wrap.style.setProperty('--fst-maxw',(tp[2]==='center')?'80vw':'46vw');
+  }
+  var c=el('fsColor');if(c)c.value=fsCfg.color;
+  var s=el('fsScale');if(s)s.value=String(fsCfg.scale);
+  var sv=el('fsScaleVal');if(sv)sv.textContent=fsCfg.scale+'%';
+  var tx=el('fsText');if(tx&&tx!==document.activeElement)tx.value=fsCfg.text||'';
+  var tc=el('fsTextColor');if(tc)tc.value=fsCfg.textColor;
+  var ts=el('fsTextSize');if(ts)ts.value=String(fsCfg.textSize);
+  var tsv=el('fsTextSizeVal');if(tsv)tsv.textContent=fsCfg.textSize+'px';
+  Array.prototype.forEach.call(document.querySelectorAll('#fsGrid button'),function(b){
+    b.classList.toggle('on',b.getAttribute('data-pos')===fsCfg.pos);
+  });
+}
+el('fsColor').addEventListener('input',function(){fsCfg.color=this.value;fsSave();fsApply();});
+el('fsText').addEventListener('input',function(){fsCfg.text=this.value;fsSave();fsApply();});
+el('fsTextColor').addEventListener('input',function(){fsCfg.textColor=this.value;fsSave();fsApply();});
+el('fsTextSize').addEventListener('input',function(){fsCfg.textSize=parseInt(this.value,10)||40;fsSave();fsApply();});
+Array.prototype.forEach.call(document.querySelectorAll('.dir-btn'),function(b){
+  b.addEventListener('click',function(){
+    fsCfg.textDir=b.getAttribute('data-dir')||'h';
+    fsSave();fsApply();
+    if(!fsCfg.text){setLive('已切换为'+(fsCfg.textDir==='v'?'竖排':'横排')+'，请在上方输入自定义文字查看效果');}
+    else{setLive('文字方向：'+(fsCfg.textDir==='v'?'竖排':'横排'));}
+  });
+});
+/* 自定义文字独立拖动（非全屏/全屏均可） */
+(function(){
+  var fc=el('fsCustom'),box=document.querySelector('.cd-main');
+  if(!fc||!box)return;
+  var dragging=false,startX=0,startY=0,baseX=50,baseY=-14;
+  function toPercent(e){
+    var r=box.getBoundingClientRect();
+    if(!r.width||!r.height)return null;
+    var x=((e.clientX-r.left)/r.width)*100;
+    var y=((e.clientY-r.top)/r.height)*100;
+    return {x:Math.max(-30,Math.min(130,Math.round(x))),y:Math.max(-80,Math.min(160,Math.round(y)))};
+  }
+  fc.addEventListener('pointerdown',function(e){
+    if(!fsCfg.text){setLive('请先在上方输入自定义文字，再拖动',true);return;}
+    dragging=true;
+    startX=e.clientX;startY=e.clientY;
+    var r=box.getBoundingClientRect();
+    baseX=fsCfg.textX;baseY=fsCfg.textY;
+    fc.style.transform='translateX(-50%)';
+    fc.style.textAlign='center';
+    fc.setPointerCapture&&fc.setPointerCapture(e.pointerId);
+    fc.classList.add('dragging');
+    e.preventDefault();e.stopPropagation();
+  });
+  fc.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    var r=box.getBoundingClientRect();
+    if(!r.width||!r.height)return;
+    var dx=((e.clientX-startX)/r.width)*100;
+    var dy=((e.clientY-startY)/r.height)*100;
+    var x=Math.max(2,Math.min(98,Math.round(baseX+dx)));
+    var y=Math.max(2,Math.min(96,Math.round(baseY+dy)));
+    fsCfg.textX=x;fsCfg.textY=y;
+    fc.style.left=x+'%';
+    fc.style.top=y+'%';
+    e.preventDefault();
+  });
+  function endDrag(){
+    if(!dragging)return;
+    dragging=false;
+    fc.classList.remove('dragging');
+    fsCfg.dragged=true;
+    fsSave();
+    setLive('文字位置已保存：左右 '+fsCfg.textX+'% / 上下 '+fsCfg.textY+'%');
+  }
+  fc.addEventListener('pointerup',endDrag);
+  fc.addEventListener('pointercancel',endDrag);
+  if(window.PointerEvent){window.addEventListener('pointerup',function(){if(dragging)endDrag();});}
+})();
+el('fsResetPos').addEventListener('click',function(){
+  fsCfg.dragX=null;fsCfg.dragY=null;
+  fsCfg.pos='tc';fsCfg.textX=50;fsCfg.textY=12;fsCfg.dragged=false;
+  fsSave();fsApply();
+  setLive('已恢复默认位置');
+});
+el('fsScale').addEventListener('input',function(){fsCfg.scale=parseInt(this.value,10)||100;fsSave();fsApply();});
+Array.prototype.forEach.call(document.querySelectorAll('#fsGrid button'),function(b){
+  b.addEventListener('click',function(){
+    fsCfg.pos=b.getAttribute('data-pos');
+    fsCfg.dragX=null;fsCfg.dragY=null;fsCfg.dragged=false;
+    fsSave();fsApply();
+    setLive('文字位置：'+(b.getAttribute('title')||''));
+  });
+});
+/* 全屏拖动 */
+(function(){
+  var main=document.querySelector('.cd-main');
+  if(!main)return;
+  /* 表盘与数字固定居中，不再支持整块拖动（九宫格与拖动均作用于自定义文字） */
+})();
+/* 双击/右键退出全屏 + 提示 */
+(function(){
+  var tip=document.createElement('div');
+  tip.id='fsTip';tip.textContent='按 ESC · 双击 · 右键 均可退出全屏';
+  document.body.appendChild(tip);
+  var menu=el('fsMenu');
+  var t=null;
+  function isFs(){var d=document;return !!(d.fullscreenElement||d.webkitFullscreenElement);}
+  function onFsChange(){
+    if(isFs()){
+      tip.style.display='none';
+    }else{
+      tip.style.display='none';
+      if(t){clearTimeout(t);t=null;}
+      menu.classList.remove('show');
+      var _m=document.querySelector('.cd-main');
+      if(_m){_m.classList.remove('fs-drag');_m.style.left='';_m.style.top='';}
+      fsApply();
+    }
+  }
+  document.addEventListener('fullscreenchange',onFsChange);
+  document.addEventListener('webkitfullscreenchange',onFsChange);
+  document.querySelector('.cd-main').addEventListener('dblclick',function(){
+    if(isFs()){
+      if(document.exitFullscreen){document.exitFullscreen();}
+      else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}
+    }
+  });
+  document.addEventListener('contextmenu',function(e){
+    if(!isFs())return;
+    e.preventDefault();
+    menu.style.left=Math.min(e.clientX,window.innerWidth-150)+'px';
+    menu.style.top=Math.min(e.clientY,window.innerHeight-60)+'px';
+    menu.classList.add('show');
+  });
+  document.addEventListener('click',function(e){
+    if(menu.classList.contains('show')&&!menu.contains(e.target)){menu.classList.remove('show');}
+  });
+  el('fsMenuExit').addEventListener('click',function(){
+    menu.classList.remove('show');
+    if(document.exitFullscreen){document.exitFullscreen();}
+    else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}
+  });
+})();
+fsLoad();fsApply();
+el('tryBtn').addEventListener('click',function(){
+  var ok=startRinging();
+  if(ok&&!el('loopChk').checked){
+    setTimeout(stopRinging,1500);
+  }
+});
+el('stopRingBtn').addEventListener('click',function(){stopRinging();setLive('已停止响铃');});
+Array.prototype.forEach.call(document.querySelectorAll('.ringbox label[data-ring]'),function(lb){
+  lb.addEventListener('click',function(e){
+    e.preventDefault();
+    var v=lb.getAttribute('data-ring');
+    var inp=lb.querySelector('input[type=radio]');
+    if(inp){inp.checked=true;}
+    Array.prototype.forEach.call(document.querySelectorAll('.ringbox label[data-ring]'),function(x){x.classList.remove('on');});
+    lb.classList.add('on');
+    el('customRow').style.display=(v==='custom')?'':'none';
+    stopRinging();
+    setLive('已选择铃声：'+lb.textContent.trim());
+  });
+});
+el('stopInlineBtn').addEventListener('click',function(e){e.stopPropagation();stopRinging();setLive('已停止响铃');});
+el('ringFile').addEventListener('change',function(e){
+  var f=e.target.files&&e.target.files[0];
+  if(!f)return;
+  if(customURL){URL.revokeObjectURL(customURL);}
+  customURL=URL.createObjectURL(f);
+  customAudio=new Audio(customURL);
+  customAudio.preload='auto';
+  el('customName').textContent='已选择：'+f.name+'（仅本地播放）';
+  setLive('自定义铃声已就绪，到点将自动播放');
+});
+document.addEventListener('keydown',function(e){
+  var t=e.target.tagName;
+  if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||t==='BUTTON')return;
+  if(e.code==='Space'){e.preventDefault();el('startBtn').click();}
+  else if(e.key==='r'||e.key==='R'){resetUI();}
+  else if(e.key==='f'||e.key==='F'){el('fsBtn').click();}
+});
+resetUI();
+})();
+</script>
 </body>
 </html>
