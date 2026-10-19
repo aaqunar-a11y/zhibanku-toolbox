@@ -64,6 +64,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7344336095061499"
+crossorigin="anonymous"></script>
 </head>
 <body>
 <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
@@ -88,7 +90,18 @@ var _hmt = _hmt || [];
 <section class="block"><h2>常见问题</h2><div class="faq"><details><summary>UTF-8 安全吗？</summary><p>安全，文本先按 UTF-8 编码再 Base64，emoji 与中文均可。</p></details><details><summary>隐私吗？</summary><p>完全客户端，数据不出浏览器。</p></details>
 <details><summary>编码后的字符串怎么还原成原文</summary><p>用本站的 Base64 解码功能，把字符串粘进输入框再点解码即可。注意解码时也要按 UTF-8 读取，中文才不会变成乱码。</p></details><details><summary>结果末尾的等号是干什么的</summary><p>那是补位符，用来把长度凑成 4 的倍数。不同长度的原文补的等号数量不同，解码时会自动去掉，不影响实际内容。</p></details><details><summary>中文比英文编码出来长很多正常吗</summary><p>正常。UTF-8 下一个汉字占 3 个字节，英文只占 1 个，编码后大约按 4 比 3 放大，所以中文结果明显比英文长。</p></details><details><summary>想编码图片或二进制文件怎么办</summary><p>文本工具只处理字符内容，二进制文件请改用 Base64 文件编码器，它按字节读取本地文件，还能直接生成 Data URI。</p></details></div></section>
   
-  <footer>
+  <section class="block" id="opensource-dl" style="margin-top:34px">
+  <h2>📦 开源与下载</h2>
+  <p style="color:#6b7280;font-size:14px;margin:0 0 14px">本工具完全开源，提供 Windows 绿色版（离线单文件 HTML，解压即用、无需联网）与源码仓库，全部免费下载。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">GitHub 开源仓库</a>
+    <a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-encoder" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">Gitee 开源仓库（国内）</a>
+    <a href="https://pan.quark.cn/s/006b2ef5bf50" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">夸克网盘下载（提取码 1323）</a>
+    <a href="https://pan.baidu.com/s/1E6xn7QQN4clzxAyw5hYReg" target="_blank" rel="noopener" style="display:inline-block;border:1px solid #e5e7eb;background:#2563eb;color:#fff;border-radius:9px;padding:10px 16px;font-size:14px;text-decoration:none;font-weight:600">百度网盘下载（提取码 sbia）</a>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin-top:10px">Windows 绿色版为单个 HTML 文件压缩包，解压后双击即可在浏览器离线运行，无需安装、无需联网、无广告。也可查看 <a href="/tools/base64-encoder-download.html" style="color:#2563eb;text-decoration:none">绿色版下载页</a> 了解详情。</p>
+</section>
+<footer>
 <p>© 2026 知办库 (DevVault). MIT licensed.</p>
 <p>本工具为独立开发的在线工具，与任何第三方软件、品牌或服务无官方关联。所有处理均在浏览器本地完成，文件不会上传至服务器。本工具按“现状（AS IS）”提供，不对数据损失或使用结果承担责任。</p>
 <section id="download" class="block" style="margin-top:34px">

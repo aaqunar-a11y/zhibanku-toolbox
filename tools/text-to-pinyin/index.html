@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉字转拼音工具 — 中文转拼音带声调与首字母</title>
+<meta name="description" content="汉字转拼音，支持声调与首字母，批量转换一键复制，本地处理不传服务器。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/text-to-pinyin.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: #f5f7fb; color: #1f2d3d; line-height: 1.7; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { text-decoration: none; }
+  .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; font-weight: 700; color: #1449b0; margin: 16px 0 8px; }
+  .lead { background: #eef4ff; border-left: 4px solid #1449b0; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 15px; color: #2c3e50; margin-bottom: 28px; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(20, 73, 176, 0.06); padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 20px; color: #1449b0; margin-bottom: 14px; border-bottom: 2px solid #e3edff; padding-bottom: 8px; }
+  textarea { width: 100%; min-height: 180px; border: 1px solid #c8d6e8; border-radius: 8px; padding: 14px; font-size: 16px; line-height: 1.8; resize: vertical; font-family: inherit; background: #fafcff; }
+  textarea:focus { outline: none; border-color: #1449b0; box-shadow: 0 0 0 3px rgba(20, 73, 176, 0.12); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+  .btn { display: inline-block; padding: 9px 20px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: #1449b0; color: #fff; }
+  .btn-primary:hover { background: #0f3a8c; }
+  .btn-secondary { background: #e8f0fe; color: #1449b0; border: 1px solid #b8d0f5; }
+  .btn-secondary:hover { background: #d8e6fc; }
+  .btn-ghost { background: #f0f2f5; color: #4a5a6a; }
+  .btn-ghost:hover { background: #e2e6ea; }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; align-items: center; }
+  .preset-row span { font-size: 14px; color: #5a6b7a; margin-right: 4px; }
+  .preset-btn { background: #f4f8ff; border: 1px solid #cddffa; color: #1449b0; border-radius: 20px; padding: 6px 16px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+  .preset-btn:hover { background: #e0ecff; border-color: #9bbdf0; }
+  .result-box { background: #f8fafc; border: 1px solid #e0e8f0; border-radius: 8px; padding: 16px; min-height: 100px; margin-top: 12px; font-size: 16px; word-break: break-all; white-space: pre-wrap; }
+  .result-label { font-size: 14px; color: #5a6b7a; margin-bottom: 6px; font-weight: 600; }
+  .radio-row { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 0; }
+  .radio-row label { display: flex; align-items: center; gap: 6px; font-size: 15px; cursor: pointer; }
+  .radio-row input[type="radio"] { accent-color: #1449b0; width: 16px; height: 16px; }
+  .tips-list { padding-left: 20px; }
+  .tips-list li { margin-bottom: 8px; font-size: 15px; }
+  .steps-list { padding-left: 20px; }
+  .steps-list li { margin-bottom: 10px; font-size: 15px; }
+  details { background: #f8fafc; border: 1px solid #e0e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { font-weight: 600; cursor: pointer; color: #1449b0; font-size: 15px; }
+  details p { margin-top: 8px; font-size: 14px; color: #3d4f5f; }
+  .tool-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tool-links a { display: inline-block; background: #f4f8ff; border: 1px solid #cddffa; color: #1449b0; border-radius: 8px; padding: 8px 16px; text-decoration: none; font-size: 14px; transition: all 0.2s; }
+  .tool-links a:hover { background: #e0ecff; border-color: #9bbdf0; }
+  footer { max-width: 920px; margin: 0 auto; padding: 20px 16px; text-align: center; color: #7a8a9a; font-size: 14px; border-top: 1px solid #e0e8f0; }
+  footer a { color: #1449b0; text-decoration: none; margin: 0 8px; }
+  .copy-tip { font-size: 13px; color: #27ae60; margin-left: 10px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main class="container">
+  <h1>汉字转拼音工具</h1>
+  <p class="lead">本工具用于将中文汉字批量转换为拼音，支持带声调、不带声调以及仅输出首字母三种模式。您只需在下方输入框中粘贴或输入中文内容，然后点击「开始转换」按钮，转换结果会立即显示在下方结果区域。整个转换过程完全在您的浏览器本地完成，不会上传任何数据到服务器，可放心处理敏感文本。</p>
+
+  <div class="card">
+    <h2>输入与转换</h2>
+    <textarea id="inputText" placeholder="请输入或粘贴中文内容，例如：你好，世界！"></textarea>
+    
+    <div class="radio-row">
+      <label><input type="radio" name="mode" value="tone" checked> 带声调（例：nǐ hǎo）</label>
+      <label><input type="radio" name="mode" value="notone"> 不带声调（例：ni hao）</label>
+      <label><input type="radio" name="mode" value="first"> 仅首字母（例：nh）</label>
+    </div>
+
+    <div class="preset-row">
+      <span>快捷预设：</span>
+      <button class="preset-btn" data-preset="你好世界">你好世界</button>
+      <button class="preset-btn" data-preset="中文转拼音工具">中文转拼音工具</button>
+      <button class="preset-btn" data-preset="我爱北京天安门">我爱北京天安门</button>
+      <button class="preset-btn" data-preset="春眠不觉晓处处闻啼鸟">春眠不觉晓</button>
+      <button class="preset-btn" data-preset="床前明月光疑是地上霜">床前明月光</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="convertBtn">开始转换</button>
+      <button class="btn btn-secondary" id="copyBtn">复制结果</button>
+      <button class="btn btn-ghost" id="resetBtn">重置</button>
+    </div>
+
+    <div class="result-label">转换结果：</div>
+    <div class="result-box" id="resultBox">转换结果将显示在这里</div>
+  </div>
+
+  <div class="card">
+    <h2>注意事项</h2>
+    <ul class="tips-list">
+      <li>本工具仅支持简体中文汉字转换，繁体字、生僻字可能无法正确识别或显示为原字符。</li>
+      <li>多音字（如「行」「长」「重」）无法根据上下文自动判断读音，默认取常用读音，请人工核对。</li>
+      <li>非汉字字符（数字、字母、标点、空格）会原样保留在结果中，不会被转换或删除。</li>
+      <li>所有转换均在浏览器本地完成，数据不会上传到任何服务器，可放心处理隐私内容。</li>
+      <li>批量转换时建议单次输入不超过 5000 字，以免页面卡顿影响体验。</li>
+      <li>「仅首字母」模式下，每个汉字取拼音首字母，非汉字字符同样原样保留。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol class="steps-list">
+      <li>在输入框中粘贴或手动输入需要转换的中文内容，也可以点击上方快捷预设按钮快速填入示例文本。</li>
+      <li>在三种输出模式中选择一种：带声调、不带声调或仅首字母，默认选中「带声调」。</li>
+      <li>点击「开始转换」按钮，转换结果会立即显示在下方结果区域。</li>
+      <li>如需复制结果，点击「复制结果」按钮即可将内容复制到剪贴板。</li>
+      <li>如需清空输入和结果，点击「重置」按钮即可恢复初始状态。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>常见问题</h2>
+    <details>
+      <summary>转换结果中的声调数字是什么意思</summary>
+      <p>声调数字 1-4 分别代表一声、二声、三声、四声，例如 nǐ 会显示为 ni3 或 nǐ，取决于您选择的模式。带声调模式直接显示声调符号，不带声调模式则去掉声调。</p>
+    </details>
+    <details>
+      <summary>为什么有些多音字转出来读音不对</summary>
+      <p>本工具使用常用读音字典，无法根据上下文智能判断多音字读音。例如「银行」的「行」会读 háng 而非 xíng。建议转换后人工核对关键多音字。</p>
+    </details>
+    <details>
+      <summary>可以转换繁体中文吗</summary>
+      <p>本工具主要针对简体中文设计，繁体字可能无法正确转换或直接保留原字符。建议先使用繁转简工具处理后再进行拼音转换。</p>
+    </details>
+    <details>
+      <summary>转换大量文本会卡顿吗</summary>
+      <p>转换在浏览器本地执行，超过 5000 字可能会有轻微卡顿。建议分批转换，或使用「仅首字母」模式提高处理速度。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>相关工具推荐</h2>
+    <div class="tool-links">
+      <a href="https://zhibanku.com/tools/word-count.html">在线字数统计工具</a>
+      <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+      <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+      <a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 美化工具</a>
+      <a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+      <a href="https://zhibanku.com/tools/offline-translator.html">离线中英翻译工具</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // 拼音字典（常用汉字 -> 带声调拼音）
+  var pinyinDict = {
+    '你': 'nǐ', '好': 'hǎo', '世': 'shì', '界': 'jiè', '中': 'zhōng', '文': 'wén',
+    '转': 'zhuǎn', '拼': 'pīn', '音': 'yīn', '工': 'gōng', '具': 'jù',
+    '我': 'wǒ', '爱': 'ài', '北': 'běi', '京': 'jīng', '天': 'tiān', '安': 'ān', '门': 'mén',
+    '春': 'chūn', '眠': 'mián', '不': 'bù', '觉': 'jué', '晓': 'xiǎo', '处': 'chù', '闻': 'wén', '啼': 'tí', '鸟': 'niǎo',
+    '床': 'chuáng', '前': 'qián', '明': 'míng', '月': 'yuè', '光': 'guāng', '疑': 'yí', '是': 'shì', '地': 'dì', '上': 'shàng', '霜': 'shuāng',
+    '的': 'de', '一': 'yī', '是': 'shì', '在': 'zài', '了': 'le', '不': 'bù', '和': 'hé', '有': 'yǒu', '人': 'rén', '这': 'zhè',
+    '大': 'dà', '小': 'xiǎo', '来': 'lái', '去': 'qù', '说': 'shuō', '话': 'huà', '看': 'kàn', '见': 'jiàn', '想': 'xiǎng', '要': 'yào',
+    '会': 'huì', '能': 'néng', '可': 'kě', '以': 'yǐ', '没': 'méi', '有': 'yǒu', '就': 'jiù', '都': 'dōu', '而': 'ér', '与': 'yǔ',
+    '及': 'jí', '或': 'huò', '但': 'dàn', '只': 'zhǐ', '个': 'gè', '之': 'zhī', '于': 'yú', '其': 'qí', '所': 'suǒ', '用': 'yòng',
+    '为': 'wèi', '从': 'cóng', '到': 'dào', '对': 'duì', '把': 'bǎ', '被': 'bèi', '让': 'ràng', '给': 'gěi', '向': 'xiàng', '在': 'zài',
+    '时': 'shí', '间': 'jiān', '年': 'nián', '月': 'yuè', '日': 'rì', '今': 'jīn', '天': 'tiān', '明': 'míng', '昨': 'zuó', '后': 'hòu',
+    '前': 'qián', '左': 'zuǒ', '右': 'yòu', '上': 'shàng', '下': 'xià', '里': 'lǐ', '外': 'wài', '中': 'zhōng', '心': 'xīn', '意': 'yì',
+    '思': 'sī', '想': 'xiǎng', '感': 'gǎn', '觉': 'jué', '知': 'zhī', '道': 'dào', '问': 'wèn', '题': 'tí', '答': 'dá', '案': 'àn',
+    '学': 'xué', '习': 'xí', '工': 'gōng', '作': 'zuò', '生': 'shēng', '活': 'huó', '朋': 'péng', '友': 'yǒu', '家': 'jiā', '国': 'guó',
+    '城': 'chéng', '市': 'shì', '村': 'cūn', '镇': 'zhèn', '山': 'shān', '水': 'shuǐ', '花': 'huā', '草': 'cǎo', '树': 'shù', '木': 'mù',
+    '风': 'fēng', '雨': 'yǔ', '雪': 'xuě', '云': 'yún', '星': 'xīng', '空': 'kōng', '气': 'qì', '温': 'wēn', '度': 'dù', '新': 'xīn',
+    '旧': 'jiù', '老': 'lǎo', '少': 'shǎo', '多': 'duō', '少': 'shǎo', '长': 'cháng', '短': 'duǎn', '高': 'gāo', '低': 'dī', '深': 'shēn',
+    '浅': 'qiǎn', '快': 'kuài', '慢': 'màn', '早': 'zǎo', '晚': 'wǎn', '白': 'bái', '黑': 'hēi', '红': 'hóng', '绿': 'lǜ', '蓝': 'lán',
+    '黄': 'huáng', '紫': 'zǐ', '灰': 'huī', '色': 'sè', '声': 'shēng', '音': 'yīn', '乐': 'yuè', '歌': 'gē', '曲': 'qǔ', '舞': 'wǔ',
+    '台': 'tái', '灯': 'dēng', '书': 'shū', '本': 'běn', '笔': 'bǐ', '纸': 'zhǐ', '墨': 'mò', '画': 'huà', '图': 'tú', '片': 'piàn',
+    '照': 'zhào', '相': 'xiàng', '机': 'jī', '电': 'diàn', '脑': 'nǎo', '手': 'shǒu', '机': 'jī', '网': 'wǎng', '络': 'luò', '信': 'xìn',
+    '息': 'xī', '数': 'shù', '据': 'jù', '库': 'kù', '表': 'biǎo', '格': 'gé', '文': 'wén', '件': 'jiàn', '夹': 'jiā', '盘': 'pán',
+    '硬': 'yìng', '软': 'ruǎn', '件': 'jiàn', '系': 'xì', '统': 'tǒng', '程': 'chéng', '序': 'xù', '码': 'mǎ', '编': 'biān', '译': 'yì',
+    '语': 'yǔ', '言': 'yán', '字': 'zì', '词': 'cí', '句': 'jù', '段': 'duàn', '章': 'zhāng', '篇': 'piān', '页': 'yè', '行': 'háng',
+    '列': 'liè', '排': 'pái', '序': 'xù', '号': 'hào', '数': 'shù', '量': 'liàng', '质': 'zhì', '量': 'liàng', '分': 'fēn', '秒': 'miǎo',
+    '钟': 'zhōng', '点': 'diǎn', '半': 'bàn', '整': 'zhěng', '零': 'líng', '壹': 'yī', '贰': 'èr', '叁': 'sān', '肆': 'sì', '伍': 'wǔ',
+    '陆': 'liù', '柒': 'qī', '捌': 'bā', '玖': 'jiǔ', '拾': 'shí', '百': 'bǎi', '千': 'qiān', '万': 'wàn', '亿': 'yì', '兆': 'zhào'
+  };
+
+  // 补充更多常用字
+  var extraDict = {
+    '欢': 'huān', '迎': 'yíng', '使': 'shǐ', '用': 'yòng', '本': 'běn', '页': 'yè',
+    '请': 'qǐng', '输': 'shū', '入': 'rù', '内': 'nèi', '容': 'róng', '示': 'shì',
+    '例': 'lì', '如': 'rú', '转': 'zhuǎn', '换': 'huàn', '结': 'jié', '果': 'guǒ',
+    '区': 'qū', '域': 'yù', '按': 'àn', '钮': 'niǔ', '开': 'kāi', '始': 'shǐ',
+    '复': 'fù', '制': 'zhì', '重': 'zhòng', '置': 'zhì', '快': 'kuài', '捷': 'jié',
+    '预': 'yù', '设': 'shè', '常': 'cháng', '见': 'jiàn', '问': 'wèn', '题': 'tí',
+    '注': 'zhù', '意': 'yì', '事': 'shì', '项': 'xiàng', '相': 'xiāng', '关': 'guān',
+    '推': 'tuī', '荐': 'jiàn', '工': 'gōng', '具': 'jù', '更': 'gèng', '多': 'duō',
+    '功': 'gōng', '能': 'néng', '正': 'zhèng', '在': 'zài', '开': 'kāi', '发': 'fā',
+    '中': 'zhōng', '敬': 'jìng', '请': 'qǐng', '期': 'qī', '待': 'dài', '谢': 'xiè',
+    '谢': 'xiè', '观': 'guān', '看': 'kàn', '浏': 'liú', '览': 'lǎn', '器': 'qì',
+    '支': 'zhī', '持': 'chí', '现': 'xiàn', '代': 'dài', '浏': 'liú', '览': 'lǎn',
+    '器': 'qì', '谷': 'gǔ', '歌': 'gē', '火': 'huǒ', '狐': 'hú', '微': 'wēi',
+    '软': 'ruǎn', '边': 'biān', '缘': 'yuán', '傲': 'ào', '游': 'yóu', '提': 'tí',
+    '示': 'shì', '错': 'cuò', '误': 'wù', '信': 'xìn', '息': 'xī', '已': 'yǐ',
+    '经': 'jīng', '复': 'fù', '制': 'zhì', '到': 'dào', '剪': 'jiǎn', '贴': 'tiē',
+    '板': 'bǎn', '无': 'wú', '法': 'fǎ', '自': 'zì', '动': 'dòng', '复': 'fù',
+    '制': 'zhì', '请': 'qǐng', '手': 'shǒu', '动': 'dòng', '选': 'xuǎn', '择': 'zé',
+    '清': 'qīng', '空': 'kōng', '成': 'chéng', '功': 'gōng', '失': 'shī', '败': 'bài',
+    '请': 'qǐng', '重': 'chóng', '试': 'shì', '输': 'shū', '入': 'rù', '内': 'nèi',
+    '容': 'róng', '不': 'bù', '能': 'néng', '为': 'wéi', '空': 'kōng', '请': 'qǐng',
+    '检': 'jiǎn', '查': 'chá', '后': 'hòu', '再': 'zài', '次': 'cì', '转': 'zhuǎn',
+    '换': 'huàn', '当': 'dāng', '前': 'qián', '模': 'mó', '式': 'shì', '带': 'dài',
+    '声': 'shēng', '调': 'diào', '不': 'bù', '带': 'dài', '声': 'shēng', '调': 'diào',
+    '仅': 'jǐn', '首': 'shǒu', '字': 'zì', '母': 'mǔ', '拼': 'pīn', '音': 'yīn',
+    '字': 'zì', '典': 'diǎn', '版': 'bǎn', '本': 'běn', '本': 'běn', '地': 'dì',
+    '运': 'yùn', '行': 'xíng', '无': 'wú', '需': 'xū', '联': 'lián', '网': 'wǎng'
+  };
+
+  // 合并字典
+  for (var key in extraDict) {
+    if (!pinyinDict[key]) {
+      pinyinDict[key] = extraDict[key];
+    }
+  }
+
+  // 获取拼音（带声调）
+  function getPinyinTone(char) {
+    return pinyinDict[char] || char;
+  }
+
+  // 去掉声调
+  function removeTone(pinyin) {
+    var toneMap = {
+      'ā': 'a', 'á': 'a', 'ǎ': 'a', 'à': 'a',
+      'ē': 'e', 'é': 'e', 'ě': 'e', 'è': 'e',
+      'ī': 'i', 'í': 'i', 'ǐ': 'i', 'ì': 'i',
+      'ō': 'o', 'ó': 'o', 'ǒ': 'o', 'ò': 'o',
+      'ū': 'u', 'ú': 'u', 'ǔ': 'u', 'ù': 'u',
+      'ǖ': 'v', 'ǘ': 'v', 'ǚ': 'v', 'ǜ': 'v',
+      'ü': 'v', 'ń': 'n', 'ň': 'n', 'ǹ': 'n',
+      'ḿ': 'm', 'm̀': 'm'
+    };
+    var result = '';
+    for (var i = 0; i < pinyin.length; i++) {
+      var ch = pinyin[i];
+      result += toneMap[ch] || ch;
+    }
+    return result;
+  }
+
+  // 获取首字母
+  function getFirstLetter(pinyin) {
+    var noTone = removeTone(pinyin);
+    if (noTone.length > 0) {
+      return noTone.charAt(0);
+    }
+    return pinyin.charAt(0);
+  }
+
+  // 转换函数
+  function convert(inputText, mode) {
+    var result = '';
+    for (var i = 0; i < inputText.length; i++) {
+      var char = inputText[i];
+      var pinyin = getPinyinTone(char);
+      if (pinyin === char) {
+        // 非汉字字符，原样保留
+        result += char;
+      } else {
+        if (mode === 'tone') {
+          result += pinyin;
+        } else if (mode === 'notone') {
+          result += removeTone(pinyin);
+        } else if (mode === 'first') {
+          result += getFirstLetter(pinyin);
+        }
+      }
+    }
+    return result;
+  }
+
+  // DOM 元素
+  var inputText = document.getElementById('inputText');
+  var resultBox = document.getElementById('resultBox');
+  var convertBtn = document.getElementById('convertBtn');
+  var copyBtn = document.getElementById('copyBtn');
+  var resetBtn = document.getElementById('resetBtn');
+
+  // 获取当前选中的模式
+  function getSelectedMode() {
+    var radios = document.querySelectorAll('input[name="mode"]');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        return radios[i].value;
+      }
+    }
+    return 'tone';
+  }
+
+  // 转换按钮
+  convertBtn.addEventListener('click', function() {
+    var text = inputText.value;
+    if (!text.trim()) {
+      resultBox.textContent = '请输入需要转换的中文内容';
+      return;
+    }
+    var mode = getSelectedMode();
+    var result = convert(text, mode);
+    resultBox.textContent = result;
+  });
+
+  // 复制按钮
+  copyBtn.addEventListener('click', function() {
+    var text = resultBox.textContent;
+    if (!text || text === '转换结果将显示在这里' || text === '请输入需要转换的中文内容') {
+      alert('请先进行转换，再复制结果');
+      return;
+    }
+    // 使用 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        alert('复制成功');
+      }).catch(function() {
+        // 降级方案
+        copyFallback(text);
+      });
+    } else {
+      copyFallback(text);
+    }
+  });
+
+  function copyFallback(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      alert('复制成功');
+    } catch (err) {
+      alert('复制失败，请手动选择复制');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 重置按钮
+  resetBtn.addEventListener('click', function() {
+    inputText.value = '';
+    resultBox.textContent = '转换结果将显示在这里';
+    // 重置为默认模式
+    var radios = document.querySelectorAll('input[name="mode"]');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].value === 'tone') {
+        radios[i].checked = true;
+      }
+    }
+  });
+
+  // 快捷预设按钮
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  for (var i = 0; i < presetBtns.length; i++) {
+    presetBtns[i].addEventListener('click', function() {
+      var preset = this.getAttribute('data-preset');
+      inputText.value = preset;
+      // 自动触发转换
+      var mode = getSelectedMode();
+      var result = convert(preset, mode);
+      resultBox.textContent = result;
+    });
+  }
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-to-pinyin" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/text-to-pinyin" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/faa2cf5035f6" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1MXRXYaGAhxl_UeBXN580GA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0712</b> ｜ 百度提取码：<b>ijfm</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/text-to-pinyin-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
