@@ -78,8 +78,8 @@ SQL 格式化与压缩，关键字大写，支持 MySQL、SQL Server、Oracle �
 | --- | --- |
 | [`index.html`](index.html) | 完整工具（单文件，含全部样式与脚本） |
 
-- **SHA-256**：`7cf788fa3d48f4336fd9efa2cf995d7f5885f7559790eda02b044b11b7616bb7`
-- **体积**：53562 字节（约 52.3 KB）
+- **SHA-256**：`8004602e82d9501d396b7989a53c3468b650bbdccdfffe9dad0fc281137f55a5`
+- **体积**：54474 字节（约 53.2 KB）
 
 ## 🔗 相关链接
 

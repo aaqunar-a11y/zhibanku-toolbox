@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>px 与 rem 换算工具</title>
+    <meta name="description" content="px 与 rem 在线换算，支持自定义根字号，一键切换方向，批量换算并复制结果。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/px-rem.html">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 60px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a3a6b;
+            margin: 24px 0 12px;
+            text-align: center;
+        }
+        .lead {
+            font-size: 15px;
+            color: #4a6a8a;
+            background: #eef4fb;
+            border-left: 4px solid #4a90d9;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 28px;
+            text-align: justify;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a3a6b;
+            margin: 36px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dce6f2;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 18px;
+        }
+        .field {
+            flex: 1;
+            min-width: 180px;
+        }
+        .field label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 6px;
+        }
+        .field input, .field select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccd9e8;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fafcff;
+            transition: border-color 0.2s;
+        }
+        .field input:focus, .field select:focus {
+            outline: none;
+            border-color: #4a90d9;
+            box-shadow: 0 0 0 3px rgba(74,144,217,0.15);
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #4a90d9;
+            color: #fff;
+        }
+        .btn:hover { background: #3a7bc0; transform: translateY(-1px); }
+        .btn-secondary {
+            background: #eef2f7;
+            color: #2c3e50;
+            border: 1px solid #ccd9e8;
+        }
+        .btn-secondary:hover { background: #dfe7f0; }
+        .btn-success {
+            background: #27ae60;
+        }
+        .btn-success:hover { background: #219a52; }
+        .btn-warning {
+            background: #e67e22;
+        }
+        .btn-warning:hover { background: #d06e1a; }
+        .preset-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 8px;
+        }
+        .preset-btn {
+            padding: 8px 16px;
+            border: 1px solid #b8d0ea;
+            background: #f0f6ff;
+            color: #1a5fb0;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .preset-btn:hover {
+            background: #dce9fa;
+            border-color: #4a90d9;
+        }
+        .result-area {
+            background: #f8fafc;
+            border: 1px solid #dce6f2;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            min-height: 80px;
+            font-size: 15px;
+            word-break: break-all;
+            white-space: pre-wrap;
+            font-family: "SF Mono", Consolas, "Courier New", monospace;
+        }
+        .result-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .switch-direction {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .switch-direction span {
+            font-size: 14px;
+            color: #7f8c9a;
+        }
+        .switch-direction .arrow {
+            font-size: 20px;
+            color: #4a90d9;
+            font-weight: bold;
+        }
+        .tips-list {
+            padding-left: 20px;
+        }
+        .tips-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .steps-list {
+            padding-left: 20px;
+        }
+        .steps-list li {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #dce6f2;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: #1a3a6b;
+            font-size: 15px;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4a6a8a;
+        }
+        .rec-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .rec-links a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f0f6ff;
+            border: 1px solid #b8d0ea;
+            border-radius: 8px;
+            color: #1a5fb0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .rec-links a:hover {
+            background: #dce9fa;
+            border-color: #4a90d9;
+        }
+        footer {
+            text-align: center;
+            padding: 30px 16px 20px;
+            color: #7f8c9a;
+            font-size: 13px;
+            border-top: 1px solid #e0e8f0;
+            margin-top: 40px;
+        }
+        footer a {
+            color: #1a5fb0;
+            text-decoration: none;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .success-msg {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .direction-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #e8f0fe;
+            color: #1a5fb0;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 16px 12px 40px; }
+            .card { padding: 16px; }
+            .btn-row { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+    <main class="container">
+        <h1>px 与 rem 换算工具</h1>
+        <p class="lead">本工具用于在像素（px）与相对单位（rem）之间进行快速换算。您只需在输入框中填写数值，选择换算方向（px 转 rem 或 rem 转 px），并设置根字号（默认 16px），点击「开始换算」按钮，结果会立即显示在下方的结果区域。同时提供多个常用根字号快捷预设按钮，一键切换，方便您在不同设计稿之间切换。结果支持一键复制，方便直接粘贴到代码中使用。</p>
+
+        <div class="card">
+            <h2 style="margin-top:0;border-bottom:none;padding-bottom:0;">换算设置</h2>
+            
+            <div class="switch-direction">
+                <span class="direction-tag" id="directionLabel">px 转 rem</span>
+                <span class="arrow">⇄</span>
+                <button class="btn btn-secondary" id="switchBtn" style="padding:6px 14px;font-size:14px;">切换方向</button>
+            </div>
+
+            <div class="input-group">
+                <div class="field">
+                    <label for="inputValue">输入数值</label>
+                    <input type="text" id="inputValue" placeholder="例如：16 或 1.5" autocomplete="off">
+                </div>
+                <div class="field">
+                    <label for="rootSize">根字号（px）</label>
+                    <input type="number" id="rootSize" value="16" min="1" step="0.5" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="preset-row">
+                <span style="font-size:13px;color:#7f8c9a;align-self:center;">快捷预设根字号：</span>
+                <button class="preset-btn" data-root="16">16px（默认）</button>
+                <button class="preset-btn" data-root="14">14px</button>
+                <button class="preset-btn" data-root="15">15px</button>
+                <button class="preset-btn" data-root="20">20px</button>
+                <button class="preset-btn" data-root="24">24px</button>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn" id="convertBtn">开始换算</button>
+                <button class="btn btn-warning" id="resetBtn">重置</button>
+            </div>
+
+            <div class="result-label">
+                <span>换算结果</span>
+                <button class="btn btn-success" id="copyBtn" style="padding:6px 14px;font-size:14px;">复制结果</button>
+            </div>
+            <div class="result-area" id="resultArea">请先输入数值，然后点击「开始换算」按钮。</div>
+            <div id="messageArea"></div>
+        </div>
+
+        <h2>注意事项</h2>
+        <ul class="tips-list">
+            <li>根字号默认设为 16px，这是浏览器标准默认值；若您的项目在 html 元素上自定义了 font-size，请先修改根字号再换算。</li>
+            <li>本工具支持小数输入（如 1.5、0.75），结果保留 4 位小数，超出部分四舍五入。</li>
+            <li>输入非法字符（如字母、符号）时，工具会提示错误，请检查后重新输入。</li>
+            <li>所有换算均在您的浏览器本地完成，数据不会上传到任何服务器，可放心使用。</li>
+            <li>若根字号设置为 0 或负数，工具会拒绝换算并提示，请确保根字号大于 0。</li>
+            <li>批量换算时请用英文逗号或空格分隔多个数值，例如：16 24 32 或 16,24,32。</li>
+        </ul>
+
+        <h2>怎么用</h2>
+        <ol class="steps-list">
+            <li>在「输入数值」框中填写需要换算的数值，支持单个或多个（用逗号或空格分隔）。</li>
+            <li>确认「根字号」是否正确，可通过快捷预设按钮快速切换，或手动输入自定义值。</li>
+            <li>确认换算方向：默认是 px 转 rem，如需反向请点击「切换方向」按钮。</li>
+            <li>点击「开始换算」按钮，结果会显示在下方结果区域。</li>
+            <li>如需复制结果，点击「复制结果」按钮即可；如需重新输入，点击「重置」按钮清空所有内容。</li>
+        </ol>
+
+        <h2>常见问题</h2>
+        <details>
+            <summary>px 和 rem 有什么区别</summary>
+            <p>px 是绝对单位，固定大小；rem 是相对单位，相对于根元素（html）的 font-size。rem 更适合响应式布局。</p>
+        </details>
+        <details>
+            <summary>为什么我的项目根字号不是 16px</summary>
+            <p>很多框架或设计稿会自定义根字号，比如 14px 或 20px。您只需在工具中修改根字号即可，换算结果会自动适配。</p>
+        </details>
+        <details>
+            <summary>可以批量换算多个数值吗</summary>
+            <p>可以。在输入框中用英文逗号或空格分隔多个数值，例如 16 24 32，工具会逐个换算并分行显示结果。</p>
+        </details>
+        <details>
+            <summary>换算结果精确到几位小数</summary>
+            <p>结果保留 4 位小数，足够满足日常开发精度需求。如需更高精度，可自行在代码中调整。</p>
+        </details>
+
+        <h2>相关工具推荐</h2>
+        <div class="rec-links">
+            <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+            <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+            <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+            <a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 美化工具</a>
+            <a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+            <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+        </div>
+    </main>
+
+    <footer>
+        <p><a href="/tools/">返回在线工具</a></p>
+        <p>本工具为纯前端实现，所有数据仅在本地浏览器处理，无需联网。</p>
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            let currentDirection = 'px-to-rem'; // 'px-to-rem' 或 'rem-to-px'
+
+            const inputValue = document.getElementById('inputValue');
+            const rootSize = document.getElementById('rootSize');
+            const directionLabel = document.getElementById('directionLabel');
+            const switchBtn = document.getElementById('switchBtn');
+            const convertBtn = document.getElementById('convertBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const resultArea = document.getElementById('resultArea');
+            const messageArea = document.getElementById('messageArea');
+
+            // 预设按钮
+            const presetBtns = document.querySelectorAll('.preset-btn');
+            presetBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const rootVal = this.getAttribute('data-root');
+                    rootSize.value = rootVal;
+                    showMessage('根字号已设置为 ' + rootVal + 'px', '成功了');
+                });
+            });
+
+            // 切换方向
+            switchBtn.addEventListener('click', function() {
+                if (currentDirection === 'px-to-rem') {
+                    currentDirection = 'rem-to-px';
+                    directionLabel.textContent = 'rem 转 px';
+                } else {
+                    currentDirection = 'px-to-rem';
+                    directionLabel.textContent = 'px 转 rem';
+                }
+                showMessage('已切换为「' + directionLabel.textContent + '」', '成功了');
+            });
+
+            // 换算
+            convertBtn.addEventListener('click', function() {
+                const rawInput = inputValue.value.trim();
+                if (!rawInput) {
+                    showMessage('请输入需要换算的数值', '出错了');
+                    resultArea.textContent = '请先输入数值，然后点击「开始换算」按钮。';
+                    return;
+                }
+
+                const rootVal = parseFloat(rootSize.value);
+                if (isNaN(rootVal) || rootVal <= 0) {
+                    showMessage('根字号必须大于 0 的数字', '出错了');
+                    return;
+                }
+
+                // 支持逗号或空格分隔
+                const parts = rawInput.split(/[,\s]+/).filter(function(p) { return p.length > 0; });
+                if (parts.length === 0) {
+                    showMessage('未识别到有效数值', '出错了');
+                    return;
+                }
+
+                const results = [];
+                let hasError = false;
+
+                parts.forEach(function(part) {
+                    const num = parseFloat(part);
+                    if (isNaN(num)) {
+                        results.push('「' + part + '」不是有效数字');
+                        hasError = true;
+                        return;
+                    }
+
+                    let result;
+                    if (currentDirection === 'px-to-rem') {
+                        result = num / rootVal;
+                        results.push(num + 'px → ' + result.toFixed(4) + 'rem');
+                    } else {
+                        result = num * rootVal;
+                        results.push(num + 'rem → ' + result.toFixed(4) + 'px');
+                    }
+                });
+
+                if (hasError) {
+                    showMessage('部分输入不是有效数字，请检查', '出错了');
+                } else {
+                    showMessage('换算完成', '成功了');
+                }
+
+                resultArea.textContent = results.join('\n');
+            });
+
+            // 重置
+            resetBtn.addEventListener('click', function() {
+                inputValue.value = '';
+                rootSize.value = '16';
+                currentDirection = 'px-to-rem';
+                directionLabel.textContent = 'px 转 rem';
+                resultArea.textContent = '请先输入数值，然后点击「开始换算」按钮。';
+                messageArea.innerHTML = '';
+            });
+
+            // 复制
+            copyBtn.addEventListener('click', function() {
+                const text = resultArea.textContent;
+                if (!text || text.indexOf('请先输入') !== -1) {
+                    showMessage('暂无可复制的结果', '出错了');
+                    return;
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        showMessage('结果已复制到剪贴板', '成功了');
+                    }).catch(function() {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            });
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showMessage('结果已复制到剪贴板', '成功了');
+                } catch (err) {
+                    showMessage('复制失败，请手动选择复制', '出错了');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            function showMessage(msg, type) {
+                messageArea.innerHTML = '';
+                const div = document.createElement('div');
+                div.className = type === '出错了' ? '出错了-msg' : '成功了-msg';
+                div.textContent = msg;
+                messageArea.appendChild(div);
+                // 3秒后自动清除
+                setTimeout(function() {
+                    if (messageArea.firstChild === div) {
+                        messageArea.innerHTML = '';
+                    }
+                }, 3000);
+            }
+
+            // 回车触发换算
+            inputValue.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    convertBtn.click();
+                }
+            });
+            rootSize.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    convertBtn.click();
+                }
+            });
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/px-rem" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/px-rem" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/b7c558feced9" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1BIogN4-bWHv_tQ0WjDfEbA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7846</b> ｜ 百度提取码：<b>tjjf</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/px-rem-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
