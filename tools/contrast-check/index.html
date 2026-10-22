@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>颜色对比度检测 — WCAG AA/AAA 评级工具</title>
+<meta name="description" content="在线检测前景与背景颜色对比度，自动计算 WCAG AA/AAA 评级，支持 HEX、RGB、HSL 输入，结果即时可见。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/contrast-check.html">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background:#f5f7fb; color:#222; line-height:1.7; }
+  .container { max-width:920px; margin:0 auto; padding:20px 16px 40px; }
+  h1 { font-size:1.8rem; margin:16px 0 8px; color:#1a2b4a; }
+  .lead { background:#eef3fc; border-left:4px solid #3b82f6; padding:12px 16px; border-radius:0 8px 8px 0; font-size:0.95rem; color:#2c3e5c; margin-bottom:24px; }
+  h2 { font-size:1.3rem; margin:28px 0 12px; color:#1a2b4a; border-bottom:2px solid #dbe4f0; padding-bottom:6px; }
+  .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); margin-bottom:16px; }
+  .flex-row { display:flex; flex-wrap:wrap; gap:16px; }
+  .flex-col { flex:1; min-width:260px; }
+  label { display:block; font-weight:600; margin-bottom:6px; font-size:0.9rem; color:#333; }
+  input[type="text"], input[type="color"] { width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:1rem; background:#fff; }
+  input[type="color"] { height:48px; padding:4px; cursor:pointer; }
+  .preset-btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .preset-btns button { padding:6px 14px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:20px; font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
+  .preset-btns button:hover { background:#e2e8f0; border-color:#94a3b8; }
+  .action-btns { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .btn-primary { background:#3b82f6; color:#fff; border:none; padding:10px 24px; border-radius:8px; font-size:1rem; cursor:pointer; font-weight:600; transition:background 0.2s; }
+  .btn-primary:hover { background:#2563eb; }
+  .btn-secondary { background:#fff; color:#3b82f6; border:1px solid #3b82f6; padding:10px 24px; border-radius:8px; font-size:1rem; cursor:pointer; font-weight:600; transition:background 0.2s; }
+  .btn-secondary:hover { background:#eff6ff; }
+  .result-box { margin-top:20px; padding:16px; border-radius:10px; border:2px solid #e2e8f0; background:#f8fafc; }
+  .ratio-display { font-size:2rem; font-weight:800; color:#1a2b4a; }
+  .rating { display:inline-block; padding:4px 14px; border-radius:20px; font-weight:700; font-size:0.9rem; margin-left:10px; }
+  .rating-aaa { background:#dcfce7; color:#166534; }
+  .rating-aa { background:#fef9c3; color:#854d0e; }
+  .rating-fail { background:#fee2e2; color:#991b1b; }
+  .preview-box { margin-top:16px; padding:24px; border-radius:10px; text-align:center; font-size:1.1rem; font-weight:500; }
+  .detail-list { list-style:none; margin-top:12px; }
+  .detail-list li { padding:6px 0; border-bottom:1px dashed #e2e8f0; font-size:0.9rem; }
+  .detail-list li:last-child { border-bottom:none; }
+  .note-list { padding-left:20px; }
+  .note-list li { margin-bottom:8px; font-size:0.92rem; }
+  .step-list { padding-left:20px; }
+  .step-list li { margin-bottom:8px; font-size:0.95rem; }
+  details { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 16px; margin-bottom:10px; }
+  summary { font-weight:600; cursor:pointer; color:#1a2b4a; }
+  details p { margin-top:8px; font-size:0.9rem; color:#475569; }
+  .tool-links { display:flex; flex-wrap:wrap; gap:10px; }
+  .tool-links a { display:inline-block; padding:8px 16px; background:#f0f4ff; border:1px solid #c7d7f0; border-radius:8px; color:#1a5fe0; text-decoration:none; font-size:0.9rem; transition:all 0.2s; }
+  .tool-links a:hover { background:#e0ebff; }
+  footer { text-align:center; padding:24px 0 12px; color:#64748b; font-size:0.85rem; border-top:1px solid #e2e8f0; margin-top:30px; }
+  footer a { color:#3b82f6; text-decoration:none; }
+  .color-input-row { display:flex; gap:10px; align-items:center; }
+  .color-input-row input[type="text"] { flex:1; }
+  .color-input-row input[type="color"] { width:56px; flex-shrink:0; }
+  .small-tip { font-size:0.8rem; color:#64748b; margin-top:4px; }
+  @media (max-width:600px) {
+    .flex-row { flex-direction:column; }
+    h1 { font-size:1.5rem; }
+  }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main class="container">
+  <h1>颜色对比度检测</h1>
+  <p class="lead">本工具用于检测前景色与背景色之间的对比度是否满足 WCAG 无障碍标准。您只需在下方输入或选择两种颜色（支持十六进制、RGB、HSL 格式），然后点击「开始检测」按钮，系统会立即计算出对比度数值，并给出 AA 或 AAA 级别的通过评级。检测结果会显示在下方结果区域，同时提供实时预览效果。整个过程完全在浏览器本地运行，您的颜色数据不会上传到任何服务器。</p>
+
+  <div class="card">
+    <div class="flex-row">
+      <div class="flex-col">
+        <label for="fgColor">前景色（文字颜色）</label>
+        <div class="color-input-row">
+          <input type="text" id="fgColor" placeholder="如 #333333 或 rgb(51,51,51)" value="#333333">
+          <input type="color" id="fgColorPicker" value="#333333">
+        </div>
+        <div class="preset-btns">
+          <button onclick="setFg('#000000')">黑色</button>
+          <button onclick="setFg('#ffffff')">白色</button>
+          <button onclick="setFg('#333333')">深灰</button>
+          <button onclick="setFg('#ff0000')">红色</button>
+          <button onclick="setFg('#0066cc')">蓝色</button>
+        </div>
+      </div>
+      <div class="flex-col">
+        <label for="bgColor">背景色</label>
+        <div class="color-input-row">
+          <input type="text" id="bgColor" placeholder="如 #ffffff 或 rgb(255,255,255)" value="#ffffff">
+          <input type="color" id="bgColorPicker" value="#ffffff">
+        </div>
+        <div class="preset-btns">
+          <button onclick="setBg('#ffffff')">白色</button>
+          <button onclick="setBg('#000000')">黑色</button>
+          <button onclick="setBg('#f0f0f0')">浅灰</button>
+          <button onclick="setBg('#ffffcc')">米黄</button>
+          <button onclick="setBg('#0066cc')">蓝色</button>
+        </div>
+      </div>
+    </div>
+    <div class="action-btns">
+      <button class="btn-primary" onclick="checkContrast()">开始检测</button>
+      <button class="btn-secondary" onclick="swapColors()">交换颜色</button>
+      <button class="btn-secondary" onclick="resetColors()">重置</button>
+    </div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <h2 style="margin-top:0;border-bottom:none;">检测结果</h2>
+    <div class="result-box">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
+        <span class="ratio-display" id="ratioValue">--:1</span>
+        <span class="rating" id="ratingBadge">--</span>
+      </div>
+      <ul class="detail-list" id="detailList">
+        <li>对比度数值：<strong id="detailRatio">--</strong></li>
+        <li>WCAG AA 普通文本（≥4.5:1）：<strong id="detailAA">--</strong></li>
+        <li>WCAG AA 大文本（≥3:1）：<strong id="detailAALarge">--</strong></li>
+        <li>WCAG AAA 普通文本（≥7:1）：<strong id="detailAAA">--</strong></li>
+        <li>WCAG AAA 大文本（≥4.5:1）：<strong id="detailAAALarge">--</strong></li>
+      </ul>
+      <div class="preview-box" id="previewBox">
+        这是预览文字，用于直观感受对比效果
+      </div>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="note-list">
+    <li>对比度计算基于 WCAG 2.1 标准中的相对亮度公式，适用于普通文本、大文本（18pt 或 14pt 加粗以上）及图形组件的对比度评估。</li>
+    <li>本工具支持 HEX（#RGB、#RRGGBB）、RGB（rgb(r,g,b)）、RGBA（alpha 会被忽略）、HSL（hsl(h,s%,l%)）格式输入，其他格式可能无法解析。</li>
+    <li>所有计算均在您的浏览器本地完成，颜色数据不会上传到任何服务器，可放心使用。</li>
+    <li>对于半透明颜色，建议先与背景混合后再输入，因为本工具不处理 alpha 通道的叠加计算。</li>
+    <li>检测结果仅供参考，实际设计时还需考虑字体大小、字重、周围环境光等因素。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="step-list">
+    <li>在「前景色」输入框中输入文字颜色，或点击右侧色板直接选取颜色；也可以点击下方快捷按钮快速设置常见颜色。</li>
+    <li>在「背景色」输入框中输入背景颜色，同样支持手动输入或色板选取。</li>
+    <li>点击「开始检测」按钮，系统会立即计算并显示对比度数值与 WCAG 评级。</li>
+    <li>查看下方结果区域中的详细评级列表，了解是否符合 AA 或 AAA 标准；预览框会实时展示实际效果。</li>
+    <li>如需调整，可点击「交换颜色」快速互换前景与背景，或点击「重置」恢复默认值。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>什么是对比度？为什么重要？</summary>
+    <p>对比度是前景色与背景色之间亮度差异的数值比例，数值越高越容易辨认。WCAG 无障碍标准要求文本与背景达到一定对比度，确保低视力用户也能清晰阅读。</p>
+  </details>
+  <details>
+    <summary>AA 和 AAA 有什么区别？</summary>
+    <p>AA 是基本无障碍标准，普通文本需 4.5:1，大文本需 3:1；AAA 是增强标准，普通文本需 7:1，大文本需 4.5:1。AAA 更严格，适合对可读性要求高的场景。</p>
+  </details>
+  <details>
+    <summary>为什么我输入的颜色解析失败？</summary>
+    <p>请检查颜色格式是否为 HEX（如 #ff0000）、RGB（如 rgb(255,0,0)）或 HSL（如 hsl(0,100%,50%)）。注意 RGB 值范围是 0-255，HSL 的饱和度与亮度是百分比。</p>
+  </details>
+  <details>
+    <summary>这个工具需要联网吗？</summary>
+    <p>完全不需要。所有计算逻辑都在您的浏览器本地运行，没有任何网络请求，您的颜色数据不会离开您的设备。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://zhibanku.com/tools/color-picker.html">颜色拾取与转换</a>
+    <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算</a>
+    <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+    <a href="https://zhibanku.com/tools/password-generator.html">高强度密码生成</a>
+    <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+    <a href="https://zhibanku.com/tools/json-mei-hua.html">JSON 美化工具</a>
+  </div>
+
+  <footer>
+    <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+  </footer>
+</main>
+
+<script>
+(function() {
+  'use strict';
+
+  // 颜色解析函数
+  function parseColor(input) {
+    if (!input) return null;
+    var str = input.trim().toLowerCase();
+    
+    // 处理 HEX 格式
+    if (str.startsWith('#')) {
+      var hex = str.slice(1);
+      if (hex.length === 3) {
+        hex = hex.split('').map(function(c) { return c + c; }).join('');
+      }
+      if (hex.length === 6 && /^[0-9a-f]{6}$/.test(hex)) {
+        return {
+          r: parseInt(hex.slice(0,2), 16),
+          g: parseInt(hex.slice(2,4), 16),
+          b: parseInt(hex.slice(4,6), 16)
+        };
+      }
+      return null;
+    }
+    
+    // 处理 RGB / RGBA 格式
+    var rgbMatch = str.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (rgbMatch) {
+      var r = parseInt(rgbMatch[1]);
+      var g = parseInt(rgbMatch[2]);
+      var b = parseInt(rgbMatch[3]);
+      if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+        return { r: r, g: g, b: b };
+      }
+      return null;
+    }
+    
+    // 处理 HSL 格式
+    var hslMatch = str.match(/^hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%/);
+    if (hslMatch) {
+      var h = parseInt(hslMatch[1]) % 360;
+      var s = parseInt(hslMatch[2]) / 100;
+      var l = parseInt(hslMatch[3]) / 100;
+      if (s >= 0 && s <= 1 && l >= 0 && l <= 1) {
+        return hslToRgb(h, s, l);
+      }
+      return null;
+    }
+    
+    return null;
+  }
+
+  // HSL 转 RGB
+  function hslToRgb(h, s, l) {
+    var r, g, b;
+    if (s === 0) {
+      r = g = b = l;
+    } else {
+      var hue2rgb = function(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h / 360 + 1/3);
+      g = hue2rgb(p, q, h / 360);
+      b = hue2rgb(p, q, h / 360 - 1/3);
+    }
+    return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255)
+    };
+  }
+
+  // 计算相对亮度
+  function getLuminance(rgb) {
+    var r = rgb.r / 255;
+    var g = rgb.g / 255;
+    var b = rgb.b / 255;
+    
+    var rs = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+    var gs = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+    var bs = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+    
+    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  }
+
+  // 计算对比度
+  function getContrastRatio(rgb1, rgb2) {
+    var l1 = getLuminance(rgb1);
+    var l2 = getLuminance(rgb2);
+    var lighter = Math.max(l1, l2);
+    var darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  // 格式化颜色为 HEX
+  function rgbToHex(rgb) {
+    var r = rgb.r.toString(16).padStart(2, '0');
+    var g = rgb.g.toString(16).padStart(2, '0');
+    var b = rgb.b.toString(16).padStart(2, '0');
+    return '#' + r + g + b;
+  }
+
+  // 设置前景色
+  window.setFg = function(color) {
+    document.getElementById('fgColor').value = color;
+    document.getElementById('fgColorPicker').value = color;
+  };
+
+  // 设置背景色
+  window.setBg = function(color) {
+    document.getElementById('bgColor').value = color;
+    document.getElementById('bgColorPicker').value = color;
+  };
+
+  // 交换颜色
+  window.swapColors = function() {
+    var fg = document.getElementById('fgColor');
+    var bg = document.getElementById('bgColor');
+    var fgPicker = document.getElementById('fgColorPicker');
+    var bgPicker = document.getElementById('bgColorPicker');
+    var temp = fg.value;
+    fg.value = bg.value;
+    bg.value = temp;
+    temp = fgPicker.value;
+    fgPicker.value = bgPicker.value;
+    bgPicker.value = temp;
+    checkContrast();
+  };
+
+  // 重置颜色
+  window.resetColors = function() {
+    document.getElementById('fgColor').value = '#333333';
+    document.getElementById('fgColorPicker').value = '#333333';
+    document.getElementById('bgColor').value = '#ffffff';
+    document.getElementById('bgColorPicker').value = '#ffffff';
+    document.getElementById('resultCard').style.display = 'none';
+  };
+
+  // 检测对比度
+  window.checkContrast = function() {
+    var fgInput = document.getElementById('fgColor').value;
+    var bgInput = document.getElementById('bgColor').value;
+    
+    var fg = parseColor(fgInput);
+    var bg = parseColor(bgInput);
+    
+    if (!fg || !bg) {
+      alert('颜色格式无法解析，请检查输入。支持格式：HEX（如 #ff0000）、RGB（如 rgb(255,0,0)）、HSL（如 hsl(0,100%,50%)）');
+      return;
+    }
+    
+    // 同步色板
+    document.getElementById('fgColorPicker').value = rgbToHex(fg);
+    document.getElementById('bgColorPicker').value = rgbToHex(bg);
+    
+    var ratio = getContrastRatio(fg, bg);
+    var ratioFixed = ratio.toFixed(2);
+    
+    document.getElementById('ratioValue').textContent = ratioFixed + ':1';
+    document.getElementById('detailRatio').textContent = ratioFixed + ':1';
+    
+    // 评级判断
+    var aaPass = ratio >= 4.5;
+    var aaLargePass = ratio >= 3;
+    var aaaPass = ratio >= 7;
+    var aaaLargePass = ratio >= 4.5;
+    
+    document.getElementById('detailAA').textContent = aaPass ? '通过' : '不通过';
+    document.getElementById('detailAALarge').textContent = aaLargePass ? '通过' : '不通过';
+    document.getElementById('detailAAA').textContent = aaaPass ? '通过' : '不通过';
+    document.getElementById('detailAAALarge').textContent = aaaLargePass ? '通过' : '不通过';
+    
+    // 评级徽章
+    var badge = document.getElementById('ratingBadge');
+    if (aaaPass) {
+      badge.textContent = 'AAA 通过';
+      badge.className = 'rating rating-aaa';
+    } else if (aaPass) {
+      badge.textContent = 'AA 通过';
+      badge.className = 'rating rating-aa';
+    } else {
+      badge.textContent = '未达标';
+      badge.className = 'rating rating-fail';
+    }
+    
+    // 预览
+    var preview = document.getElementById('previewBox');
+    preview.style.color = rgbToHex(fg);
+    preview.style.backgroundColor = rgbToHex(bg);
+    
+    // 显示结果
+    document.getElementById('resultCard').style.display = 'block';
+  };
+
+  // 色板联动
+  document.getElementById('fgColorPicker').addEventListener('input', function() {
+    document.getElementById('fgColor').value = this.value;
+  });
+  document.getElementById('bgColorPicker').addEventListener('input', function() {
+    document.getElementById('bgColor').value = this.value;
+  });
+
+  // 输入框回车触发检测
+  document.getElementById('fgColor').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkContrast();
+  });
+  document.getElementById('bgColor').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkContrast();
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/contrast-check" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/contrast-check" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/dc1d950f038f" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1z-nLKK1ckD7c853SlGXYJQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0431</b> ｜ 百度提取码：<b>t0a9</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/contrast-check-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

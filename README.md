@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-45-blue.svg)
+![Tools](https://img.shields.io/badge/tools-47-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -25,8 +25,10 @@
 | Base64 编码 | [在线使用](https://www.zhibanku.com/tools/base64-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-encoder) |
 | Base64 文件编码器 - 文件转 Data URI / Base64 在线工具 | [在线使用](https://www.zhibanku.com/tools/base64-file-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/base64-file-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/base64-file-encoder) |
 | BMI 计算器 | [在线使用](https://www.zhibanku.com/tools/bmi-calc.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/bmi-calc) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/bmi-calc) |
+| CSS 阴影生成器 | [在线使用](https://www.zhibanku.com/tools/box-shadow.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/box-shadow) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/box-shadow) |
 | 命名风格转换 | [在线使用](https://www.zhibanku.com/tools/case-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/case-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/case-converter) |
 | 颜色格式转换器 | [在线使用](https://www.zhibanku.com/tools/color-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/color-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/color-converter) |
+| 颜色对比度检测 | [在线使用](https://www.zhibanku.com/tools/contrast-check.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/contrast-check) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/contrast-check) |
 | 倒计时器 | [在线使用](https://www.zhibanku.com/tools/countdown-timer.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/countdown-timer) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/countdown-timer) |
 | CSS 渐变生成器 | [在线使用](https://www.zhibanku.com/tools/css-gradient.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/css-gradient) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/css-gradient) |
 | 日期差计算器 | [在线使用](https://www.zhibanku.com/tools/date-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/date-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/date-diff) |
@@ -66,7 +68,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 45 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 47 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 

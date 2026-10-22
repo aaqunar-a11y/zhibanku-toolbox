@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 阴影生成器</title>
+    <meta name="description" content="可视化调整 CSS 阴影参数，实时预览并一键复制代码，支持多重阴影与预设样式。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/box-shadow.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fb;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a2a4a;
+            margin: 20px 0 12px;
+            text-align: center;
+        }
+        .lead {
+            background: #eef4ff;
+            border-left: 4px solid #4a7cf7;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            color: #33475f;
+            margin-bottom: 28px;
+            text-align: justify;
+        }
+        h2 {
+            font-size: 20px;
+            color: #1a2a4a;
+            margin: 32px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dde5f0;
+        }
+        .tool-wrap {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .preview-area {
+            background: linear-gradient(135deg, #e8edf5 0%, #d5deeb 100%);
+            border-radius: 10px;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            min-height: 200px;
+            position: relative;
+        }
+        .preview-box {
+            width: 180px;
+            height: 120px;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #555;
+            transition: box-shadow 0.15s ease, border-radius 0.15s ease;
+            user-select: none;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+        }
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .control-item label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3a4a6a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .control-item label .val {
+            font-weight: 400;
+            color: #6b7a95;
+            background: #f0f3f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: monospace;
+        }
+        .control-item input[type="range"] {
+            width: 100%;
+            accent-color: #4a7cf7;
+            cursor: pointer;
+        }
+        .control-item input[type="color"] {
+            width: 50px;
+            height: 32px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 2px;
+            background: #fff;
+        }
+        .control-item select {
+            padding: 8px 10px;
+            border: 1px solid #ccd4e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            color: #2c3e50;
+        }
+        .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0 24px;
+        }
+        .preset-btns button {
+            padding: 8px 16px;
+            border: 1px solid #c5d3e8;
+            background: #f0f5ff;
+            color: #2a5bd7;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .preset-btns button:hover {
+            background: #dce8ff;
+            border-color: #7aa0f0;
+        }
+        .action-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #4a7cf7;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #3a6ae0;
+        }
+        .btn-secondary {
+            background: #eef1f6;
+            color: #3a4a6a;
+            border: 1px solid #d0d8e5;
+        }
+        .btn-secondary:hover {
+            background: #e2e7f0;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #219a52;
+        }
+        .code-output {
+            margin-top: 20px;
+            background: #1e2a3a;
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+        .code-output pre {
+            color: #d4e6ff;
+            font-family: "SF Mono", "Consolas", "Courier New", monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+        }
+        .code-output .copy-tip {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            color: #8fa8c8;
+            font-size: 12px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .code-output .copy-tip.show {
+            opacity: 1;
+        }
+        .shadow-list {
+            margin-top: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #e0e7f0;
+        }
+        .shadow-list .list-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3a4a6a;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shadow-list .list-title button {
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .shadow-list .list-title button:hover {
+            background: #e05555;
+        }
+        .shadow-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            background: #fff;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border: 1px solid #e8edf5;
+            font-size: 13px;
+            font-family: monospace;
+            color: #4a5a7a;
+        }
+        .shadow-item .del-btn {
+            margin-left: auto;
+            background: #f0f2f6;
+            border: none;
+            color: #e05555;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .shadow-item .del-btn:hover {
+            background: #ffe0e0;
+        }
+        .shadow-item .edit-btn {
+            background: #f0f2f6;
+            border: none;
+            color: #4a7cf7;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .shadow-item .edit-btn:hover {
+            background: #e0e8ff;
+        }
+        .note-list {
+            padding-left: 20px;
+        }
+        .note-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #44566e;
+        }
+        .step-list {
+            padding-left: 20px;
+            counter-reset: step;
+        }
+        .step-list li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #44566e;
+            counter-increment: step;
+            position: relative;
+            padding-left: 30px;
+        }
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 22px;
+            height: 22px;
+            background: #4a7cf7;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #e0e7f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #2a5bd7;
+            font-size: 15px;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #44566e;
+        }
+        .related-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .related-links a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #eef4ff;
+            border: 1px solid #c5d3e8;
+            border-radius: 8px;
+            color: #2a5bd7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .related-links a:hover {
+            background: #dce8ff;
+            border-color: #7aa0f0;
+        }
+        footer {
+            text-align: center;
+            padding: 24px 16px;
+            color: #6b7a95;
+            font-size: 13px;
+            border-top: 1px solid #e0e7f0;
+            margin-top: 40px;
+        }
+        footer a {
+            color: #2a5bd7;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        @media (max-width: 640px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            .preview-box {
+                width: 140px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main>
+    <h1>CSS 阴影生成器</h1>
+    <p class="lead">这是一个可视化调整 CSS 盒子阴影（box-shadow）参数并实时生成代码的工具。您可以在下方调整水平偏移、垂直偏移、模糊半径、扩散半径、阴影颜色以及阴影的透明度，所有修改都会在左侧预览区域实时显示效果。调整满意后，点击「复制结果」按钮即可将生成的 CSS 代码复制到剪贴板，直接粘贴到您的样式表中使用。工具还提供了多种快捷预设，一键应用常见阴影效果，并支持叠加多重阴影，满足更复杂的设计需求。</p>
+
+    <div class="tool-wrap">
+        <div class="preview-area">
+            <div class="preview-box" id="previewBox">预览效果</div>
+        </div>
+
+        <div class="preset-btns">
+            <button onclick="applyPreset('subtle')">轻微阴影</button>
+            <button onclick="applyPreset('medium')">中等阴影</button>
+            <button onclick="applyPreset('large')">大阴影</button>
+            <button onclick="applyPreset('inner')">内阴影</button>
+            <button onclick="applyPreset('glow')">发光效果</button>
+        </div>
+
+        <div class="controls">
+            <div class="control-item">
+                <label>水平偏移 <span class="val" id="offsetXVal">0px</span></label>
+                <input type="range" id="offsetX" min="-50" max="50" value="0" step="1">
+            </div>
+            <div class="control-item">
+                <label>垂直偏移 <span class="val" id="offsetYVal">0px</span></label>
+                <input type="range" id="offsetY" min="-50" max="50" value="0" step="1">
+            </div>
+            <div class="control-item">
+                <label>模糊半径 <span class="val" id="blurVal">10px</span></label>
+                <input type="range" id="blur" min="0" max="100" value="10" step="1">
+            </div>
+            <div class="control-item">
+                <label>扩散半径 <span class="val" id="spreadVal">0px</span></label>
+                <input type="range" id="spread" min="-20" max="50" value="0" step="1">
+            </div>
+            <div class="control-item">
+                <label>阴影颜色 <input type="color" id="shadowColor" value="#000000"></label>
+            </div>
+            <div class="control-item">
+                <label>透明度 <span class="val" id="opacityVal">0.4</span></label>
+                <input type="range" id="opacity" min="0" max="100" value="40" step="1">
+            </div>
+            <div class="control-item">
+                <label>阴影方向</label>
+                <select id="shadowType">
+                    <option value="outer">外阴影</option>
+                    <option value="inner">内阴影</option>
+                </select>
+            </div>
+            <div class="control-item">
+                <label>圆角半径 <span class="val" id="radiusVal">8px</span></label>
+                <input type="range" id="radius" min="0" max="50" value="8" step="1">
+            </div>
+        </div>
+
+        <div class="shadow-list">
+            <div class="list-title">
+                <span>当前阴影列表（可叠加多重阴影）</span>
+                <button onclick="addShadow()">添加当前阴影</button>
+            </div>
+            <div id="shadowListContainer">
+                <div class="shadow-item">暂无额外阴影，调整参数后点击「添加当前阴影」</div>
+            </div>
+        </div>
+
+        <div class="action-btns">
+            <button class="btn btn-primary" onclick="copyResult()">复制结果</button>
+            <button class="btn btn-secondary" onclick="resetAll()">重置</button>
+        </div>
+
+        <div class="code-output">
+            <pre id="codeOutput">box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.4);</pre>
+            <span class="copy-tip" id="copyTip">已复制到剪贴板</span>
+        </div>
+    </div>
+
+    <h2>注意事项</h2>
+    <ul class="note-list">
+        <li>所有参数调整均在浏览器本地完成，不会上传任何数据到服务器，请放心使用。</li>
+        <li>模糊半径与扩散半径支持 0 到较大值，但过大的模糊值（如超过 100px）在部分低性能设备上可能导致预览卡顿。</li>
+        <li>内阴影（inset）与外阴影不能同时作用于同一个阴影声明，如需叠加效果请添加多个阴影层。</li>
+        <li>生成的 CSS 代码兼容所有现代浏览器（Chrome、Firefox、Safari、Edge），无需前缀。</li>
+        <li>透明度参数会与颜色值合并为 rgba 格式输出，若您需要保留十六进制颜色，可手动修改生成的代码。</li>
+        <li>多重阴影的叠加顺序会影响最终效果，列表中越靠上的阴影渲染在越外层。</li>
+    </ul>
+
+    <h2>怎么用</h2>
+    <ol class="step-list">
+        <li>在「水平偏移」「垂直偏移」「模糊半径」「扩散半径」等滑块上拖动，调整阴影的基本形态。</li>
+        <li>通过「阴影颜色」选择器选取颜色，并用「透明度」滑块控制颜色的透明程度。</li>
+        <li>如需内阴影效果，在「阴影方向」下拉框中选择「内阴影」。</li>
+        <li>点击「复制结果」按钮，生成的 CSS 代码会自动复制到剪贴板，粘贴到您的样式表中即可使用。</li>
+        <li>如需叠加多重阴影，调整好参数后点击「添加当前阴影」，可多次添加形成复杂效果。</li>
+    </ol>
+
+    <h2>常见问题</h2>
+    <details>
+        <summary>生成的阴影代码为什么不生效</summary>
+        <p>请检查是否将代码粘贴到了正确的选择器内，并确认没有语法错误。另外，部分旧浏览器可能不支持某些高级阴影特性。</p>
+    </details>
+    <details>
+        <summary>如何实现双层阴影效果</summary>
+        <p>先调整好第一层阴影参数，点击「添加当前阴影」保存，再调整参数生成第二层阴影，再次点击添加，即可叠加两层阴影。</p>
+    </details>
+    <details>
+        <summary>内阴影和外阴影有什么区别</summary>
+        <p>外阴影在元素外部渲染，内阴影在元素内部渲染。内阴影通常用于模拟凹陷或浮雕效果，需要勾选「阴影方向」中的内阴影选项。</p>
+    </details>
+    <details>
+        <summary>颜色透明度如何影响最终效果</summary>
+        <p>透明度越高阴影越明显，越低则越淡。透明度为 0 时阴影完全不可见，为 100 时阴影完全不透明。</p>
+    </details>
+
+    <h2>相关工具推荐</h2>
+    <div class="related-links">
+        <a href="https://zhibanku.com/tools/border-radius.html">圆角生成器</a>
+        <a href="https://zhibanku.com/tools/color-picker.html">颜色拾取转换</a>
+        <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算</a>
+        <a href="https://zhibanku.com/tools/css-gradient.html">渐变背景生成</a>
+        <a href="https://zhibanku.com/tools/flexbox-gen.html">Flex 布局生成</a>
+        <a href="https://zhibanku.com/tools/grid-gen.html">Grid 布局生成</a>
+    </div>
+</main>
+<footer>
+    <a href="/tools/">返回在线工具</a>
+    <span>· 本工具在浏览器本地运行，无需联网</span>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    // 状态管理
+    var state = {
+        offsetX: 0,
+        offsetY: 0,
+        blur: 10,
+        spread: 0,
+        color: '#000000',
+        opacity: 40,
+        type: 'outer',
+        radius: 8,
+        extraShadows: [] // 存储额外阴影 {offsetX, offsetY, blur, spread, color, opacity, type}
+    };
+
+    // DOM 引用
+    var el = {
+        offsetX: document.getElementById('offsetX'),
+        offsetY: document.getElementById('offsetY'),
+        blur: document.getElementById('blur'),
+        spread: document.getElementById('spread'),
+        color: document.getElementById('shadowColor'),
+        opacity: document.getElementById('opacity'),
+        type: document.getElementById('shadowType'),
+        radius: document.getElementById('radius'),
+        offsetXVal: document.getElementById('offsetXVal'),
+        offsetYVal: document.getElementById('offsetYVal'),
+        blurVal: document.getElementById('blurVal'),
+        spreadVal: document.getElementById('spreadVal'),
+        opacityVal: document.getElementById('opacityVal'),
+        radiusVal: document.getElementById('radiusVal'),
+        previewBox: document.getElementById('previewBox'),
+        codeOutput: document.getElementById('codeOutput'),
+        copyTip: document.getElementById('copyTip'),
+        shadowListContainer: document.getElementById('shadowListContainer')
+    };
+
+    // 格式化颜色为 rgba
+    function hexToRgba(hex, opacity) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        var a = (opacity / 100).toFixed(2);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+    // 生成单个阴影的 CSS 字符串
+    function shadowToCss(shadow) {
+        var inset = shadow.type === 'inner' ? 'inset ' : '';
+        var color = hexToRgba(shadow.color, shadow.opacity);
+        return inset + shadow.offsetX + 'px ' + shadow.offsetY + 'px ' + shadow.blur + 'px ' + shadow.spread + 'px ' + color;
+    }
+
+    // 更新预览和代码
+    function update() {
+        var mainShadow = {
+            offsetX: state.offsetX,
+            offsetY: state.offsetY,
+            blur: state.blur,
+            spread: state.spread,
+            color: state.color,
+            opacity: state.opacity,
+            type: state.type
+        };
+
+        var allShadows = [mainShadow].concat(state.extraShadows);
+        var cssShadows = allShadows.map(shadowToCss).join(', ');
+        var fullCss = 'box-shadow: ' + cssShadows + ';';
+        var radiusCss = 'border-radius: ' + state.radius + 'px;';
+
+        // 更新预览
+        el.previewBox.style.boxShadow = cssShadows;
+        el.previewBox.style.borderRadius = state.radius + 'px';
+
+        // 更新代码输出
+        el.codeOutput.textContent = fullCss + '\n' + radiusCss;
+
+        // 更新数值显示
+        el.offsetXVal.textContent = state.offsetX + 'px';
+        el.offsetYVal.textContent = state.offsetY + 'px';
+        el.blurVal.textContent = state.blur + 'px';
+        el.spreadVal.textContent = state.spread + 'px';
+        el.opacityVal.textContent = (state.opacity / 100).toFixed(2apsed);
+        el.opacityVal.textContent = (state.opacity / 100).toFixed(2);
+        el.radiusVal.textContent = state.radius + 'px';
+
+        // 更新阴影列表
+        renderShadowList();
+    }
+
+    // 渲染阴影列表
+    function renderShadowList() {
+        if (state.extraShadows.length === 0) {
+            el.shadowListContainer.innerHTML = '<div class="shadow-item">暂无额外阴影，调整参数后点击「添加当前阴影」</div>';
+            return;
+        }
+        var html = '';
+        state.extraShadows.forEach(function (shadow, index) {
+            var css = shadowToCss(shadow);
+            html += '<div class="shadow-item">' +
+                '<span>' + css + '</span>' +
+                '<button class="edit-btn" onclick="editShadow(' + index + ')">编辑</button>' +
+                '<button class="del-btn" onclick="removeShadow(' + index + ')">删除</button>' +
+                '</div>';
+        });
+        el.shadowListContainer.innerHTML = html;
+    }
+
+    // 从控件读取状态
+    function readFromControls() {
+        state.offsetX = parseInt(el.offsetX.value, 10);
+        state.offsetY = parseInt(el.offsetY.value, 10);
+        state.blur = parseInt(el.blur.value, 10);
+        state.spread = parseInt(el.spread.value, 10);
+        state.color = el.color.value;
+        state.opacity = parseInt(el.opacity.value, 10);
+        state.type = el.type.value;
+        state.radius = parseInt(el.radius.value, 10);
+    }
+
+    // 绑定控件事件
+    function bindEvents() {
+        var controls = [el.offsetX, el.offsetY, el.blur, el.spread, el.color, el.opacity, el.type, el.radius];
+        controls.forEach(function (control) {
+            control.addEventListener('input', function () {
+                readFromControls();
+                update();
+            });
+            control.addEventListener('change', function () {
+                readFromControls();
+                update();
+            });
+        });
+    }
+
+    // 预设
+    function applyPreset(type) {
+        var preset = {
+            subtle: { offsetX: 0, offsetY: 2, blur: 4, spread: 0, color: '#000000', opacity: 15, type: 'outer', radius: 8 },
+            medium: { offsetX: 0, offsetY: 4, blur: 12, spread: 0, color: '#000000', opacity: 25, type: 'outer', radius: 8 },
+            large: { offsetX: 0, offsetY: 10, blur: 30, spread: 0, color: '#000000', opacity: 30, type: 'outer', radius: 8 },
+            inner: { offsetX: 0, offsetY: 3, blur: 8, spread: 0, color: '#000000', opacity: 30, type: 'inner', radius: 8 },
+            glow: { offsetX: 0, offsetY: 0, blur: 20, spread: 5, color: '#4a7cf7', opacity: 50, type: 'outer', radius: 8 }
+        };
+        var p = preset[type];
+        if (!p) return;
+
+        state.offsetX = p.offsetX;
+        state.offsetY = p.offsetY;
+        state.blur = p.blur;
+        state.spread = p.spread;
+        state.color = p.color;
+        state.opacity = p.opacity;
+        state.type = p.type;
+        state.radius = p.radius;
+
+        // 同步到控件
+        el.offsetX.value = p.offsetX;
+        el.offsetY.value = p.offsetY;
+        el.blur.value = p.blur;
+        el.spread.value = p.spread;
+        el.color.value = p.color;
+        el.opacity.value = p.opacity;
+        el.type.value = p.type;
+        el.radius.value = p.radius;
+
+        update();
+    }
+
+    // 添加当前阴影到列表
+    function addShadow() {
+        readFromControls();
+        var shadow = {
+            offsetX: state.offsetX,
+            offsetY: state.offsetY,
+            blur: state.blur,
+            spread: state.spread,
+            color: state.color,
+            opacity: state.opacity,
+            type: state.type
+        };
+        state.extraShadows.push(shadow);
+        update();
+    }
+
+    // 删除阴影
+    function removeShadow(index) {
+        state.extraShadows.splice(index, 1);
+        update();
+    }
+
+    // 编辑阴影（将阴影加载到控件）
+    function editShadow(index) {
+        var shadow = state.extraShadows[index];
+        if (!shadow) return;
+        state.offsetX = shadow.offsetX;
+        state.offsetY = shadow.offsetY;
+        state.blur = shadow.blur;
+        state.spread = shadow.spread;
+        state.color = shadow.color;
+        state.opacity = shadow.opacity;
+        state.type = shadow.type;
+
+        el.offsetX.value = shadow.offsetX;
+        el.offsetY.value = shadow.offsetY;
+        el.blur.value = shadow.blur;
+        el.spread.value = shadow.spread;
+        el.color.value = shadow.color;
+        el.opacity.value = shadow.opacity;
+        el.type.value = shadow.type;
+
+        // 从列表中移除该阴影
+        state.extraShadows.splice(index, 1apsed);
+        state.extraShadows.splice(index, 1);
+        update();
+    }
+
+    // 复制结果
+    function copyResult() {
+        var text = el.codeOutput.textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                showCopyTip();
+            }).catch(function () {
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopyTip();
+        } catch (e) {
+            alert('复制失败，请手动选择代码复制');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopyTip() {
+        el.copyTip.classList.add('show');
+        setTimeout(function () {
+            el.copyTip.classList.remove('show');
+        }, 1500);
+    }
+
+    // 重置
+    function resetAll() {
+        state.offsetX = 0;
+        state.offsetY = 0;
+        state.blur = 10;
+        state.spread = 0;
+        state.color = '#000000';
+        state.opacity = 40;
+        state.type = 'outer';
+        state.radius = 8;
+        state.extraShadows = [];
+
+        el.offsetX.value = 0;
+        el.offsetY.value = 0;
+        el.blur.value = 10;
+        el.spread.value = 0;
+        el.color.value = '#000000';
+        el.opacity.value = 40;
+        el.type.value = 'outer';
+        el.radius.value = 8;
+
+        update();
+    }
+
+    // 暴露全局方法
+    window.applyPreset = applyPreset;
+    window.addShadow = addShadow;
+    window.removeShadow = removeShadow;
+    window.editShadow = editShadow;
+    window.copyResult = copyResult;
+    window.resetAll = resetAll;
+
+    // 初始化
+    bindEvents();
+    update();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/box-shadow" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/box-shadow" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/9dadd0a9e5b8" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1qds1nHdNkZGpeExZXwWGPA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>1793</b> ｜ 百度提取码：<b>zsyz</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/box-shadow-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
