@@ -10365,7 +10365,8 @@ function b64u(s){
   return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 function startQrAnim(boxId, payload){
-  var box = $(boxId); box.innerHTML = '';
+  var box = $(boxId);
+  box.innerHTML = '';   // [FIX v1.4] 清掉旧 holder，防止重复生成时累积多个 QR
   var CHUNK = 280;
   var n = Math.ceil(payload.length / CHUNK);
   if(n < 1) n = 1;
@@ -10447,7 +10448,9 @@ function setupDC(ch){
 }
 
 /* ================= Host：创建 offer ================= */
+var _hostBusy = false;
 function hostCreate(){
+  if (_hostBusy) { return; }   // [FIX v1.4] 防重复点击导致双 QR/双连接
   role = 'host';
   // [FIX 2026-10-23] 安全上下文检测：file:// 或 http:// 下 WebRTC 被浏览器禁用
   if (!window.isSecureContext) {
@@ -10458,6 +10461,14 @@ function hostCreate(){
     setStatus('hostStatus','当前浏览器不支持 WebRTC，请使用 Chrome / Edge / Safari 最新版。', 'err');
     return;
   }
+  _hostBusy = true;
+  // [FIX v1.4] 清理上一次会话：动画、扫描、旧连接、旧 QR 全部清掉（幂等）
+  stopQrAnim();
+  stopScan();
+  try { if (pc) { pc.close(); } } catch(e) {}
+  $('hostQrBox').innerHTML = '';
+  $('hostScanBox').style.display = 'none';
+  $('btnHostScan').disabled = false;
   pc = newPeer();
   dc = pc.createDataChannel('file', {ordered:true});
   setupDC(dc);
@@ -10469,7 +10480,9 @@ function hostCreate(){
       var n = startQrAnim('hostQrBox', payload);
       $('hostQrCard').style.display = 'block';
       setStatus('hostStatus','二维码共 '+n+' 帧循环滚动，请让对方用「接收文件」扫描');
-    }).catch(function(e){ setStatus('hostStatus','生成失败：'+e.message+'（请通过 https:// 访问本页；仍失败请更换 Chrome/Edge 重试）', 'err'); });
+    }).catch(function(e){ setStatus('hostStatus','生成失败：'+e.message+'（请通过 https:// 访问本页；仍失败请更换 Chrome/Edge 重试）', 'err'); _hostBusy = false; });
+  // [FIX v1.4] 二维码已出（动画启动）即解锁，允许重新生成
+  setTimeout(function(){ _hostBusy = false; }, 500);
 }
 
 /* ================= Join：扫 offer → 回 answer ================= */
