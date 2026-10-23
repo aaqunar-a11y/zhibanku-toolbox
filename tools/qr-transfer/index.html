@@ -131,11 +131,11 @@
       <div class="qr-status" id="hostStatus">等待对方扫描…</div>
       <!-- [v1.5] 手机入口小二维码：手机扫它直接进接收页，不用手输网址 -->
       <div style="display:flex;align-items:center;gap:14px;margin-top:16px;padding:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;flex-wrap:wrap">
-        <div class="qr-qrbox" id="entryQrBox" style="flex:0 0 auto"></div>
         <div style="flex:1;min-width:200px">
           <div style="font-weight:600;font-size:14px;margin-bottom:4px">📱 手机用户先扫这个小码</div>
           <div style="font-size:13px;color:#475569;line-height:1.7">用手机相机扫这个码，会直接打开本页的「接收文件」界面，<b>不需要手动输入网址</b>。然后再扫上方滚动的配对二维码。</div>
         </div>
+        <div class="qr-qrbox" id="entryQrBox" style="flex:0 0 auto;margin-left:auto"></div>
       </div>
       <div style="text-align:center;margin-top:12px">
         <button class="qr-btn ghost" id="btnHostScan" onclick="startScan('answer')">下一步：扫描对方屏幕上的二维码</button>
@@ -10326,6 +10326,20 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 <script>
 (function(){
 "use strict";
+/* ================= 统一 QR 渲染 [v1.6] =================
+   qrcodejs 会同时创建 canvas + img（img 是 Android 4.x 兼容兜底），
+   现代浏览器两个都会显示 → 用户看到「两个并列的二维码」。
+   统一渲染：创建后移除 img，只保留 canvas（现代浏览器 100% 支持）。 */
+function renderQR(holder, text, size, level){
+  holder.innerHTML = '';
+  new QRCode(holder, { text: text, width: size, height: size, correctLevel: level });
+  var imgs = holder.querySelectorAll('img');
+  for (var i = 0; i < imgs.length; i++) {
+    if (imgs[i].parentNode) imgs[i].parentNode.removeChild(imgs[i]);
+  }
+  return holder.querySelectorAll('canvas, img').length;
+}
+
 /* ================= 状态 ================= */
 var pc = null, dc = null, role = null;
 var files = [], chunks = {}, expected = 0, got = 0;
@@ -10389,8 +10403,7 @@ function startQrAnim(boxId, payload){
   if(qrAnim) clearInterval(qrAnim);
   function show(){
     var seg = payload.slice(i*CHUNK, (i+1)*CHUNK);
-    holder.innerHTML = '';
-    new QRCode(holder, { text: (i+1)+'/'+n+':'+seg, width: 240, height: 240, correctLevel: QRCode.CorrectLevel.L });
+    renderQR(holder, (i+1)+'/'+n+':'+seg, 240, QRCode.CorrectLevel.L);
     i = (i+1) % n;
   }
   show();
@@ -10407,8 +10420,7 @@ function genEntryQR(){
   box.innerHTML = '';
   var holder = document.createElement('div');
   box.appendChild(holder);
-  new QRCode(holder, { text: ENTRY_URL, width: 140, height: 140,
-                        correctLevel: QRCode.CorrectLevel.M });
+  renderQR(holder, ENTRY_URL, 140, QRCode.CorrectLevel.M);
 }
 // URL 参数：?mode=join / ?mode=text 自动切 Tab（手机扫小码进来直接是接收页）
 (function(){
@@ -10436,7 +10448,7 @@ function genTextQR(){
   box.innerHTML = '';
   var holder = document.createElement('div');
   box.appendChild(holder);
-  new QRCode(holder, { text: v, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.L });
+  renderQR(holder, v, 260, QRCode.CorrectLevel.L);
   $('textQrCard').style.display = 'block';
   setStatus('textStatus','已生成：对方用手机相机/微信扫一扫即可看到内容', 'ok');
 }
