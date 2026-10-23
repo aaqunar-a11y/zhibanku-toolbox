@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <title>扫码传文件 - 二维码点对点传输工具（不经过服务器）- 知办库</title>
-<meta name="description" content="免费在线二维码传文件工具：电脑与手机通过扫描二维码直接建立点对点连接传输文件，不经过任何服务器，不上传云端，无需安装无需注册。支持任意格式任意大小文件。">
+<meta name="description" content="免费二维码传文件工具：扫码直接建立点对点连接传输文件，不经过服务器，断网也能用（本地运行）。无需安装注册，支持任意格式任意大小。">
 <meta name="keywords" content="二维码传文件,扫码传文件,点对点传输,P2P传文件,跨设备传输,手机电脑互传,不经过服务器,WebRTC传输">
 <link rel="canonical" href="https://www.zhibanku.com/tools/qr-transfer.html">
 <meta property="og:site_name" content="知办库">
@@ -84,7 +84,12 @@
 
   <div class="qr-hero">
     <h1>扫码传文件 · 二维码点对点传输</h1>
-    <p class="hero-sub">两台设备<strong>扫描二维码直接连接</strong>，文件从一台设备直达另一台，<strong>不经过任何服务器、不上传云端</strong>。无需安装、无需注册，任意格式任意大小。</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 12px">
+      <span style="background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600">🔌 断网可用 · 无需联网</span>
+      <span style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600">🛡️ 不经过任何服务器</span>
+      <span style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600">📦 单文件 · 离线部署</span>
+    </div>
+    <p class="hero-sub">两台设备<strong>扫描二维码直接连接</strong>，文件从一台设备直达另一台，<strong>不经过任何服务器、不上传云端</strong>。<strong>本工具完全本地运行，断开网络也能完成配对与传输</strong>（同一局域网内）。无需安装、无需注册，任意格式任意大小。</p>
   </div>
 
   <div class="qr-steps">
@@ -157,9 +162,9 @@
 
 
   <div class="qr-card" style="text-align:center">
-    <h3 style="margin-bottom:8px">📦 源码下载</h3>
-    <p style="font-size:13px;color:#64748b;margin:0 0 12px">完整单文件源码（HTML，内联全部依赖，离线可用），可自行部署到任意静态托管。</p>
-    <a class="qr-btn" href="/tools/qr-transfer-download.html" style="text-decoration:none">获取源码下载链接</a>
+    <h3 style="margin-bottom:8px">📦 源码下载（断网可用版）</h3>
+    <p style="font-size:13px;color:#64748b;margin:0 0 12px">完整单文件源码（内联全部依赖），下载后<strong>无需联网</strong>即可使用，也可部署到任意静态托管。</p>
+    <a class="qr-btn" href="/tools/qr-transfer-download.html" style="text-decoration:none">获取双盘下载链接</a>
   </div>
 
   <div class="qr-card" style="font-size:13px;color:#64748b;line-height:1.9">
@@ -10362,7 +10367,7 @@ function rtcConfig(){
 function waitIce(p){
   return new Promise(function(res){
     if(p.iceGatheringState === 'complete') return res();
-    var t = setTimeout(function(){ p.removeEventListener('icegatheringstatechange', chk); res(); }, 4000);
+    var t = setTimeout(function(){ p.removeEventListener('icegatheringstatechange', chk); res(); }, 10000);  // [FIX 2026-10-23] 4s→10s：等 ICE 候选收集完
     function chk(){ if(p.iceGatheringState === 'complete'){ clearTimeout(t); p.removeEventListener('icegatheringstatechange', chk); res(); } }
     p.addEventListener('icegatheringstatechange', chk);
   });
@@ -10390,6 +10395,15 @@ function setupDC(ch){
 /* ================= Host：创建 offer ================= */
 function hostCreate(){
   role = 'host';
+  // [FIX 2026-10-23] 安全上下文检测：file:// 或 http:// 下 WebRTC 被浏览器禁用
+  if (!window.isSecureContext) {
+    setStatus('hostStatus','当前页面不是安全上下文（本地双击打开或 http 访问），浏览器禁用了 WebRTC。请通过 https://www.zhibanku.com 访问本页，或下载离线版后用 Edge 打开并访问 localhost。', 'err');
+    return;
+  }
+  if (typeof RTCPeerConnection === 'undefined') {
+    setStatus('hostStatus','当前浏览器不支持 WebRTC，请使用 Chrome / Edge / Safari 最新版。', 'err');
+    return;
+  }
   pc = newPeer();
   dc = pc.createDataChannel('file', {ordered:true});
   setupDC(dc);
@@ -10401,7 +10415,7 @@ function hostCreate(){
       var n = startQrAnim('hostQrBox', payload);
       $('hostQrCard').style.display = 'block';
       setStatus('hostStatus','二维码共 '+n+' 帧循环滚动，请让对方用「接收文件」扫描');
-    }).catch(function(e){ setStatus('hostStatus','生成失败：'+e.message, 'err'); });
+    }).catch(function(e){ setStatus('hostStatus','生成失败：'+e.message+'（请通过 https:// 访问本页；仍失败请更换 Chrome/Edge 重试）', 'err'); });
 }
 
 /* ================= Join：扫 offer → 回 answer ================= */
