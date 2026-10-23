@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<title>扫码传文件 - 二维码点对点传输工具（不经过服务器）- 知办库</title>
-<meta name="description" content="免费二维码传文件工具：扫码直接建立点对点连接传输文件，不经过服务器，断网也能用（本地运行）。无需安装注册，支持任意格式任意大小。">
-<meta name="keywords" content="二维码传文件,扫码传文件,点对点传输,P2P传文件,跨设备传输,手机电脑互传,不经过服务器,WebRTC传输">
+<title>扫码传文件 - 二维码传文件 手机电脑互传 断网可用 P2P点对点 不经过服务器 - 知办库</title>
+<meta name="description" content="免费二维码传文件工具：手机电脑扫码互传文件，点对点直连不经过服务器，断网也能用。无需安装、无需注册、不限文件大小，单文件离线部署，开源免费。">
+<meta name="keywords" content="二维码传文件,扫码传文件,手机电脑互传文件,跨设备传输,点对点传输,P2P传文件,断网传文件,不经过服务器,不用数据线传文件,WebRTC传输,开源传输工具">
 <link rel="canonical" href="https://www.zhibanku.com/tools/qr-transfer.html">
 <meta property="og:site_name" content="知办库">
-<meta property="og:title" content="扫码传文件 - 二维码点对点传输工具">
-<meta property="og:description" content="电脑与手机通过扫描二维码直接传输文件，不经过任何服务器，无需安装无需注册。">
+<meta property="og:title" content="扫码传文件 - 手机电脑扫码互传，断网可用不经过服务器">
+<meta property="og:description" content="手机电脑扫码互传文件，点对点直连，断网可用，不经过服务器，无需安装注册。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.zhibanku.com/tools/qr-transfer.html">
 <link rel="stylesheet" href="/static/css/style.css?v=20260821a">
@@ -25,7 +25,7 @@
   "browserRequirements": "RequiresJavaScript",
   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"},
   "description": "通过扫描二维码在两台设备间直接传输文件，不经过任何服务器。",
-  "featureList": ["二维码配对", "点对点传输", "任意文件格式", "不限文件大小", "无服务器"]
+  "featureList": ["二维码配对", "点对点传输", "断网可用", "任意文件格式", "不限文件大小", "不经过服务器", "无需安装注册"]
 }
 </script>
 <style>
@@ -102,6 +102,7 @@
   <div class="qr-tabs">
     <button class="qr-tab active" id="tabHost" onclick="switchTab('host')">发送文件</button>
     <button class="qr-tab" id="tabJoin" onclick="switchTab('join')">接收文件</button>
+    <button class="qr-tab" id="tabText" onclick="switchTab('text')">单码传内容</button>
   </div>
 
   <!-- ============ 发送方 ============ -->
@@ -151,6 +152,27 @@
     </div>
   </div>
 
+  <!-- ============ 单码传内容（零配对，扫码即得） ============ -->
+  <div class="qr-panel" id="panelText">
+    <div class="qr-card">
+      <h3>输入内容，直接生成单个二维码</h3>
+      <p style="font-size:13px;color:#64748b;margin:0 0 10px">适合传<b>网址、一段文字、验证码、联系方式</b>等小内容：对方用手机相机扫一下就能看到，<b>不需要配对、不经过服务器、断网也能生成</b>。</p>
+      <textarea id="textInput" rows="4" placeholder="在此输入要传给对方的文字或网址（支持约 800 字符）" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+      <div class="qr-opt"><span id="textCount">0 / 800</span></div>
+      <div style="text-align:center;margin-top:12px">
+        <button class="qr-btn" onclick="genTextQR()">生成二维码</button>
+      </div>
+    </div>
+    <div class="qr-card" id="textQrCard" style="display:none">
+      <h3>让对方用手机相机扫描这个码</h3>
+      <div class="qr-qrbox" id="textQrBox"></div>
+      <div class="qr-status" id="textStatus"></div>
+      <div style="text-align:center">
+        <button class="qr-btn ghost" onclick="resetTextQR()">换一张</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ 传输进度 ============ -->
   <div class="qr-card">
     <div class="qr-progress" id="progBox">
@@ -159,7 +181,6 @@
     </div>
     <label class="qr-opt"><input type="checkbox" id="chkStun"> 跨网络增强（使用公共 STUN 服务器获取公网地址；仅用于建立连接，不传输任何内容。同一 WiFi 下无需勾选）</label>
   </div>
-
 
   <div class="qr-card" style="text-align:center">
     <h3 style="margin-bottom:8px">📦 源码下载（断网可用版）</h3>
@@ -10307,8 +10328,12 @@ function setStatus(id, msg, cls){
 function switchTab(r){
   $('tabHost').classList.toggle('active', r==='host');
   $('tabJoin').classList.toggle('active', r==='join');
+  $('tabText').classList.toggle('active', r==='text');
   $('panelHost').classList.toggle('active', r==='host');
   $('panelJoin').classList.toggle('active', r==='join');
+  $('panelText').classList.toggle('active', r==='text');
+  if(r !== 'host'){ stopScan(); }
+  if(r !== 'text'){ /* 保留单码结果，切回可见 */ }
 }
 
 /* ================= 文件选择 ================= */
@@ -10359,6 +10384,35 @@ function startQrAnim(boxId, payload){
   return n;
 }
 function stopQrAnim(){ if(qrAnim){ clearInterval(qrAnim); qrAnim=null; } }
+
+/* ================= 单码传内容（零配对） ================= */
+var _textInput = $('textInput');
+if (_textInput) {
+  _textInput.addEventListener('input', function(){
+    var n = _textInput.value.length;
+    $('textCount').textContent = n + ' / 800';
+    $('textCount').style.color = n > 800 ? '#dc2626' : '#64748b';
+  });
+}
+function genTextQR(){
+  var v = ($('textInput').value || '').trim();
+  if (!v) { setStatus('textStatus','请先输入内容', 'err'); return; }
+  if (v.length > 800) { setStatus('textStatus','内容超过 800 字符，请缩短（二维码容量有限）', 'err'); return; }
+  var box = $('textQrBox');
+  box.innerHTML = '';
+  var holder = document.createElement('div');
+  box.appendChild(holder);
+  new QRCode(holder, { text: v, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.L });
+  $('textQrCard').style.display = 'block';
+  setStatus('textStatus','已生成：对方用手机相机/微信扫一扫即可看到内容', 'ok');
+}
+function resetTextQR(){
+  $('textInput').value = '';
+  $('textCount').textContent = '0 / 800';
+  $('textQrCard').style.display = 'none';
+  $('textQrBox').innerHTML = '';
+  setStatus('textStatus','', '');
+}
 
 /* ================= WebRTC ================= */
 function rtcConfig(){
@@ -10537,6 +10591,13 @@ function setProg(txt, pct){
   $('progTxt').textContent = txt;
   $('progBar').style.width = pct + '%';
 }
+// [FIX 2026-10-23 v1.2] 导出到 window：内联 onclick 需要全局函数（IIFE 内不可见）
+window.switchTab = switchTab;
+window.hostCreate = hostCreate;
+window.startScan = startScan;
+window.addFiles = addFiles;
+window.genTextQR = genTextQR;      // [v1.3] 单码传内容
+window.resetTextQR = resetTextQR;
 })();
 </script>
 </body>
