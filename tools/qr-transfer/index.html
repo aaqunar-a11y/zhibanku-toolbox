@@ -48,6 +48,8 @@
 .qr-qrbox { text-align:center; padding:8px 0; }
 .qr-qrbox canvas, .qr-qrbox img { display:inline-block !important; border:1px solid #e5e7eb; border-radius:8px; }
 .qr-qrbox video { width:100%; max-width:360px; border-radius:10px; background:#000; }
+#entryQrBox canvas, #entryQrBox img { width:140px !important; height:140px !important; }
+@media (max-width:640px){ #entryQrBox canvas, #entryQrBox img { width:120px !important; height:120px !important; } }
 .qr-status { text-align:center; font-size:14px; color:#475569; margin:10px 0; min-height:22px; }
 .qr-status.ok { color:#059669; }
 .qr-status.err { color:#dc2626; }
@@ -93,10 +95,13 @@
   </div>
 
   <div class="qr-steps">
-    <b>使用方法（两步扫码，零服务器）：</b><br>
-    ① 发送方选「发送文件」→ 选择文件 → 屏幕出现<b>一组滚动的二维码</b><br>
-    ② 接收方选「接收文件」→ 用摄像头扫描那组二维码 → 接收方屏幕出现<b>另一组二维码</b><br>
-    ③ 把接收方屏幕的二维码对准发送方摄像头 → 连接建立，开始传输
+    <b>使用方法（共 5 步，全程零服务器）：</b><br>
+    <b>①</b> 电脑上选「发送文件」→ 选择文件 → 点「生成配对二维码」<br>
+    <b>②</b> 手机用相机扫屏幕上的<b>小二维码</b>（写着「手机用户先扫这个小码」）→ 自动打开接收页，<b>不用手输网址</b><br>
+    <b>③</b> 手机上点「开启摄像头扫描」→ 对准电脑屏幕上<b>滚动的大二维码</b><br>
+    <b>④</b> 手机屏幕会出现<b>另一组滚动的二维码</b> → 把这组码对准电脑摄像头<br>
+    <b>⑤</b> 听到提示音即连接成功，文件开始自动传输，手机端点「下载」保存<br>
+    <span style="color:#94a3b8">提示：只传网址/一段文字？用「单码传内容」，一个码扫码即得，无需配对。</span>
   </div>
 
   <div class="qr-tabs">
@@ -124,7 +129,15 @@
       <h3>2. 把这块屏幕上的滚动二维码展示给对方扫</h3>
       <div class="qr-qrbox" id="hostQrBox"></div>
       <div class="qr-status" id="hostStatus">等待对方扫描…</div>
-      <div style="text-align:center">
+      <!-- [v1.5] 手机入口小二维码：手机扫它直接进接收页，不用手输网址 -->
+      <div style="display:flex;align-items:center;gap:14px;margin-top:16px;padding:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;flex-wrap:wrap">
+        <div class="qr-qrbox" id="entryQrBox" style="flex:0 0 auto"></div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px">📱 手机用户先扫这个小码</div>
+          <div style="font-size:13px;color:#475569;line-height:1.7">用手机相机扫这个码，会直接打开本页的「接收文件」界面，<b>不需要手动输入网址</b>。然后再扫上方滚动的配对二维码。</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px">
         <button class="qr-btn ghost" id="btnHostScan" onclick="startScan('answer')">下一步：扫描对方屏幕上的二维码</button>
       </div>
       <div class="qr-qrbox" id="hostScanBox" style="display:none;margin-top:12px">
@@ -10386,6 +10399,26 @@ function startQrAnim(boxId, payload){
 }
 function stopQrAnim(){ if(qrAnim){ clearInterval(qrAnim); qrAnim=null; } }
 
+/* ================= 手机入口小二维码 + URL 参数 [v1.5] ================= */
+var ENTRY_URL = "https://www.zhibanku.com/tools/qr-transfer.html?mode=join";
+function genEntryQR(){
+  var box = $('entryQrBox');
+  if (!box) return;
+  box.innerHTML = '';
+  var holder = document.createElement('div');
+  box.appendChild(holder);
+  new QRCode(holder, { text: ENTRY_URL, width: 140, height: 140,
+                        correctLevel: QRCode.CorrectLevel.M });
+}
+// URL 参数：?mode=join / ?mode=text 自动切 Tab（手机扫小码进来直接是接收页）
+(function(){
+  try {
+    var qs = new URLSearchParams(location.search);
+    var m = qs.get('mode');
+    if (m === 'join' || m === 'text') { switchTab(m); }
+  } catch(e) {}
+})();
+
 /* ================= 单码传内容（零配对） ================= */
 var _textInput = $('textInput');
 if (_textInput) {
@@ -10478,6 +10511,7 @@ function hostCreate(){
     .then(function(){
       var payload = b64u(pc.localDescription.sdp);
       var n = startQrAnim('hostQrBox', payload);
+      genEntryQR();   // [v1.5] 同时生成手机入口小二维码
       $('hostQrCard').style.display = 'block';
       setStatus('hostStatus','二维码共 '+n+' 帧循环滚动，请让对方用「接收文件」扫描');
     }).catch(function(e){ setStatus('hostStatus','生成失败：'+e.message+'（请通过 https:// 访问本页；仍失败请更换 Chrome/Edge 重试）', 'err'); _hostBusy = false; });
