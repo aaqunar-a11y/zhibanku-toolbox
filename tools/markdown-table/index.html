@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown 表格转换器 — 粘贴数据一键生成表格</title>
+<meta name="description" content="粘贴 CSV、制表符分隔或管道符数据，一键转换为 Markdown 表格，支持对齐与复制。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/markdown-table.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7fb;
+    color: #1f2937;
+    line-height: 1.7;
+    padding-bottom: 40px;
+  }
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+    color: #111827;
+  }
+  .lead {
+    background: #eef4ff;
+    border-left: 4px solid #3b82f6;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    color: #1e3a5f;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e5e7eb;
+    color: #111827;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .preset-btn {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+    transition: all 0.2s;
+  }
+  .preset-btn:hover {
+    background: #eef2ff;
+    border-color: #818cf8;
+    color: #4338ca;
+  }
+  .preset-btn.active {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+  }
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 14px;
+    resize: vertical;
+    background: #fcfcfd;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .btn-primary {
+    padding: 10px 24px;
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-secondary {
+    padding: 10px 24px;
+    background: #fff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: #f3f4f6; }
+  .btn-copy {
+    padding: 8px 18px;
+    background: #059669;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-copy:hover { background: #047857; }
+  .btn-reset {
+    padding: 8px 18px;
+    background: #fff;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-reset:hover { background: #f3f4f6; }
+  .result-area {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 12px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    color: #0f172a;
+  }
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .result-header span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+  }
+  .error-msg {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    border: 1px solid #fecaca;
+  }
+  .tips-list {
+    padding-left: 20px;
+  }
+  .tips-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .steps-list {
+    padding-left: 20px;
+  }
+  .steps-list li {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  details {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    color: #1f2937;
+  }
+  details p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #4b5563;
+  }
+  .rel-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .rel-links a {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #f0f4ff;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+    color: #1d4ed8;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .rel-links a:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+  }
+  footer {
+    text-align: center;
+    padding: 24px 16px 0;
+    font-size: 13px;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 40px;
+  }
+  footer a {
+    color: #4f46e5;
+    text-decoration: none;
+  }
+  .option-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 12px 0;
+    align-items: center;
+  }
+  .option-row label {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .option-row select {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<div class="container">
+  <h1>Markdown 表格转换器</h1>
+  <p class="lead">本工具用于把 CSV、制表符分隔或管道符分隔的文本数据，一键转换为规范的 Markdown 表格。您只需在下方输入框粘贴原始数据，选择对应的分隔方式，点击「转换为表格」按钮，转换结果会立即显示在结果区。您还可以点击「复制结果」按钮将表格复制到剪贴板，方便粘贴到文档、博客或代码仓库中。整个过程完全在浏览器本地完成，数据不会上传到任何服务器。</p>
+
+  <div class="card">
+    <h2 style="margin-top:0;border-bottom:none;padding-bottom:0;">输入数据</h2>
+    <div class="preset-row">
+      <button class="preset-btn" data-preset="csv">CSV 示例</button>
+      <button class="preset-btn" data-preset="tsv">制表符示例</button>
+      <button class="preset-btn" data-preset="pipe">管道符示例</button>
+      <button class="preset-btn" data-preset="empty">清空输入</button>
+    </div>
+    <textarea id="inputText" placeholder="在此粘贴或输入数据，例如：&#10;姓名,年龄,城市&#10;张三,28,北京&#10;李四,32,上海"></textarea>
+    
+    <div class="option-row">
+      <label>分隔方式：
+        <select id="delimiter">
+          <option value="auto">自动识别</option>
+          <option value="comma">逗号（CSV）</option>
+          <option value="tab">制表符</option>
+          <option value="pipe">管道符（|）</option>
+        </select>
+      </label>
+      <label>对齐方式：
+        <select id="align">
+          <option value="default">默认（左对齐）</option>
+          <option value="left">全部左对齐</option>
+          <option value="center">全部居中</option>
+          <option value="right">全部右对齐</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="convertBtn">转换为表格</button>
+      <button class="btn-secondary" id="resetBtn">重置</button>
+    </div>
+
+    <div id="出错了Msg" class="出错了-msg" style="display:none;"></div>
+
+    <div class="result-header">
+      <span>转换结果</span>
+      <div>
+        <button class="btn-copy" id="copyBtn">复制结果</button>
+      </div>
+    </div>
+    <div class="result-area" id="resultArea">转换后的 Markdown 表格将显示在这里</div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="tips-list">
+    <li>自动识别分隔方式时，工具会优先检测制表符，其次是管道符，最后是逗号。如果数据中包含多种分隔符，建议手动选择。</li>
+    <li>CSV 数据如果包含引号包裹的字段（内含逗号），请选择「逗号（CSV）」模式，工具会正确解析引号内的逗号。</li>
+    <li>所有数据仅在您的浏览器本地处理，不会上传到任何服务器，关闭页面后数据即消失。</li>
+    <li>如果某行字段数量与其他行不一致，工具会以第一行的字段数为准，多余字段会被忽略，缺失字段会留空。</li>
+    <li>转换结果中的 Markdown 表格使用标准语法，兼容 GitHub、Typora、语雀等主流 Markdown 渲染器。</li>
+    <li>复制结果功能依赖浏览器的剪贴板权限，如果复制失败，请手动选中结果文本后按 Ctrl+C 复制。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps-list">
+    <li>在输入框中粘贴您的数据，可以是 CSV（逗号分隔）、TSV（制表符分隔）或管道符分隔的文本。</li>
+    <li>选择分隔方式（推荐「自动识别」），如需自定义对齐方式，可在下拉框中选择。</li>
+    <li>点击「转换为表格」按钮，右侧结果区会立即生成 Markdown 格式的表格。</li>
+    <li>点击「复制结果」按钮，将表格复制到剪贴板，然后粘贴到您需要的地方。</li>
+    <li>如需重新开始，点击「重置」按钮清空所有内容。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>支持哪些输入格式</summary>
+    <p>支持逗号分隔的 CSV、制表符分隔的 TSV 以及管道符分隔的文本。第一行会被识别为表头，后续行作为表格数据。</p>
+  </details>
+  <details>
+    <summary>数据包含逗号怎么办</summary>
+    <p>如果字段内容本身包含逗号，请用英文双引号将该字段包裹起来，并选择「逗号（CSV）」模式，工具会正确解析。</p>
+  </details>
+  <details>
+    <summary>转换结果能直接用在 GitHub 吗</summary>
+    <p>可以。工具生成的是标准 Markdown 表格语法，GitHub、GitLab、语雀、飞书文档等主流平台都支持直接渲染。</p>
+  </details>
+  <details>
+    <summary>数据会上传到服务器吗</summary>
+    <p>不会。所有转换操作都在您的浏览器本地完成，数据不会离开您的设备，请放心使用。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="rel-links">
+    <a href="https://www.zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+    <a href="https://www.zhibanku.com/tools/csv-json.html">CSV 与 JSON 互转</a>
+    <a href="https://www.zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验工具</a>
+    <a href="https://www.zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://www.zhibanku.com/tools/word-count.html">在线字数统计</a>
+    <a href="https://www.zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+  </div>
+</div>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  const inputText = document.getElementById('inputText');
+  const delimiterSelect = document.getElementById('delimiter');
+  const alignSelect = document.getElementById('align');
+  const convertBtn = document.getElementById('convertBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const resultArea = document.getElementById('resultArea');
+  const errorMsg = document.getElementById('出错了Msg');
+
+  // 预设数据
+  const presets = {
+    csv: '姓名,年龄,城市,职业\n张三,28,北京,工程师\n李四,32,上海,设计师\n王五,25,广州,产品经理\n赵六,35,深圳,架构师',
+    tsv: '产品\t价格\t库存\n苹果\t5.5\t120\n香蕉\t3.2\t85\n橙子\t4.8\t60\n葡萄\t12.5\t40',
+    pipe: '项目|状态|负责人|进度\n首页改版|进行中|张三|60%\n移动端适配|已完成|李四|100%\n性能优化|待开始|王五|0%\n安全审计|进行中|赵六|30%',
+    empty: ''
+  };
+
+  // 快捷预设按钮
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const key = this.getAttribute('data-preset');
+      if (key === 'empty') {
+        inputText.value = '';
+        resultArea.textContent = '转换后的 Markdown 表格将显示在这里';
+        errorMsg.style.display = 'none';
+        return;
+      }
+      inputText.value = presets[key] || '';
+      // 根据预设自动选择分隔方式
+      if (key === 'csv') delimiterSelect.value = 'comma';
+      else if (key === 'tsv') delimiterSelect.value = 'tab';
+      else if (key === 'pipe') delimiterSelect.value = 'pipe';
+    });
+  });
+
+  // 解析 CSV 行（支持引号包裹）
+  function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (i + 1 < line.length && line[i+1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          current += ch;
+        }
+      } else {
+        if (ch === '"') {
+          inQuotes = true;
+        } else if (ch === ',') {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  // 解析制表符行
+  function parseTabLine(line) {
+    return line.split('\t').map(cell => cell.trim());
+  }
+
+  // 解析管道符行（去掉首尾的 |）
+  function parsePipeLine(line) {
+    let trimmed = line.trim();
+    if (trimmed.startsWith('|')) trimmed = trimmed.substring(1);
+    if (trimmed.endsWith('|')) trimmed = trimmed.substring(0, trimmed.length - 1);
+    return trimmed.split('|').map(cell => cell.trim());
+  }
+
+  // 转义 Markdown 表格中的特殊字符
+  function escapeCell(cell) {
+    return cell.replace(/\|/g, '\\|').replace(/\n/g, '<br>');
+  }
+
+  // 自动检测分隔方式
+  function detectDelimiter(text) {
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+    if (lines.length === 0) return 'comma';
+    
+    const firstLine = lines[0];
+    const tabCount = (firstLine.match(/\t/g) || []).length;
+    const pipeCount = (firstLine.match(/\|/g) || []).length;
+    const commaCount = (firstLine.match(/,/g) || []).length;
+    
+    if (tabCount > 0 && tabCount >= commaCount && tabCount >= pipeCount) return 'tab';
+    if (pipeCount > 0 && pipeCount >= commaCount) return 'pipe';
+    return 'comma';
+  }
+
+  // 转换函数
+  function convert() {
+    const text = inputText.value;
+    if (!text.trim()) {
+      showError('请输入需要转换的数据');
+      return;
+    }
+
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+    if (lines.length < 2) {
+      showError('至少需要两行数据（一行表头 + 一行数据）');
+      return;
+    }
+
+    let delimiter = delimiterSelect.value;
+    if (delimiter === 'auto') {
+      delimiter = detectDelimiter(text);
+    }
+
+    // 解析所有行
+    const rows = [];
+    for (const line of lines) {
+      let cells;
+      if (delimiter === 'comma') {
+        cells = parseCSVLine(line);
+      } else if (delimiter === 'tab') {
+        cells = parseTabLine(line);
+      } else if (delimiter === 'pipe') {
+        cells = parsePipeLine(line);
+      } else {
+        cells = parseCSVLine(line);
+      }
+      rows.push(cells);
+    }
+
+    // 确定列数（以第一行为准）
+    const colCount = rows[0].length;
+    if (colCount === 0) {
+      showError('无法识别列，请检查数据格式');
+      return;
+    }
+
+    // 对齐方式
+    const align = alignSelect.value;
+    let alignMarker;
+    if (align === 'left') alignMarker = ':---';
+    else if (align === 'center') alignMarker = ':---:';
+    else if (align === 'right') alignMarker = '---:';
+    else alignMarker = '---';
+
+    // 构建 Markdown 表格
+    let md = '';
+    
+    // 表头
+    const headerCells = [];
+    for (let i = 0; i < colCount; i++) {
+      headerCells.push(escapeCell(rows[0][i] !== undefined ? rows[0][i] : ''));
+    }
+    md += '| ' + headerCells.join(' | ') + ' |\n';
+    
+    // 分隔行
+    const separators = [];
+    for (let i = 0; i < colCount; i++) {
+      separators.push(alignMarker);
+    }
+    md += '| ' + separators.join(' | ') + ' |\n';
+    
+    // 数据行
+    for (let r = 1; r < rows.length; r++) {
+      const dataCells = [];
+      for (let i = 0; i < colCount; i++) {
+        dataCells.push(escapeCell(rows[r][i] !== undefined ? rows[r][i] : ''));
+      }
+      md += '| ' + dataCells.join(' | ') + ' |\n';
+    }
+
+    resultArea.textContent = md;
+    errorMsg.style.display = 'none';
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  // 转换按钮
+  convertBtn.addEventListener('click', convert);
+
+  // 重置按钮
+  resetBtn.addEventListener('click', function() {
+    inputText.value = '';
+    delimiterSelect.value = 'auto';
+    alignSelect.value = 'default';
+    resultArea.textContent = '转换后的 Markdown 表格将显示在这里';
+    errorMsg.style.display = 'none';
+  });
+
+  // 复制按钮
+  copyBtn.addEventListener('click', function() {
+    const text = resultArea.textContent;
+    if (!text || text === '转换后的 Markdown 表格将显示在这里') {
+      showError('没有可复制的内容，请先转换数据');
+      return;
+    }
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        const oldText = copyBtn.textContent;
+        copyBtn.textContent = '已复制';
+        setTimeout(function() {
+          copyBtn.textContent = oldText;
+        }, 1500);
+      }).catch(function() {
+        // 降级方案
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  });
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      const oldText = copyBtn.textContent;
+      copyBtn.textContent = '已复制';
+      setTimeout(function() {
+        copyBtn.textContent = oldText;
+      }, 1500);
+    } catch (err) {
+      showError('复制失败，请手动选中结果后按 Ctrl+C 复制');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 支持 Ctrl+Enter 快捷键转换
+  inputText.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      convert();
+    }
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/markdown-table" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/markdown-table" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/b433a0584527" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1fb9oPbm4zjLEGYB4Sz6raQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>5862</b> ｜ 百度提取码：<b>kjhw</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/markdown-table-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

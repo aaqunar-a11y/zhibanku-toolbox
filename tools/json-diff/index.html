@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON 对比工具 — 并排查看差异</title>
+<meta name="description" content="并排对比两份 JSON 差异，高亮新增、删除与修改路径，本地完成不传数据。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/json-diff.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1f2937; line-height: 1.6; }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; font-weight: 700; color: #111827; margin: 16px 0 8px; }
+  .lead { background: #eef2ff; border-left: 4px solid #4f46e5; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 15px; color: #3730a3; margin-bottom: 28px; }
+  h2 { font-size: 20px; font-weight: 600; color: #1e293b; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; }
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .tool-grid { grid-template-columns: 1fr; } }
+  .input-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .input-card label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: #334155; }
+  .input-card textarea { width: 100%; height: 260px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 13px; resize: vertical; background: #f8fafc; color: #0f172a; }
+  .input-card textarea:focus { outline: 2px solid #4f46e5; outline-offset: 1px; border-color: #4f46e5; background: #fff; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-secondary { background: #fff; color: #334155; border-color: #cbd5e1; }
+  .btn-secondary:hover { background: #f1f5f9; }
+  .btn-success { background: #059669; color: #fff; border-color: #059669; }
+  .btn-success:hover { background: #047857; }
+  .btn-danger { background: #fff; color: #dc2626; border-color: #fca5a5; }
+  .btn-danger:hover { background: #fef2f2; }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .preset-btn { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; border-radius: 999px; padding: 5px 14px; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .preset-btn:hover { background: #e0e7ff; border-color: #a5b4fc; }
+  .result-area { margin-top: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .result-header h3 { font-size: 16px; font-weight: 600; color: #1e293b; }
+  .diff-summary { font-size: 14px; color: #475569; background: #f1f5f9; padding: 8px 14px; border-radius: 8px; margin-bottom: 12px; }
+  .diff-summary strong { color: #4f46e5; }
+  .diff-output { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .diff-output { grid-template-columns: 1fr; } }
+  .diff-pane { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+  .diff-pane-title { background: #f8fafc; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; }
+  .diff-pane pre { margin: 0; padding: 12px; font-size: 13px; line-height: 1.7; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+  .diff-added { background: #dcfce7; color: #166534; }
+  .diff-removed { background: #fee2e2; color: #991b1b; text-decoration: line-through; }
+  .diff-modified { background: #fef9c3; color: #854d0e; }
+  .diff-path { background: #e0e7ff; color: #3730a3; padding: 8px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #c7d2fe; }
+  .diff-path-list { margin: 0; padding: 0; list-style: none; }
+  .diff-path-list li { padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-family: monospace; font-size: 13px; color: #334155; }
+  .diff-path-list li:last-child { border-bottom: none; }
+  .error-box { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 12px 16px; border-radius: 8px; margin-top: 12px; font-size: 14px; }
+  .note-list { padding-left: 20px; }
+  .note-list li { margin-bottom: 8px; font-size: 14px; color: #334155; }
+  .steps { padding-left: 20px; }
+  .steps li { margin-bottom: 8px; font-size: 14px; color: #334155; }
+  details { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; color: #1e293b; font-size: 15px; }
+  details p { margin-top: 8px; font-size: 14px; color: #475569; }
+  .tool-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .tool-links a { display: inline-block; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; color: #1d4ed8; text-decoration: none; font-size: 14px; transition: all 0.15s; }
+  .tool-links a:hover { background: #eef2ff; border-color: #c7d2fe; }
+  footer { max-width: 1200px; margin: 40px auto 0; padding: 20px 16px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 13px; color: #64748b; }
+  footer a { color: #1d4ed8; text-decoration: none; margin: 0 8px; }
+  .hidden { display: none; }
+  .badge { display: inline-block; background: #e0e7ff; color: #3730a3; font-size: 12px; padding: 2px 8px; border-radius: 999px; margin-left: 8px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main>
+  <h1>JSON 对比工具 <span class="badge">本地运行</span></h1>
+  <p class="lead">本工具用于并排对比两份 JSON 数据的差异，自动高亮新增、删除与修改的字段路径。您只需在左侧两个输入框中分别粘贴或输入 JSON 内容，然后点击「开始对比」按钮，差异结果会以左右并排的方式展示，同时列出所有变更路径。整个过程完全在浏览器本地完成，数据不会上传到任何服务器，可放心处理敏感数据。</p>
+
+  <div class="tool-grid">
+    <div class="input-card">
+      <label for="jsonA">原始 JSON（左侧）</label>
+      <textarea id="jsonA" placeholder="粘贴第一份 JSON 内容，例如：&#10;{&#10;  &quot;name&quot;: &quot;张三&quot;,&#10;  &quot;age&quot;: 30,&#10;  &quot;tags&quot;: [&quot;a&quot;, &quot;b&quot;]&#10;}"></textarea>
+    </div>
+    <div class="input-card">
+      <label for="jsonB">对比 JSON（右侧）</label>
+      <textarea id="jsonB" placeholder="粘贴第二份 JSON 内容，例如：&#10;{&#10;  &quot;name&quot;: &quot;李四&quot;,&#10;  &quot;age&quot;: 31,&#10;  &quot;tags&quot;: [&quot;a&quot;, &quot;c&quot;]&#10;}"></textarea>
+    </div>
+  </div>
+
+  <div class="preset-row">
+    <span style="font-size:13px;color:#64748b;align-self:center;">快捷预设：</span>
+    <button class="preset-btn" data-preset="simple">简单对象</button>
+    <button class="preset-btn" data-preset="nested">嵌套结构</button>
+    <button class="preset-btn" data-preset="array">数组变化</button>
+    <button class="preset-btn" data-preset="empty">清空输入</button>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="compareBtn">开始对比</button>
+    <button class="btn btn-secondary" id="swapBtn">交换左右</button>
+    <button class="btn btn-danger" id="resetBtn">重置</button>
+  </div>
+
+  <div id="出错了Box" class="出错了-box hidden"></div>
+
+  <div id="resultArea" class="result-area hidden">
+    <div class="result-header">
+      <h3>对比结果</h3>
+      <button class="btn btn-success" id="copyBtn">复制结果</button>
+    </div>
+    <div id="diffSummary" class="diff-summary"></div>
+    <div id="diffPathSection">
+      <div class="diff-path" style="margin-bottom:8px;">变更路径（共 <span id="pathCount">0</span> 处）</div>
+      <ul id="pathList" class="diff-path-list"></ul>
+    </div>
+    <div class="diff-output">
+      <div class="diff-pane">
+        <div class="diff-pane-title">原始 JSON（左）</div>
+        <pre id="diffLeft"></pre>
+      </div>
+      <div class="diff-pane">
+        <div class="diff-pane-title">对比 JSON（右）</div>
+        <pre id="diffRight"></pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="note-list">
+    <li>输入内容必须是合法 JSON，否则会提示错误；支持对象、数组、字符串、数字、布尔值和 null。</li>
+    <li>对比基于 JSON 解析后的结构，键值顺序不同不会视为差异，但数组顺序变化会显示为修改。</li>
+    <li>所有处理均在浏览器本地完成，数据不会离开您的设备，请放心粘贴敏感内容。</li>
+    <li>对于大型 JSON（超过 1MB），页面可能出现卡顿，建议先压缩或分段对比。</li>
+    <li>差异高亮采用行级标记，同一行内多个差异会合并显示，路径列表提供精确位置。</li>
+    <li>复制结果会生成纯文本格式的差异报告，包含路径和变更类型，方便分享或记录。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在左侧「原始 JSON」输入框中粘贴第一份 JSON 内容。</li>
+    <li>在右侧「对比 JSON」输入框中粘贴第二份 JSON 内容。</li>
+    <li>点击「开始对比」按钮，系统会自动解析并比较两份 JSON。</li>
+    <li>对比结果会在下方区域展示：左右并排显示差异高亮，上方列出所有变更路径。</li>
+    <li>如需复制差异报告，点击「复制结果」按钮即可。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>JSON 格式错误怎么办</summary>
+    <p>页面会提示具体错误位置，请检查括号、引号、逗号是否完整。可使用本页的 JSON 校验工具先验证格式。</p>
+  </details>
+  <details>
+    <summary>数组顺序不同算差异吗</summary>
+    <p>算。数组按索引逐项对比，顺序变化会导致对应位置显示为修改。若需忽略顺序，可先排序再对比。</p>
+  </details>
+  <details>
+    <summary>对比结果如何解读</summary>
+    <p>绿色背景表示新增内容，红色删除线表示移除内容，黄色背景表示修改内容。路径列表给出精确的字段位置。</p>
+  </details>
+  <details>
+    <summary>数据会传到服务器吗</summary>
+    <p>不会。所有解析和对比逻辑都在浏览器本地执行，无任何网络请求，数据完全离线处理。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验与定位</a>
+    <a href="https://zhibanku.com/tools/json-ya-suo.html">JSON 压缩到最小</a>
+    <a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义与反转义</a>
+    <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://zhibanku.com/tools/json-flatten.html">JSON 拍平与还原</a>
+    <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <span>本工具完全在本地运行，无需联网。</span>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  const jsonA = document.getElementById('jsonA');
+  const jsonB = document.getElementById('jsonB');
+  const compareBtn = document.getElementById('compareBtn');
+  const swapBtn = document.getElementById('swapBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const errorBox = document.getElementById('出错了Box');
+  const resultArea = document.getElementById('resultArea');
+  const diffSummary = document.getElementById('diffSummary');
+  const pathList = document.getElementById('pathList');
+  const pathCount = document.getElementById('pathCount');
+  const diffLeft = document.getElementById('diffLeft');
+  const diffRight = document.getElementById('diffRight');
+
+  // 快捷预设
+  const presets = {
+    'simple': {
+      a: '{\n  "name": "张三",\n  "age": 30,\n  "city": "北京",\n  "active": true\n}',
+      b: '{\n  "name": "李四",\n  "age": 31,\n  "city": "上海",\n  "active": true,\n  "email": "test@example.com"\n}'
+    },
+    'nested': {
+      a: '{\n  "user": {\n    "id": 1,\n    "profile": {\n      "nickname": "小明",\n      "avatar": "a.png"\n    }\n  },\n  "settings": {\n    "theme": "dark"\n  }\n}',
+      b: '{\n  "user": {\n    "id": 1,\n    "profile": {\n      "nickname": "小红",\n      "avatar": "b.png",\n      "bio": "你好"\n    }\n  },\n  "settings": {\n    "theme": "light"\n  }\n}'
+    },
+    'array': {
+      a: '{\n  "items": [\n    "苹果",\n    "香蕉",\n    "橙子"\n  ],\n  "count": 3\n}',
+      b: '{\n  "items": [\n    "苹果",\n    "葡萄",\n    "橙子",\n    "西瓜"\n  ],\n  "count": 4\n}'
+    },
+    'empty': {
+      a: '',
+      b: ''
+    }
+  };
+
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const key = this.dataset.preset;
+      if (presets[key]) {
+        jsonA.value = presets[key].a;
+        jsonB.value = presets[key].b;
+        errorBox.classList.add('hidden');
+        resultArea.classList.add('hidden');
+      }
+    });
+  });
+
+  // 交换左右
+  swapBtn.addEventListener('click', function() {
+    const tmp = jsonA.value;
+    jsonA.value = jsonB.value;
+    jsonB.value = tmp;
+    errorBox.classList.add('hidden');
+    resultArea.classList.add('hidden');
+  });
+
+  // 重置
+  resetBtn.addEventListener('click', function() {
+    jsonA.value = '';
+    jsonB.value = '';
+    errorBox.classList.add('hidden');
+    resultArea.classList.add('hidden');
+  });
+
+  // 复制结果
+  copyBtn.addEventListener('click', function() {
+    const report = generateReport();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(report).then(function() {
+        showToast('已复制到剪贴板');
+      }).catch(function() {
+        fallbackCopy(report);
+      });
+    } else {
+      fallbackCopy(report);
+    }
+  });
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('已复制到剪贴板');
+    } catch (e) {
+      showToast('复制失败，请手动选择复制');
+    }
+    document.body.removeChild(ta);
+  }
+
+  function showToast(msg) {
+    let toast = document.getElementById('toastMsg');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toastMsg';
+      toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    setTimeout(function() {
+      toast.style.opacity = '0';
+    }, 2000);
+  }
+
+  // 生成报告文本
+  function generateReport() {
+    const a = jsonA.value;
+    const b = jsonB.value;
+    let parsedA, parsedB;
+    try {
+      parsedA = JSON.parse(a);
+      parsedB = JSON.parse(b);
+    } catch (e) {
+      return 'JSON 解析失败，无法生成报告';
+    }
+    const diffs = diffObjects(parsedA, parsedB, '');
+    let report = 'JSON 对比报告\n';
+    report += '生成时间：' + new Date().toLocaleString('zh-CN') + '\n';
+    report += '差异数量：' + diffs.length + '\n\n';
+    if (diffs.length === 0) {
+      report += '两份 JSON 完全一致。\n';
+    } else {
+      diffs.forEach(function(d) {
+        report += '[' + d.type + '] ' + (d.path || '(根节点)') + '\n';
+        if (d.type === '修改') {
+          report += '  原值: ' + JSON.stringify(d.oldValue) + '\n';
+          report += '  新值: ' + JSON.stringify(d.newValue) + '\n';
+        } else if (d.type === '新增') {
+          report += '  值: ' + JSON.stringify(d.newValue) + '\n';
+        } else if (d.type === '删除') {
+          report += '  值: ' + JSON.stringify(d.oldValue) + '\n';
+        }
+      });
+    }
+    return report;
+  }
+
+  // 深度对比
+  function diffObjects(objA, objB, basePath) {
+    const diffs = [];
+    const typeA = getType(objA);
+    const typeB = getType(objB);
+
+    if (typeA !== typeB) {
+      diffs.push({
+        path: basePath || '(根节点)',
+        type: '修改',
+        oldValue: objA,
+        newValue: objB
+      });
+      return diffs;
+    }
+
+    if (typeA === 'object') {
+      const keysA = Object.keys(objA);
+      const keysB = Object.keys(objB);
+      const allKeys = new Set([...keysA, ...keysB]);
+
+      allKeys.forEach(function(key) {
+        const childPath = basePath ? basePath + '.' + key : key;
+        if (!(key in objA)) {
+          diffs.push({
+            path: childPath,
+            type: '新增',
+            oldValue: undefined,
+            newValue: objB[key]
+          });
+        } else if (!(key in objB)) {
+          diffs.push({
+            path: childPath,
+            type: '删除',
+            oldValue: objA[key],
+            newValue: undefined
+          });
+        } else {
+          const childDiffs = diffObjects(objA[key], objB[key], childPath);
+          diffs.push(...childDiffs);
+        }
+      });
+    } else if (typeA === 'array') {
+      const len = Math.max(objA.length, objB.length);
+      for (let i = 0; i < len; i++) {
+        const childPath = basePath ? basePath + '[' + i + ']' : '[' + i + ']';
+        if (i >= objA.length) {
+          diffs.push({
+            path: childPath,
+            type: '新增',
+            oldValue: undefined,
+            newValue: objB[i]
+          });
+        } else if (i >= objB.length) {
+          diffs.push({
+            path: childPath,
+            type: '删除',
+            oldValue: objA[i],
+            newValue: undefined
+          });
+        } else {
+          const childDiffs = diffObjects(objA[i], objB[i], childPath);
+          diffs.push(...childDiffs);
+        }
+      }
+    } else {
+      // 基本类型
+      if (objA !== objB) {
+        diffs.push({
+          path: basePath || '(根节点)',
+          type: '修改',
+          oldValue: objA,
+          newValue: objB
+        });
+      }
+    }
+    return diffs;
+  }
+
+  function getType(val) {
+    if (val === null) return 'null';
+    if (Array.isArray(val)) return 'array';
+    return typeof val;
+  }
+
+  // 对比主逻辑
+  compareBtn.addEventListener('click', function() {
+    const a = jsonA.value.trim();
+    const b = jsonB.value.trim();
+
+    errorBox.classList.add('hidden');
+    resultArea.classList.add('hidden');
+
+    if (!a || !b) {
+      showError('请输入两份 JSON 内容');
+      return;
+    }
+
+    let parsedA, parsedB;
+    try {
+      parsedA = JSON.parse(a);
+    } catch (e) {
+      showError('左侧 JSON 解析失败：' + e.message);
+      return;
+    }
+    try {
+      parsedB = JSON.parse(b);
+    } catch (e) {
+      showError('右侧 JSON 解析失败：' + e.message);
+      return;
+    }
+
+    const diffs = diffObjects(parsedA, parsedB, '');
+
+    // 渲染差异
+    renderDiff(parsedA, parsedB, diffshed(parsedA, parsedB, diffs));
+  });
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+  }
+
+  // 渲染差异
+  function renderDiff(objA, objB, diffs) {
+    // 构建差异映射
+    const diffMap = {};
+    diffs.forEach(function(d) {
+      diffMap[d.path] = d;
+    });
+
+    // 渲染左侧
+    const leftHtml = renderValue(objA, '', 'left', diffMap);
+    diffLeft.innerHTML = leftHtml;
+
+    // 渲染右侧
+    const rightHtml = renderValue(objB, '', 'right', diffMap);
+    diffRight.innerHTML = rightHtml;
+
+    // 路径列表
+    pathList.innerHTML = '';
+    pathCount.textContent = diffs.length;
+    diffs.forEach(function(d) {
+      const li = document.createElement('li');
+      const typeMap = {
+        '新增': '新增',
+        '删除': '删除',
+        '修改': '修改'
+      };
+      li.textContent = '[' + typeMap[d.type] + '] ' + d.path;
+      if (d.type === '修改') {
+        li.textContent += '  → ' + JSON.stringify(d.oldValue) + ' 变为 ' + JSON.stringify(d.newValue);
+      } else if (d.type === '新增') {
+        li.textContent += '  → ' + JSON.stringify(d.newValue);
+      } else if (d.type === '删除') {
+        li.textContent += '  → ' + JSON.stringify(d.oldValue);
+      }
+      pathList.appendChild(li);
+    });
+
+    // 摘要
+    const addCount = diffs.filter(d => d.type === '新增').length;
+    const delCount = diffs.filter(d => d.type === '删除').length;
+    const modCount = diffs.filter(d => d.type === '修改').length;
+    diffSummary.innerHTML = '共发现 <strong>' + diffs.length + '</strong> 处差异：新增 <strong>' + addCount + '</strong> 处，删除 <strong>' + delCount + '</strong> 处，修改 <strong>' + modCount + '</strong> 处。';
+
+    resultArea.classList.remove('hidden');
+  }
+
+  // 渲染值（带高亮）
+  function renderValue(val, path, side, diffMap) {
+    const type = getType(val);
+    const diff = diffMap[path];
+
+    if (diff) {
+      let cls = '';
+      if (diff.type === '新增' && side === 'right') {
+        cls = 'diff-added';
+      } else if (diff.type === '删除' && side === 'left') {
+        cls = 'diff-removed';
+      } else if (diff.type === '修改') {
+        cls = 'diff-modified';
+      }
+      if (cls) {
+        return '<span class="' + cls + '">' + escapeHtml(JSON.stringify(val, null, 2)) + '</span>';
+      }
+    }
+
+    if (type === 'object') {
+      const keys = Object.keys(val);
+      let html = '{\n';
+      keys.forEach(function(key, idx) {
+        const childPath = path ? path + '.' + key : key;
+        const childDiff = diffMap[childPath];
+        let childCls = '';
+        if (childDiff) {
+          if (childDiff.type === '新增' && side === 'right') childCls = 'diff-added';
+          if (childDiff.type === '删除' && side === 'left') childCls = 'diff-removed';
+          if (childDiff.type === '修改') childCls = 'diff-modified';
+        }
+        const comma = idx < keys.length - 1 ? ',' : '';
+        html += '  ' + (childCls ? '<span class="' + childCls + '">' : '') + '"' + escapeHtml(key) + '": ' + renderValue(val[key], childPath, side, diffMap) + (childCls ? '</span>' : '') + comma + '\n';
+      });
+      html += '}';
+      return html;
+    } else if (type === 'array') {
+      let html = '[\n';
+      val.forEach(function(item, idx) {
+        const childPath = path + '[' + idx + ']';
+        const childDiff = diffMap[childPath];
+        let childCls = '';
+        if (childDiff) {
+          if (childDiff.type === '新增' && side === 'right') childCls = 'diff-added';
+          if (childDiff.type === '删除' && side === 'left') childCls = 'diff-removed';
+          if (childDiff.type === '修改') childCls = 'diff-modified';
+        }
+        const comma = idx < val.length - 1 ? ',' : '';
+        html += '  ' + (childCls ? '<span class="' + childCls + '">' : '') + renderValue(item, childPath, side, diffMap) + (childCls ? '</span>' : '') + comma + '\n';
+      });
+      html += ']';
+      return html;
+    } else if (type === 'string') {
+      return '"' + escapeHtml(val) + '"';
+    } else if (type === 'null') {
+      return 'null';
+    } else {
+      return String(val);
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // 修复：renderDiff 调用参数错误
+  function renderDiff(objA, objB, diffs) {
+    // 构建差异映射
+    const diffMap = {};
+    diffs.forEach(function(d) {
+      diffMap[d.path] = d;
+    });
+
+    // 渲染左侧
+    const leftHtml = renderValue(objA, '', 'left', diffMap);
+    diffLeft.innerHTML = leftHtml;
+
+    // 渲染右侧
+    const rightHtml = renderValue(objB, '', 'right', diffMap);
+    diffRight.innerHTML = rightHtml;
+
+    // 路径列表
+    pathList.innerHTML = '';
+    pathCount.textContent = diffs.length;
+    diffs.forEach(function(d) {
+      const li = document.createElement('li');
+      const typeMap = {
+        '新增': '新增',
+        '删除': '删除',
+        '修改': '修改'
+      };
+      li.textContent = '[' + typeMap[d.type] + '] ' + d.path;
+      if (d.type === '修改') {
+        li.textContent += '  → ' + JSON.stringify(d.oldValue) + ' 变为 ' + JSON.stringify(d.newValue);
+      } else if (d.type === '新增') {
+        li.textContent += '  → ' + JSON.stringify(d.newValue);
+      } else if (d.type === '删除') {
+        li.textContent += '  → ' + JSON.stringify(d.oldValue);
+      }
+      pathList.appendChild(li);
+    });
+
+    // 摘要
+    const addCount = diffs.filter(d => d.type === '新增').length;
+    const delCount = diffs.filter(d => d.type === '删除').length;
+    const modCount = diffs.filter(d => d.type === '修改').length;
+    diffSummary.innerHTML = '共发现 <strong>' + diffs.length + '</strong> 处差异：新增 <strong>' + addCount + '</strong> 处，删除 <strong>' + delCount + '</strong> 处，修改 <strong>' + modCount + '</strong> 处。';
+
+    resultArea.classList.remove('hidden');
+  }
+
+  // 修正 compareBtn 中的调用
+  compareBtn.addEventListener('click', function() {
+    const a = jsonA.value.trim();
+    const b = jsonB.value.trim();
+
+    errorBox.classList.add('hidden');
+    resultArea.classList.add('hidden');
+
+    if (!a || !b) {
+      showError('请输入两份 JSON 内容');
+      return;
+    }
+
+    let parsedA, parsedB;
+    try {
+      parsedA = JSON.parse(a);
+    } catch (e) {
+      showError('左侧 JSON 解析失败：' + e.message);
+      return;
+    }
+    try {
+      parsedB = JSON.parse(b);
+    } catch (e) {
+      showError('右侧 JSON 解析失败：' + e.message);
+      return;
+    }
+
+    const diffs = diffObjects(parsedA, parsedB, '');
+    renderDiff(parsedA, parsedB, diffs);
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/json-diff" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/7b5970ef3dee" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1dksRUL1EhBG9Ju5u3QnGGA" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>5953</b> ｜ 百度提取码：<b>ldp5</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/json-diff-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

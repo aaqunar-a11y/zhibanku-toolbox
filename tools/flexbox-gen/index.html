@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flexbox 布局代码生成器</title>
+<meta name="description" content="可视化勾选参数，实时预览并生成 Flexbox 布局 CSS 代码，一键复制，本地运行不传数据。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/flexbox-gen.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7fb;
+    color: #1e2a3a;
+    line-height: 1.6;
+    padding-bottom: 40px;
+  }
+  .zbk-topnav {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 12px 16px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .zbk-topnav a {
+    display: inline-block;
+    padding: 7px 14px;
+    border: 1px solid #cddffa;
+    background: #f4f8ff;
+    color: #1449b0;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .zbk-topnav a:last-child {
+    background: transparent;
+    border: none;
+    color: #1a5fe0;
+    font-weight: 400;
+  }
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+  h1 {
+    font-size: 28px;
+    color: #0f2a4a;
+    margin-bottom: 8px;
+  }
+  .lead {
+    background: #eef4ff;
+    border-left: 4px solid #1a5fe0;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    color: #2a3d5c;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 20px;
+    color: #0f2a4a;
+    margin: 32px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #dbe4f0;
+  }
+  .tool-wrap {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .config-panel {
+    flex: 1 1 340px;
+    min-width: 300px;
+  }
+  .preview-panel {
+    flex: 1 1 380px;
+    min-width: 320px;
+  }
+  .group {
+    margin-bottom: 18px;
+  }
+  .group-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1a5fe0;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .group-title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 16px;
+    background: #1a5fe0;
+    border-radius: 2px;
+  }
+  .radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .radio-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f0f4fa;
+    border: 1px solid #d0dcec;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .radio-row label:hover {
+    background: #e3ecf8;
+  }
+  .radio-row input[type="radio"] {
+    accent-color: #1a5fe0;
+  }
+  .radio-row input[type="radio"]:checked + span {
+    color: #1a5fe0;
+    font-weight: 600;
+  }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .preset-btn {
+    background: #e8f0fe;
+    border: 1px solid #b8cff0;
+    color: #1449b0;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .preset-btn:hover {
+    background: #d4e4fd;
+    transform: translateY(-1px);
+  }
+  .preset-btn:active {
+    transform: translateY(0);
+  }
+  .preview-box {
+    border: 2px dashed #b0c4de;
+    border-radius: 10px;
+    min-height: 220px;
+    padding: 16px;
+    background: #fafcff;
+    transition: all 0.3s;
+    display: flex;
+  }
+  .preview-item {
+    background: linear-gradient(135deg, #4a90e2, #3570b8);
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 48px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    transition: all 0.3s;
+  }
+  .preview-item:nth-child(2) {
+    background: linear-gradient(135deg, #e2a04a, #c07f2e);
+  }
+  .preview-item:nth-child(3) {
+    background: linear-gradient(135deg, #5cb85c, #3d8b3d);
+  }
+  .preview-item:nth-child(4) {
+    background: linear-gradient(135deg, #d9534f, #b03a36);
+  }
+  .code-area {
+    margin-top: 16px;
+    background: #1e2a3a;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+  }
+  .code-area pre {
+    color: #d4e4fd;
+    font-family: "SF Mono", "Consolas", "Courier New", monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+  }
+  .code-area .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #2a4a7a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .code-area .copy-btn:hover {
+    background: #3a5a8a;
+  }
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: #1a5fe0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover {
+    background: #1449b0;
+  }
+  .btn-secondary {
+    background: #eef2f7;
+    color: #2a3d5c;
+    border: 1px solid #c0cfe0;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover {
+    background: #dfe6ef;
+  }
+  .note-list {
+    padding-left: 20px;
+  }
+  .note-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .steps {
+    padding-left: 20px;
+  }
+  .steps li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  details {
+    background: #fff;
+    border: 1px solid #dbe4f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: #1449b0;
+    font-size: 14px;
+  }
+  details p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #3a4a5c;
+  }
+  .related-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .related-links a {
+    display: inline-block;
+    background: #eef4ff;
+    border: 1px solid #c0d4f0;
+    color: #1449b0;
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .related-links a:hover {
+    background: #dce8fc;
+    transform: translateY(-1px);
+  }
+  footer {
+    max-width: 920px;
+    margin: 40px auto 0;
+    padding: 20px 16px;
+    border-top: 1px solid #dbe4f0;
+    text-align: center;
+    font-size: 13px;
+    color: #6a7a8c;
+  }
+  footer a {
+    color: #1a5fe0;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .item-count {
+    margin-top: 12px;
+  }
+  .item-count label {
+    font-size: 13px;
+    color: #2a3d5c;
+    margin-right: 8px;
+  }
+  .item-count select {
+    padding: 5px 10px;
+    border: 1px solid #c0cfe0;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fff;
+  }
+  .tip {
+    font-size: 12px;
+    color: #7a8a9c;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6">
+  <a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a>
+  <a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a>
+</nav>
+
+<main>
+  <h1>Flexbox 布局代码生成器</h1>
+  <p class="lead">这是一个可视化生成 Flexbox 布局 CSS 代码的在线工具。您无需手写任何样式，只需在左侧面板勾选或选择您需要的布局参数（如主轴方向、对齐方式、换行规则等），然后点击「生成代码」按钮，右侧预览区会立即展示布局效果，同时下方代码区会输出完整的 CSS 代码。您可以直接点击「复制结果」按钮将代码粘贴到自己的项目中使用。整个过程完全在浏览器本地运行，您的数据不会上传到任何服务器。</p>
+
+  <div class="tool-wrap">
+    <div class="panel config-panel">
+      <div class="preset-row">
+        <button class="preset-btn" data-preset="center">居中布局</button>
+        <button class="preset-btn" data-preset="space-between">两端对齐</button>
+        <button class="preset-btn" data-preset="header">经典导航</button>
+        <button class="preset-btn" data-preset="column">纵向排列</button>
+      </div>
+
+      <div class="group">
+        <div class="group-title">主轴方向</div>
+        <div class="radio-row">
+          <label><input type="radio" name="flex-direction" value="row" checked> <span>水平 row</span></label>
+          <label><input type="radio" name="flex-direction" value="row-reverse"> <span>水平反向</span></label>
+          <label><input type="radio" name="flex-direction" value="column"> <span>垂直 column</span></label>
+          <label><input type="radio" name="flex-direction" value="column-reverse"> <span>垂直反向</span></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">主轴对齐</div>
+        <div class="radio-row">
+          <label><input type="radio" name="justify-content" value="flex-start" checked> <span>起点</span></label>
+          <label><input type="radio" name="justify-content" value="flex-end"> <span>终点</span></label>
+          <label><input type="radio" name="justify-content" value="center"> <span>居中</span></label>
+          <label><input type="radio" name="justify-content" value="space-between"> <span>两端</span></label>
+          <label><input type="radio" name="justify-content" value="space-around"> <span>环绕</span></label>
+          <label><input type="radio" name="justify-content" value="space-evenly"> <span>均匀</span></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">交叉轴对齐</div>
+        <div class="radio-row">
+          <label><input type="radio" name="align-items" value="stretch" checked> <span>拉伸</span></label>
+          <label><input type="radio" name="align-items" value="flex-start"> <span>起点</span></label>
+          <label><input type="radio" name="align-items" value="flex-end"> <span>终点</span></label>
+          <label><input type="radio" name="align-items" value="center"> <span>居中</span></label>
+          <label><input type="radio" name="align-items" value="baseline"> <span>基线</span></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">换行方式</div>
+        <div class="radio-row">
+          <label><input type="radio" name="flex-wrap" value="nowrap" checked> <span>不换行</span></label>
+          <label><input type="radio" name="flex-wrap" value="wrap"> <span>换行</span></label>
+          <label><input type="radio" name="flex-wrap" value="wrap-reverse"> <span>反向换行</span></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">多行对齐（仅换行时生效）</div>
+        <div class="radio-row">
+          <label><input type="radio" name="align-content" value="stretch" checked> <span>拉伸</span></label>
+          <label><input type="radio" name="align-content" value="flex-start"> <span>起点</span></label>
+          <label><input type="radio" name="align-content" value="flex-end"> <span>终点</span></label>
+          <label><input type="radio" name="align-content" value="center"> <span>居中</span></label>
+          <label><input type="radio" name="align-content" value="space-between"> <span>两端</span></label>
+          <label><input type="radio" name="align-content" value="space-around"> <span>环绕</span></label>
+        </div>
+      </div>
+
+      <div class="group item-count">
+        <label for="item-count">子元素数量：</label>
+        <select id="item-count">
+          <option value="2">2 个</option>
+          <option value="3" selected>3 个</option>
+          <option value="4">4 个</option>
+          <option value="5">5 个</option>
+        </select>
+        <div class="tip">预览区子元素数量，不影响生成的 CSS 代码</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="generate-btn">生成代码</button>
+        <button class="btn-secondary" id="reset-btn">重置</button>
+      </div>
+    </div>
+
+    <div class="panel preview-panel">
+      <div class="group-title">实时预览</div>
+      <div class="preview-box" id="preview-box">
+        <div class="preview-item">元素 1</div>
+        <div class="preview-item">元素 2</div>
+        <div class="preview-item">元素 3</div>
+      </div>
+
+      <div class="code-area">
+        <button class="copy-btn" id="copy-btn">复制结果</button>
+        <pre id="code-output">/* 点击「生成代码」查看 CSS */</pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="note-list">
+    <li>本工具生成的代码仅包含 Flex 容器（父元素）的样式，子元素的 flex 属性（如 flex-grow、flex-shrink）需要您自行添加。</li>
+    <li>「多行对齐」仅在「换行方式」选择「换行」或「反向换行」时生效，且容器需要足够高度才能看到效果。</li>
+    <li>「基线对齐」在子元素内容高度不一致时效果更明显，若所有子元素高度相同则视觉上等同于「起点」。</li>
+    <li>所有操作均在浏览器本地完成，不会上传任何数据到服务器，刷新页面后所有配置将恢复默认。</li>
+    <li>生成的 CSS 代码兼容所有现代浏览器（Chrome、Firefox、Safari、Edge），无需添加浏览器前缀。</li>
+    <li>预览区子元素数量仅用于视觉参考，不会影响生成代码中 flex 容器的属性。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在左侧面板中，通过单选按钮选择主轴方向、主轴对齐、交叉轴对齐、换行方式等参数。</li>
+    <li>如需快速使用常见布局，可直接点击上方「居中布局」「两端对齐」等快捷预设按钮。</li>
+    <li>点击「生成代码」按钮，右侧预览区会立即展示布局效果，下方代码区会输出完整的 CSS 代码。</li>
+    <li>点击「复制结果」按钮，将生成的 CSS 代码复制到剪贴板，粘贴到您的项目中即可使用。</li>
+    <li>如需重新开始，点击「重置」按钮恢复所有默认设置。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>为什么我设置了换行但子元素没有换行？</summary>
+    <p>请检查子元素是否设置了固定宽度，且容器宽度不足以容纳所有子元素。若子元素宽度可伸缩，则不会触发换行。</p>
+  </details>
+  <details>
+    <summary>生成的代码为什么没有子元素的样式？</summary>
+    <p>本工具专注于生成 Flex 容器的布局属性。子元素的宽度、高度、边距等样式需要您根据实际需求自行编写。</p>
+  </details>
+  <details>
+    <summary>多行对齐选项为什么看起来没有效果？</summary>
+    <p>多行对齐需要容器高度大于子元素总高度，且换行已生效。请尝试增加预览区高度或减少子元素数量。</p>
+  </details>
+  <details>
+    <summary>代码可以用于生产环境吗？</summary>
+    <p>可以。生成的代码是标准 CSS，兼容所有现代浏览器。建议在目标浏览器中做最终验证。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="related-links">
+    <a href="https://www.zhibanku.com/tools/border-radius.html">圆角可视化生成器</a>
+    <a href="https://www.zhibanku.com/tools/px-rem.html">px 与 rem 换算</a>
+    <a href="https://www.zhibanku.com/tools/color-picker.html">颜色选择与转换</a>
+    <a href="https://www.zhibanku.com/tools/meta-tags.html">SEO 标签生成器</a>
+    <a href="https://www.zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+    <a href="https://www.zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+  </div>
+</main>
+
+<footer>
+  <p><a href="/tools/">返回在线工具</a> · 本工具纯本地运行，无需联网，数据不会离开您的浏览器</p>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  const previewBox = document.getElementById('preview-box');
+  const codeOutput = document.getElementById('code-output');
+  const copyBtn = document.getElementById('copy-btn');
+  const generateBtn = document.getElementById('generate-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const itemCountSelect = document.getElementById('item-count');
+
+  // 快捷预设
+  const presets = {
+    center: {
+      'flex-direction': 'row',
+      'justify-content': 'center',
+      'align-items': 'center',
+      'flex-wrap': 'nowrap',
+      'align-content': 'stretch'
+    },
+    'space-between': {
+      'flex-direction': 'row',
+      'justify-content': 'space-between',
+      'align-items': 'center',
+      'flex-wrap': 'nowrap',
+      'align-content': 'stretch'
+    },
+    header: {
+      'flex-direction': 'row',
+      'justify-content': 'space-between',
+      'align-items': 'center',
+      'flex-wrap': 'wrap',
+      'align-content': 'flex-start'
+    },
+    column: {
+      'flex-direction': 'column',
+      'justify-content': 'flex-start',
+      'align-items': 'stretch',
+      'flex-wrap': 'nowrap',
+      'align-content': 'stretch'
+    }
+  };
+
+  // 获取当前配置
+  function getConfig() {
+    return {
+      'flex-direction': document.querySelector('input[name="flex-direction"]:checked').value,
+      'justify-content': document.querySelector('input[name="justify-content"]:checked').value,
+      'align-items': document.querySelector('input[name="align-items"]:checked').value,
+      'flex-wrap': document.querySelector('input[name="flex-wrap"]:checked').value,
+      'align-content': document.querySelector('input[name="align-content"]:checked').value
+    };
+  }
+
+  // 应用配置到预览
+  function applyConfig(config) {
+    previewBox.style.flexDirection = config['flex-direction'];
+    previewBox.style.justifyContent = config['justify-content'];
+    previewBox.style.alignItems = config['align-items'];
+    previewBox.style.flexWrap = config['flex-wrap'];
+    previewBox.style.alignContent = config['align-content'];
+  }
+
+  // 生成 CSS 代码
+  function generateCSS(config) {
+    return `.flex-container {
+  display: flex;
+  flex-direction: ${config['flex-direction']};
+  justify-content: ${config['justify-content']};
+  align-items: ${config['align-items']};
+  flex-wrap: ${config['flex-wrap']};
+  align-content: ${config['align-content']};
+}`;
+  }
+
+  // 更新子元素数量
+  function updateItems(count) {
+    const currentItems = previewBox.querySelectorAll('.preview-item');
+    const currentCount = currentItems.length;
+    
+    if (count > currentCount) {
+      for (let i = currentCount + 1; i <= count; i++) {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.textContent = '元素 ' + i;
+        previewBox.appendChild(div);
+      }
+    } else if (count < currentCount) {
+      for (let i = currentCount; i > count; i--) {
+        previewBox.removeChild(previewBox.lastElementChild);
+      }
+    }
+  }
+
+  // 生成并显示
+  function generate() {
+    const config = getConfig();
+    applyConfig(config);
+    codeOutput.textContent = generateCSS(config);
+  }
+
+  // 重置
+  function reset() {
+    document.querySelector('input[name="flex-direction"][value="row"]').checked = true;
+    document.querySelector('input[name="justify-content"][value="flex-start"]').checked = true;
+    document.querySelector('input[name="align-items"][value="stretch"]').checked = true;
+    document.querySelector('input[name="flex-wrap"][value="nowrap"]').checked = true;
+    document.querySelector('input[name="align-content"][value="stretch"]').checked = true;
+    itemCountSelect.value = '3';
+    updateItems(3);
+    generate();
+  }
+
+  // 复制
+  function copyCode() {
+    const code = codeOutput.textContent;
+    if (code.startsWith('/*')) {
+      alert('请先点击「生成代码」按钮生成 CSS 代码');
+      return;
+    }
+    navigator.clipboard.writeText(code).then(function() {
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = '已复制';
+      setTimeout(function() {
+        copyBtn.textContent = originalText;
+      }, 1500);
+    }).catch(function() {
+      // 降级方案
+      const textarea = document.createElement('textarea');
+      textarea.value = code;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = '已复制';
+      setTimeout(function() {
+        copyBtn.textContent = originalText;
+      }, 1500);
+    });
+  }
+
+  // 事件绑定
+  generateBtn.addEventListener('click', generateapsed);
+  resetBtn.addEventListener('click', reset);
+  copyBtn.addEventListener('click', copyCodeapse);
+
+  // 快捷预设按钮
+  document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const preset = presets[this.dataset.preset];
+      if (preset) {
+        document.querySelector('input[name="flex-direction"][value="' + preset['flex-direction'] + '"]').checked = true;
+        document.querySelector('input[name="justify-content"][value="' + preset['justify-content'] + '"]').checked = true;
+        document.querySelector('input[name="align-items"][value="' + preset['align-items'] + '"]').checked = true;
+        document.querySelector('input[name="flex-wrap"][value="' + preset['flex-wrap'] + '"]').checked = true;
+        document.querySelector('input[name="align-content"][value="' + preset['align-content'] + '"]').checked = true;
+        generate();
+      }
+    });
+  });
+
+  // 子元素数量变化
+  itemCountSelect.addEventListener('change', function() {
+    updateItems(parseInt(this.value));
+  });
+
+  // 初始化
+  generate();
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/flexbox-gen" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/flexbox-gen" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/be99dc60ee9e" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1Ei72pl7qeTlWLgL17e4cuw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>1660</b> ｜ 百度提取码：<b>pwwv</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/flexbox-gen-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

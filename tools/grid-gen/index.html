@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grid 布局生成器 — 可视化生成 CSS Grid 代码</title>
+<meta name="description" content="Grid 布局生成器，可视化设置行列、间距与对齐，实时预览并一键复制 CSS 代码。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/grid-gen.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f0f4f8; color: #1a2b3c; line-height: 1.6; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { text-decoration: none; }
+  .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; margin-bottom: 8px; color: #0d2b52; }
+  .lead { background: #e8f0fe; border-left: 4px solid #1a5fe0; padding: 14px 18px; border-radius: 0 8px 8px 0; margin-bottom: 28px; font-size: 15px; color: #1a3a5e; }
+  h2 { font-size: 20px; margin: 32px 0 14px; padding-bottom: 6px; border-bottom: 2px solid #d4e2f5; color: #0d2b52; }
+  .panel { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid-2col { grid-template-columns: 1fr; } }
+  .field-group { margin-bottom: 14px; }
+  .field-group label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #2c4a6e; }
+  .field-group input[type="number"], .field-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fafcff; }
+  .field-group input[type="number"]:focus, .field-group select:focus { outline: none; border-color: #1a5fe0; box-shadow: 0 0 0 3px rgba(26,95,224,0.15); }
+  .field-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .field-row .field-group { flex: 1; min-width: 80px; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+  .btn-primary { background: #1a5fe0; color: #fff; }
+  .btn-primary:hover { background: #1449b0; }
+  .btn-secondary { background: #e8f0fe; color: #1449b0; border: 1px solid #b8d0f0; }
+  .btn-secondary:hover { background: #d4e2f5; }
+  .btn-success { background: #0e9f6e; color: #fff; }
+  .btn-success:hover { background: #0b7a55; }
+  .btn-warning { background: #f59e0b; color: #fff; }
+  .btn-warning:hover { background: #d97706; }
+  .btn-sm { padding: 5px 12px; font-size: 13px; }
+  .preset-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .preset-bar .btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #334e68; }
+  .preset-bar .btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+  .preview-box { border: 2px dashed #94a3b8; border-radius: 8px; padding: 12px; background: #f8fafc; min-height: 180px; transition: all 0.2s; }
+  .preview-box .grid-item { background: #dbeafe; border: 1px solid #93c5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1e40af; font-weight: 500; padding: 8px; text-align: center; }
+  .code-output { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 16px; font-family: "SF Mono", "Fira Code", Consolas, monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; margin-top: 12px; }
+  .copy-tip { color: #0e9f6e; font-size: 13px; margin-left: 8px; }
+  .note-list { padding-left: 20px; }
+  .note-list li { margin-bottom: 8px; font-size: 14px; }
+  .steps { padding-left: 20px; }
+  .steps li { margin-bottom: 8px; font-size: 14px; }
+  details { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; color: #1a5fe0; font-size: 14px; }
+  details p { margin-top: 8px; font-size: 14px; color: #334e68; }
+  .tool-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .tool-links a { display: block; padding: 10px 14px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #1a5fe0; font-size: 14px; transition: all 0.2s; }
+  .tool-links a:hover { background: #e8f0fe; border-color: #93c5fd; }
+  footer { text-align: center; padding: 24px 16px; color: #64748b; font-size: 13px; border-top: 1px solid #e2e8f0; margin-top: 40px; }
+  footer a { color: #1a5fe0; text-decoration: none; margin: 0 8px; }
+  .color-options { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+  .color-dot:hover { transform: scale(1.15); }
+  .color-dot.active { border-color: #0d2b52; box-shadow: 0 0 0 2px rgba(13,43,82,0.2); }
+  .range-value { font-size: 13px; color: #64748b; margin-left: 6px; }
+  .section-title { display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main class="container">
+  <h1>Grid 布局生成器</h1>
+  <p class="lead">本工具用于可视化生成 CSS Grid 布局代码。您无需手写复杂的 grid 属性，只需在下方设置列数、行数、间距、对齐方式等参数，即可在预览区实时看到网格效果，并自动生成对应的 CSS 代码。点击「生成代码」按钮可刷新代码，点击「复制结果」按钮可将代码复制到剪贴板。生成的代码可直接用于您的网页项目中，所有操作均在浏览器本地完成，数据不会上传到任何服务器。</p>
+
+  <div class="panel">
+    <div class="section-title">
+      <h2 style="margin:0;border:none;">布局参数设置</h2>
+    </div>
+    <div class="preset-bar">
+      <span style="font-size:13px;color:#64748b;align-self:center;">快捷预设：</span>
+      <button class="btn btn-sm" onclick="applyPreset(3,3,12,12,'center','stretch')">3×3 网格</button>
+      <button class="btn btn-sm" onclick="applyPreset(4,3,16,16,'center','center')">4×3 网格</button>
+      <button class="btn btn-sm" onclick="applyPreset(2,2,20,20,'stretch','stretch')">2×2 大间距</button>
+      <button class="btn btn-sm" onclick="applyPreset(6,4,8,8,'center','stretch')">6×4 紧凑型</button>
+      <button class="btn btn-sm" onclick="applyPreset(5,5,0,0,'stretch','stretch')">5×5 无间距</button>
+    </div>
+
+    <div class="grid-2col">
+      <div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>列数</label>
+            <input type="number" id="cols" min="1" max="12" value="3">
+          </div>
+          <div class="field-group">
+            <label>行数</label>
+            <input type="number" id="rows" min="1" max="12" value="3">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>列间距（px）</label>
+            <input type="number" id="colGap" min="0" max="100" value="12">
+          </div>
+          <div class="field-group">
+            <label>行间距（px）</label>
+            <input type="number" id="rowGap" min="0" max="100" value="12">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>水平对齐（justify-items）</label>
+          <select id="justifyItems">
+            <option value="stretch">拉伸（默认）</option>
+            <option value="start">起点</option>
+            <option value="center">居中</option>
+            <option value="end">终点</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>垂直对齐（align-items）</label>
+          <select id="alignItems">
+            <option value="stretch">拉伸（默认）</option>
+            <option value="start">起点</option>
+            <option value="center">居中</option>
+            <option value="end">终点</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="field-group">
+          <label>网格项颜色</label>
+          <div class="color-options" id="colorOptions">
+            <span class="color-dot active" style="background:#dbeafe" data-color="#dbeafe" title="浅蓝"></span>
+            <span class="color-dot" style="background:#dcfce7" data-color="#dcfce7" title="浅绿"></span>
+            <span class="color-dot" style="background:#fee2e2" data-color="#fee2e2" title="浅红"></span>
+            <span class="color-dot" style="background:#fef9c3" data-color="#fef9c3" title="浅黄"></span>
+            <span class="color-dot" style="background:#f3e8ff" data-color="#f3e8ff" title="浅紫"></span>
+            <span class="color-dot" style="background:#ffedd5" data-color="#ffedd5" title="浅橙"></span>
+            <span class="color-dot" style="background:#e0f2fe" data-color="#e0f2fe" title="天蓝"></span>
+            <span class="color-dot" style="background:#fce7f3" data-color="#fce7f3" title="浅粉"></span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>显示网格编号</label>
+          <select id="showNumbers">
+            <option value="1">显示编号</option>
+            <option value="0">不显示编号</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>预览区背景</label>
+          <select id="previewBg">
+            <option value="#f8fafc">浅灰</option>
+            <option value="#ffffff">白色</option>
+            <option value="#f0fdf4">浅绿</option>
+            <option value="#fef2f2">浅红</option>
+            <option value="#eff6ff">浅蓝</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="generateGrid()">生成代码</button>
+      <button class="btn btn-success" onclick="copyCode()">复制结果</button>
+      <button class="btn btn-warning" onclick="resetAll()">重置</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0;border:none;">实时预览</h2>
+    <div class="preview-box" id="previewBox" style="background:#f8fafc;"></div>
+  </div>
+
+  <div class="panel">
+    <h2 style="margin-top:0;border:none;">生成的 CSS 代码</h2>
+    <div class="code-output" id="codeOutput">// 点击「生成代码」按钮查看 CSS 代码</div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="note-list">
+    <li>本工具生成的代码基于 CSS Grid 标准语法，兼容 Chrome、Firefox、Safari、Edge 等现代浏览器，不支持 IE11 及更早版本。</li>
+    <li>所有参数调整均在浏览器本地完成，不会上传任何数据到服务器，可放心使用。</li>
+    <li>预览区中的网格项仅用于展示布局效果，实际使用时您需要将网格项替换为自己的内容。</li>
+    <li>列数和行数最大支持 12，间距最大支持 100px，超出范围的值会被自动限制。</li>
+    <li>「生成代码」按钮会基于当前参数重新生成 CSS 代码；修改参数后需点击该按钮更新代码。</li>
+    <li>复制功能依赖浏览器剪贴板 API，若复制失败请检查浏览器权限设置。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在「布局参数设置」区域调整列数、行数、间距和对齐方式等参数，或直接点击上方的快捷预设按钮快速填充常用配置。</li>
+    <li>点击「生成代码」按钮，右侧预览区会实时显示网格效果，下方代码区会生成对应的 CSS 代码。</li>
+    <li>如需调整网格项颜色或是否显示编号，可在参数区进行选择，然后再次点击「生成代码」刷新预览。</li>
+    <li>点击「复制结果」按钮，将生成的 CSS 代码复制到剪贴板，粘贴到您的项目中即可使用。</li>
+    <li>如需重新开始，点击「重置」按钮恢复默认设置。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>生成的代码可以直接用吗</summary>
+    <p>可以。生成的代码包含完整的 CSS 规则，您只需将网格项放入容器中即可正常显示。代码中已包含必要的浏览器前缀。</p>
+  </details>
+  <details>
+    <summary>为什么预览和实际效果不一样</summary>
+    <p>预览区使用固定高度展示效果，实际使用时容器高度由内容决定。若您的网格项内容较多，实际布局可能略有差异，属正常现象。</p>
+  </details>
+  <details>
+    <summary>如何让网格项跨列或跨行</summary>
+    <p>本工具生成的是基础网格布局，跨列跨行需要您手动在网格项上添加 grid-column 或 grid-row 属性，工具暂不支持可视化设置。</p>
+  </details>
+  <details>
+    <summary>支持响应式布局吗</summary>
+    <p>工具生成的是固定行列的网格，如需响应式布局，建议结合媒体查询在不同屏幕尺寸下调整列数，工具本身不生成响应式代码。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算工具</a>
+    <a href="https://zhibanku.com/tools/border-radius.html">圆角可视化生成器</a>
+    <a href="https://zhibanku.com/tools/color-picker.html">在线拾色与色值转换</a>
+    <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+    <a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+    <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <span>· 本工具在浏览器本地运行，无需联网</span>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  let selectedColor = '#dbeafe';
+
+  // 颜色选择器事件
+  document.querySelectorAll('.color-dot').forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
+      this.classList.add('active');
+      selectedColor = this.getAttribute('data-color');
+    });
+  });
+
+  // 生成网格
+  function generateGrid() {
+    const cols = clampInt('cols', 1, 12);
+    const rows = clampInt('rows', 1, 12);
+    const colGap = clampInt('colGap', 0, 100);
+    const rowGap = clampInt('rowGap', 0, 100);
+    const justifyItems = document.getElementById('justifyItems').value;
+    const alignItems = document.getElementById('alignItems').value;
+    const showNumbers = document.getElementById('showNumbers').value === '1';
+    const previewBg = document.getElementById('previewBg').value;
+
+    // 更新预览
+    const previewBox = document.getElementById('previewBox');
+    previewBox.style.background = previewBg;
+    previewBox.style.display = 'grid';
+    previewBox.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+    previewBox.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+    previewBox.style.gap = rowGap + 'px ' + colGap + 'px';
+    previewBox.style.justifyItems = justifyItems;
+    previewBox.style.alignItems = alignItems;
+
+    let itemsHtml = '';
+    const total = cols * rows;
+    for (let i = 1; i <= total; i++) {
+      const label = showNumbers ? i : '';
+      itemsHtml += '<div class="grid-item" style="background:' + selectedColor + ';border:1px solid rgba(0,0,0,0.15);">' + label + '</div>';
+    }
+    previewBox.innerHTML = itemsHtml;
+
+    // 生成 CSS 代码
+    const cssCode = 
+'.grid-container {\n' +
+'  display: grid;\n' +
+'  grid-template-columns: repeat(' + cols + ', 1fr);\n' +
+'  grid-template-rows: repeat(' + rows + ', 1fr);\n' +
+'  gap: ' + rowGap + 'px ' + colGap + 'px;\n' +
+'  justify-items: ' + justifyItems + ';\n' +
+'  align-items: ' + alignItems + ';\n' +
+'}\n\n' +
+'.grid-item {\n' +
+'  background: ' + selectedColor + ';\n' +
+'  border: 1px solid rgba(0,0,0,0.15);\n' +
+'  border-radius: 6px;\n' +
+'  padding: 12px;\n' +
+'  text-align: center;\n' +
+'}';
+
+    document.getElementById('codeOutput').textContent = cssCode;
+  }
+
+  // 复制代码
+  function copyCode() {
+    const code = document.getElementById('codeOutput').textContent;
+    if (code.indexOf('点击') !== -1) {
+      alert('请先点击「生成代码」按钮生成 CSS 代码');
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(function() {
+        alert('代码已复制到剪贴板');
+      }).catch(function() {
+        fallbackCopy(code);
+      });
+    } else {
+      fallbackCopy(code);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      alert('代码已复制到剪贴板');
+    } catch (err) {
+      alert('复制失败，请手动选择代码复制');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 重置
+  function resetAll() {
+    document.getElementById('cols').value = 3;
+    document.getElementById('rows').value = 3;
+    document.getElementById('colGap').value = 12;
+    document.getElementById('rowGap').value = 12;
+    document.getElementById('justifyItems').value = 'stretch';
+    document.getElementById('alignItems').value = 'stretch';
+    document.getElementById('showNumbers').value = '1';
+    document.getElementById('previewBg').value = '#f8fafc';
+    document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
+    document.querySelector('.color-dot').classList.add('active');
+    selectedColor = '#dbeafe';
+    generateGrid();
+  }
+
+  // 快捷预设
+  function applyPreset(cols, rows, colGap, rowGap, justify, align) {
+    document.getElementById('cols').value = cols;
+    document.getElementById('rows').value = rows;
+    document.getElementById('colGap').value = colGap;
+    document.getElementById('rowGap').value = rowGap;
+    document.getElementById('justifyItems').value = justify;
+    document.getElementById('alignItems').value = align;
+    generateGrid();
+  }
+
+  // 辅助函数
+  function clampInt(id, min, max) {
+    const el = document.getElementById(id);
+    let val = parseInt(el.value, 10);
+    if (isNaN(val)) val = min;
+    val = Math.max(min, Math.min(max, val));
+    el.value = val;
+    return val;
+  }
+
+  // 暴露到全局
+  window.generateGrid = generateGrid;
+  window.copyCode = copyCode;
+  window.resetAll = resetAll;
+  window.applyPreset = applyPreset;
+
+  // 初始生成
+  generateGrid();
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/grid-gen" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/grid-gen" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/6dee8c8a0929" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1EeYEP-iRgDzXcTt5FVIUwQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>7578</b> ｜ 百度提取码：<b>0t7z</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/grid-gen-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
