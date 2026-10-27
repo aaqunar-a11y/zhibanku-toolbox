@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV 与 JSON 互转工具</title>
+<meta name="description" content="CSV 与 JSON 双向转换，自动识别表头与分隔符，本地处理不传云端。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/csv-json.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #2c3e50; line-height: 1.6; }
+  .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 1.9rem; color: #1a3a6b; margin: 20px 0 8px; }
+  .lead { background: #eef4ff; border-left: 4px solid #4a7de0; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 0.98rem; color: #2c3e50; margin-bottom: 28px; }
+  h2 { font-size: 1.3rem; color: #1a3a6b; margin: 32px 0 14px; padding-bottom: 6px; border-bottom: 2px solid #d8e2f5; }
+  .tool-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .mode-btn { padding: 9px 22px; border: 2px solid #c9d8f0; background: #fff; border-radius: 30px; cursor: pointer; font-size: 0.95rem; color: #1a3a6b; font-weight: 600; transition: all 0.2s; }
+  .mode-btn.active { background: #1a5fe0; border-color: #1a5fe0; color: #fff; }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; align-items: center; }
+  .preset-row span { font-size: 0.9rem; color: #5a6b8a; margin-right: 4px; }
+  .preset-btn { padding: 5px 14px; border: 1px solid #b8cbe8; background: #f0f5ff; border-radius: 16px; cursor: pointer; font-size: 0.85rem; color: #1a4a9e; transition: all 0.15s; }
+  .preset-btn:hover { background: #dbe8ff; border-color: #7a9fe0; }
+  textarea { width: 100%; min-height: 220px; border: 1px solid #cbd6e8; border-radius: 8px; padding: 12px; font-family: "SF Mono", "Consolas", "Courier New", monospace; font-size: 0.9rem; resize: vertical; background: #fafcff; color: #1e2b3c; }
+  textarea:focus { outline: none; border-color: #4a7de0; box-shadow: 0 0 0 3px rgba(74,125,224,0.15); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+  .primary-btn { padding: 10px 28px; background: #1a5fe0; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+  .primary-btn:hover { background: #1449b0; }
+  .secondary-btn { padding: 10px 20px; background: #fff; color: #1a3a6b; border: 1px solid #b8cbe8; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .secondary-btn:hover { background: #f0f5ff; border-color: #7a9fe0; }
+  .result-label { font-size: 0.9rem; color: #5a6b8a; margin: 18px 0 6px; display: flex; justify-content: space-between; align-items: center; }
+  .result-box { background: #f8fafd; border: 1px solid #d8e2f5; border-radius: 8px; padding: 14px; min-height: 120px; max-height: 320px; overflow-y: auto; font-family: "SF Mono", "Consolas", "Courier New", monospace; font-size: 0.88rem; white-space: pre-wrap; word-break: break-all; color: #1e2b3c; }
+  .error-msg { background: #fff0f0; border: 1px solid #f5c6c6; color: #b02a2a; padding: 10px 14px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; display: none; }
+  .tips-list { padding-left: 20px; }
+  .tips-list li { margin-bottom: 8px; font-size: 0.95rem; }
+  .steps-list { padding-left: 20px; }
+  .steps-list li { margin-bottom: 8px; font-size: 0.95rem; }
+  details { background: #f8fafd; border: 1px solid #d8e2f5; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; color: #1a3a6b; font-size: 0.98rem; }
+  details p { margin-top: 10px; font-size: 0.92rem; color: #3a4a6a; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .related-links a { display: inline-block; padding: 8px 16px; background: #eef4ff; border: 1px solid #c9d8f0; border-radius: 8px; color: #1a4a9e; text-decoration: none; font-size: 0.92rem; transition: all 0.2s; }
+  .related-links a:hover { background: #dbe8ff; border-color: #7a9fe0; }
+  footer { text-align: center; margin-top: 48px; padding-top: 20px; border-top: 1px solid #d8e2f5; color: #7a8aa8; font-size: 0.88rem; }
+  footer a { color: #1a5fe0; text-decoration: none; }
+  .copy-tip { font-size: 0.85rem; color: #2a8a4a; margin-left: 10px; }
+  .delimiter-select { padding: 6px 12px; border: 1px solid #b8cbe8; border-radius: 6px; background: #fff; font-size: 0.9rem; color: #1a3a6b; margin-left: 8px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main class="container">
+  <h1>CSV 与 JSON 互转工具</h1>
+  <p class="lead">本工具用于在 CSV 表格数据与 JSON 对象数组之间进行双向转换。您只需在下方文本框中粘贴 CSV 文本或 JSON 文本，选择转换方向后点击「转换为 JSON」或「转换为 CSV」按钮，结果会立即显示在下方结果区。工具会自动识别 CSV 的表头行与分隔符（支持逗号、制表符、分号），所有数据均在浏览器本地处理，不会上传到任何服务器。</p>
+
+  <div class="tool-card">
+    <div class="mode-switch">
+      <button class="mode-btn active" id="modeCsvToJson">CSV 转 JSON</button>
+      <button class="mode-btn" id="modeJsonToCsv">JSON 转 CSV</button>
+    </div>
+
+    <div class="preset-row">
+      <span>快捷预设：</span>
+      <button class="preset-btn" data-preset="comma">逗号分隔</button>
+      <button class="preset-btn" data-preset="tab">制表符分隔</button>
+      <button class="preset-btn" data-preset="semicolon">分号分隔</button>
+      <button class="preset-btn" data-preset="sample-csv">示例 CSV</button>
+      <button class="preset-btn" data-preset="sample-json">示例 JSON</button>
+    </div>
+
+    <div class="preset-row" id="delimiterRow" style="display:none;">
+      <span>CSV 分隔符：</span>
+      <select class="delimiter-select" id="delimiterSelect">
+        <option value=",">逗号 ,</option>
+        <option value="\t">制表符 \t</option>
+        <option value=";">分号 ;</option>
+        <option value="|">竖线 |</option>
+      </select>
+    </div>
+
+    <textarea id="inputArea" placeholder="在此粘贴 CSV 或 JSON 数据..."></textarea>
+
+    <div class="btn-row">
+      <button class="primary-btn" id="convertBtn">转换为 JSON</button>
+      <button class="secondary-btn" id="resetBtn">重置</button>
+      <button class="secondary-btn" id="swapBtn">交换输入输出</button>
+    </div>
+
+    <div class="result-label">
+      <span>转换结果</span>
+      <span><button class="secondary-btn" id="copyBtn" style="padding:4px 14px;font-size:0.85rem;">复制结果</button><span class="copy-tip" id="copyTip"></span></span>
+    </div>
+    <div class="result-box" id="resultBox">等待转换...</div>
+
+    <div class="出错了-msg" id="出错了Msg"></div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="tips-list">
+    <li>CSV 转 JSON 时，默认将第一行作为表头（字段名），后续每行数据生成一个 JSON 对象。</li>
+    <li>CSV 字段若包含分隔符、换行符或双引号，需用双引号包裹，且内部双引号需用两个双引号转义。</li>
+    <li>JSON 转 CSV 时，仅支持对象数组（数组内元素为扁平对象），嵌套对象或数组会被序列化为 JSON 字符串。</li>
+    <li>所有转换均在浏览器本地完成，数据不会离开您的设备，请放心粘贴敏感数据。</li>
+    <li>若 CSV 各行列数不一致，将按表头列数截断或补空字符串处理。</li>
+    <li>大文件（超过 5 万行）可能导致页面卡顿，建议分批处理。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps-list">
+    <li>在顶部选择转换方向：CSV 转 JSON 或 JSON 转 CSV。</li>
+    <li>将数据粘贴到上方文本框中，或点击「示例 CSV」「示例 JSON」快速填充演示数据。</li>
+    <li>如需自定义 CSV 分隔符，可在下拉框中选择逗号、制表符、分号或竖线。</li>
+    <li>点击「转换为 JSON」或「转换为 CSV」按钮（按钮文字随模式变化），结果会显示在下方结果区。</li>
+    <li>点击「复制结果」可将转换后的文本复制到剪贴板，点击「重置」清空所有内容。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>CSV 文件里含有逗号怎么办</summary>
+    <p>CSV 规范要求包含逗号、换行符或双引号的字段必须用双引号包裹，例如 "北京, 上海"。本工具支持这种标准转义格式。</p>
+  </details>
+  <details>
+    <summary>JSON 转 CSV 时嵌套对象怎么处理</summary>
+    <p>嵌套对象或数组会被自动序列化为 JSON 字符串写入对应单元格，您可以在 Excel 中查看完整结构，但无法直接展开为多列。</p>
+  </details>
+  <details>
+    <summary>转换结果和预期不符怎么办</summary>
+    <p>请检查输入数据格式：CSV 是否包含表头行、JSON 是否为对象数组。也可尝试切换分隔符选项，或使用示例数据对比验证。</p>
+  </details>
+  <details>
+    <summary>数据会上传到服务器吗</summary>
+    <p>不会。本工具为纯前端实现，所有解析和转换逻辑都在您的浏览器中运行，没有任何网络请求，数据完全本地处理。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="related-links">
+    <a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验与定位错误</a>
+    <a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义与反转义</a>
+    <a href="https://zhibanku.com/tools/csv-view.html">CSV 智能分列成表</a>
+    <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+    <a href="https://zhibanku.com/tools/markdown-table.html">Markdown 表格转换器</a>
+    <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具完全在浏览器本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  let currentMode = 'csv2json'; // csv2json | json2csv
+
+  const inputArea = document.getElementById('inputArea');
+  const resultBox = document.getElementById('resultBox');
+  const errorMsg = document.getElementById('出错了Msg');
+  const convertBtn = document.getElementById('convertBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const swapBtn = document.getElementById('swapBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const copyTip = document.getElementById('copyTip');
+  const delimiterSelect = document.getElementById('delimiterSelect');
+  const delimiterRow = document.getElementById('delimiterRow');
+  const modeCsvToJson = document.getElementById('modeCsvToJson');
+  const modeJsonToCsv = document.getElementById('modeJsonToCsv');
+
+  // 预设按钮
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
+  // 示例数据
+  const sampleCsv = '姓名,年龄,城市,职业\n张三,28,北京,工程师\n李四,35,上海,设计师\n王五,42,深圳,产品经理\n赵六,24,广州,数据分析师';
+  const sampleJson = '[\n  { "姓名": "张三", "年龄": 28, "城市": "北京", "职业": "工程师" },\n  { "姓名": "李四", "年龄": 35, "城市": "上海", "职业": "设计师" },\n  { "姓名": "王五", "年龄": 42, "城市": "深圳", "职业": "产品经理" }\n]';
+
+  function setMode(mode) {
+    currentMode = mode;
+    if (mode === 'csv2json') {
+      modeCsvToJson.classList.add('active');
+      modeJsonToCsv.classList.remove('active');
+      convertBtn.textContent = '转换为 JSON';
+      delimiterRow.style.display = 'flex';
+      inputArea.placeholder = '在此粘贴 CSV 数据（第一行为表头）...';
+    } else {
+      modeJsonToCsv.classList.add('active');
+      modeCsvToJson.classList.remove('active');
+      convertBtn.textContent = '转换为 CSV';
+      delimiterRow.style.display = 'none';
+      inputArea.placeholder = '在此粘贴 JSON 对象数组...';
+    }
+    // 清空结果
+    resultBox.textContent = '等待转换...';
+    errorMsg.style.display = 'none';
+    copyTip.textContent = '';
+  }
+
+  // CSV 解析（支持引号转义）
+  function parseCSV(text, delimiter) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+    let i = 0;
+    const len = text.length;
+
+    while (i < len) {
+      const char = text[i];
+      if (inQuotes) {
+        if (char === '"') {
+          if (i + 1 < len && text[i + 1] === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          field += char;
+        }
+      } else {
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === delimiter) {
+          row.push(field);
+          field = '';
+        } else if (char === '\n') {
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = '';
+        } else if (char === '\r') {
+          // 忽略回车，由换行处理
+        } else {
+          field += char;
+        }
+      }
+      i++;
+    }
+    // 最后一行
+    if (field.length > 0 || row.length > 0) {
+      row.push(field);
+      rows.push(row);
+    }
+    // 过滤空行
+    return rows.filter(r => r.some(c => c.trim() !== ''));
+  }
+
+  // CSV 转 JSON
+  function csvToJson(text, delimiter) {
+    const rows = parseCSV(text, delimiter);
+    if (rows.length === 0) {
+      throw new Error('未解析到任何数据行');
+    }
+    const headers = rows[0].map(h => h.trim());
+    const result = [];
+    for (let i = 1; i < rows.length; i++) {
+      const obj = {};
+      const row = rows[i];
+      for (let j = 0; j < headers.length; j++) {
+        obj[headers[j]] = row[j] !== undefined ? row[j].trim() : '';
+      }
+      result.push(obj);
+    }
+    return JSON.stringify(result, null, 2);
+  }
+
+  // JSON 转 CSV
+  function jsonToCsv(text, delimiter) {
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('JSON 解析失败，请检查格式');
+    }
+    if (!Array.isArray(data)) {
+      throw new Error('JSON 必须是对象数组格式');
+    }
+    if (data.length === 0) {
+      throw new Error('JSON 数组为空');
+    }
+    // 收集所有字段
+    const headers = [];
+    const seen = new Set();
+    data.forEach(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        Object.keys(item).forEach(k => {
+          if (!seen.has(k)) {
+            seen.add(k);
+            headers.push(k);
+          }
+        });
+      }
+    });
+    if (headers.length === 0) {
+      throw new Error('JSON 数组中的对象没有可识别的字段');
+    }
+
+    // 转义 CSV 字段
+    function escapeField(val) {
+      let str = String(val);
+      if (str.includes(delimiter) || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+        str = '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    const lines = [];
+    lines.push(headers.map(h => escapeField(h)).join(delimiter));
+    data.forEach(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const row = headers.map(h => {
+          const val = item[h];
+          if (val === null || val === undefined) return '';
+          if (typeof val === 'object') {
+            return escapeField(JSON.stringify(val));
+          }
+          return escapeField(val);
+        });
+        lines.push(row.join(delimiter));
+      }
+    });
+    return lines.join('\n');
+  }
+
+  // 执行转换
+  function convert() {
+    const text = inputArea.value.trim();
+    if (!text) {
+      showError('请输入需要转换的数据');
+      return;
+    }
+    try {
+      let result;
+      if (currentMode === 'csv2json') {
+        const delim = delimiterSelect.value === '\\t' ? '\t' : delimiterSelect.value;
+        result = csvToJson(text, delim);
+      } else {
+        const delim = delimiterSelect.value === '\\t' ? '\t' : delimiterSelect.value;
+        result = jsonToCsv(text, delim);
+      }
+      resultBox.textContent = result;
+      errorMsg.style.display = 'none';
+      copyTip.textContent = '';
+    } catch (e) {
+      showError(e.message);
+    }
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = '错误：' + msg;
+    errorMsg.style.display = 'block';
+    resultBox.textContent = '转换失败';
+    copyTip.textContent = '';
+  }
+
+  // 重置
+  function reset() {
+    inputArea.value = '';
+    resultBox.textContent = '等待转换...';
+    errorMsg.style.display = 'none';
+    copyTip.textContent = '';
+  }
+
+  // 交换输入输出
+  function swap() {
+    const resultText = resultBox.textContent;
+    if (resultText && resultText !== '等待转换...' && resultText !== '转换失败') {
+      inputArea.value = resultText;
+      // 切换模式
+      if (currentMode === 'csv2json') {
+        setMode('json2csv');
+      } else {
+        setMode('csv2json');
+      }
+      resultBox.textContent = '等待转换...';
+      errorMsg.style.display = 'none';
+      copyTip.textContent = '';
+    } else {
+      showError('没有可交换的结果内容');
+    }
+  }
+
+  // 复制结果
+  function copyResult() {
+    const text = resultBox.textContent;
+    if (!text || text === '等待转换...' || text === '转换失败') {
+      copyTip.textContent = '没有可复制的内容';
+      setTimeout(() => { copyTip.textContent = ''; }, 1500);
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        copyTip.textContent = '已复制';
+        setTimeout(() => { copyTip.textContent = ''; }, 1500);
+      }).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      copyTip.textContent = '已复制';
+    } catch (e) {
+      copyTip.textContent = '复制失败，请手动选择复制';
+    }
+    document.body.removeChild(ta);
+    setTimeout(() => { copyTip.textContent = ''; }, 1500);
+  }
+
+  // 事件绑定
+  modeCsvToJson.addEventListener('click', () => setMode('csv2json'));
+  modeJsonToCsv.addEventListener('click', () => setMode('json2csv'));
+  convertBtn.addEventListener('click', convert);
+  resetBtn.addEventListener('click', reset);
+  swapBtn.addEventListener('click', swap);
+  copyBtn.addEventListener('click', copyResult);
+
+  // 预设按钮
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const preset = this.dataset.preset;
+      if (preset === 'comma') {
+        delimiterSelect.value = ',';
+        if (currentMode !== 'csv2json') setMode('csv2json');
+        inputArea.placeholder = '在此粘贴 CSV 数据（逗号分隔）...';
+      } else if (preset === 'tab') {
+        delimiterSelect.value = '\\t';
+        if (currentMode !== 'csv2json') setMode('csv2json');
+        inputArea.placeholder = '在此粘贴 CSV 数据（制表符分隔）...';
+      } else if (preset === 'semicolon') {
+        delimiterSelect.value = ';';
+        if (currentMode !== 'csv2json') setMode('csv2json');
+        inputArea.placeholder = '在此粘贴 CSV 数据（分号分隔）...';
+      } else if (preset === 'sample-csv') {
+        if (currentMode !== 'csv2json') setMode('csv2json');
+        inputArea.value = sampleCsv;
+        delimiterSelect.value = ',';
+        resultBox.textContent = '等待转换...';
+        errorMsg.style.display = 'none';
+        copyTip.textContent = '';
+      } else if (preset === 'sample-json') {
+        if (currentMode !== 'json2csv') setMode('json2csv');
+        inputArea.value = sampleJson;
+        resultBox.textContent = '等待转换...';
+        errorMsg.style.display = 'none';
+        copyTip.textContent = '';
+      }
+    });
+  });
+
+  // 初始化
+  setMode('csv2json');
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/csv-json" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/csv-json" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/a755aa819d77" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/10_L52yQ-ATdkXRpPB27hcw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>2567</b> ｜ 百度提取码：<b>3em4</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/csv-json-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
