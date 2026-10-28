@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML 格式化工具</title>
+    <meta name="description" content="XML 格式化与压缩校验工具，支持缩进调整、标签闭合检查，全程本地处理。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/xml-format.html">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+        h1 { font-size: 28px; color: #1a3a6b; margin: 20px 0 12px; text-align: center; }
+        .lead { background: #eef4ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 15px; color: #1e3a5f; margin-bottom: 28px; }
+        .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 24px; }
+        .card h2 { font-size: 20px; color: #1a3a6b; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8eef7; }
+        .preset-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .preset-btn { background: #eef4ff; border: 1px solid #c5d8f0; color: #1a5fa8; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .preset-btn:hover { background: #dbe8ff; border-color: #3b82f6; }
+        .action-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+        .btn { padding: 10px 22px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .btn-primary { background: #3b82f6; color: #fff; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-secondary:hover { background: #d1d5db; }
+        .btn-success { background: #10b981; color: #fff; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: #fff; }
+        .btn-warning:hover { background: #d97706; }
+        textarea { width: 100%; min-height: 220px; border: 1px solid #d1d5db; border-radius: 8px; padding: 14px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 13px; resize: vertical; background: #fafbfc; color: #1f2937; }
+        textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        .label { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px; display: block; }
+        .result-area { margin-top: 16px; }
+        .result-area textarea { background: #f8fafc; }
+        .status-bar { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 14px; display: none; }
+        .status-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; display: block; }
+        .status-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; display: block; }
+        .tips-list { padding-left: 20px; }
+        .tips-list li { margin-bottom: 8px; font-size: 14px; }
+        .steps-list { padding-left: 20px; }
+        .steps-list li { margin-bottom: 10px; font-size: 14px; }
+        details { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+        summary { cursor: pointer; font-weight: 600; color: #1a3a6b; font-size: 15px; }
+        details p { margin-top: 10px; font-size: 14px; color: #4b5563; }
+        .tool-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .tool-links a { display: block; padding: 10px 14px; background: #f0f4fa; border-radius: 8px; color: #1a5fa8; text-decoration: none; font-size: 14px; border: 1px solid #dbe4f0; transition: all 0.2s; }
+        .tool-links a:hover { background: #e0ebff; border-color: #3b82f6; }
+        footer { text-align: center; padding: 30px 0 20px; color: #6b7280; font-size: 13px; border-top: 1px solid #e5e7eb; margin-top: 20px; }
+        footer a { color: #3b82f6; text-decoration: none; margin: 0 8px; }
+        .indent-select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #fff; }
+        @media (max-width: 640px) {
+            .container { padding: 16px 12px 30px; }
+            h1 { font-size: 24px; }
+            .card { padding: 16px; }
+            .btn { padding: 8px 16px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main class="container">
+    <h1>XML 格式化工具</h1>
+    <p class="lead">本工具用于格式化、压缩和校验 XML 内容。您可以在下方输入框中粘贴或直接输入 XML 代码，点击「格式化」按钮即可得到缩进整齐、结构清晰的 XML；点击「压缩」按钮可去除多余空白；点击「校验」按钮可检查标签闭合与语法错误。格式化结果会显示在下方结果区，并支持一键复制。所有处理均在您的浏览器本地完成，不会上传任何数据。</p>
+
+    <div class="card">
+        <h2>快捷用法</h2>
+        <div class="preset-row">
+            <button class="preset-btn" onclick="loadSample('simple')">简单示例</button>
+            <button class="preset-btn" onclick="loadSample('nested')">嵌套示例</button>
+            <button class="preset-btn" onclick="loadSample('attr')">带属性示例</button>
+            <button class="preset-btn" onclick="loadSample('cdata')">CDATA 示例</button>
+            <button class="preset-btn" onclick="loadSample('comment')">含注释示例</button>
+        </div>
+        <div class="action-row" style="align-items:center;">
+            <label class="label" style="margin:0 8px 0 0;">缩进宽度</label>
+            <select class="indent-select" id="indentSelect">
+                <option value="2">2 空格</option>
+                <option value="4" selected>4 空格</option>
+                <option value="8">8 空格</option>
+                <option value="tab">制表符</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>输入 XML</h2>
+        <label class="label" for="inputXml">在此粘贴或输入 XML 内容</label>
+        <textarea id="inputXml" placeholder="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;root&gt;&#10;  &lt;item&gt;内容&lt;/item&gt;&#10;&lt;/root&gt;" spellcheck="false"></textarea>
+        <div class="action-row">
+            <button class="btn btn-primary" onclick="formatXml()">格式化</button>
+            <button class="btn btn-secondary" onclick="compressXml()">压缩</button>
+            <button class="btn btn-warning" onclick="validateXml()">校验</button>
+            <button class="btn btn-secondary" onclick="resetAll()">重置</button>
+        </div>
+        <div class="status-bar" id="statusBar"></div>
+    </div>
+
+    <div class="card">
+        <h2>结果</h2>
+        <div class="result-area">
+            <label class="label" for="outputXml">格式化结果</label>
+            <textarea id="outputXml" readonly placeholder="格式化后的 XML 将显示在这里" spellcheck="false"></textarea>
+            <div class="action-row">
+                <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>注意事项</h2>
+        <ul class="tips-list">
+            <li>本工具仅支持标准 XML 语法，不支持 DTD 外部实体解析，遇到未知实体可能报错。</li>
+            <li>所有处理均在浏览器本地完成，您的 XML 内容不会上传到任何服务器，可放心处理敏感数据。</li>
+            <li>格式化时默认保留 XML 声明（&lt;?xml?&gt;），压缩时会移除多余空白但保留声明。</li>
+            <li>如果 XML 中包含中文注释或 CDATA 内容，请确保文件编码为 UTF-8，否则可能出现乱码。</li>
+            <li>校验功能会检查标签闭合、属性引号、命名空间等常见语法问题，但不保证完全符合 XML 1.0 规范。</li>
+            <li>超大 XML（超过 5MB）可能导致浏览器卡顿，建议分段处理。</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>怎么用</h2>
+        <ol class="steps-list">
+            <li>在「输入 XML」区域的文本框中粘贴或输入您的 XML 内容。</li>
+            <li>根据需要选择缩进宽度（默认 4 空格），或点击上方「快捷用法」中的示例按钮快速填充测试内容。</li>
+            <li>点击「格式化」按钮，工具会自动整理缩进和换行；点击「压缩」可去除多余空白；点击「校验」可检查语法错误。</li>
+            <li>处理完成后，结果会显示在下方「结果」区域的文本框中，点击「复制结果」按钮即可复制到剪贴板。</li>
+            <li>如需重新开始，点击「重置」按钮清空所有输入和输出。</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>常见问题</h2>
+        <details>
+            <summary>格式化后 XML 结构乱了怎么办</summary>
+            <p>请检查原始 XML 是否包含未闭合的标签或非法字符。可先点击「校验」按钮查看具体错误位置，修正后再格式化。</p>
+        </details>
+        <details>
+            <summary>支持处理带命名空间的 XML 吗</summary>
+            <p>支持。工具会保留 xmlns 属性，并按标准方式处理带前缀的标签。但不会验证命名空间 URI 的有效性。</p>
+        </details>
+        <details>
+            <summary>压缩模式会删除哪些内容</summary>
+            <p>压缩会移除标签之间的空白字符、多余换行和缩进，但会保留 CDATA 内部内容和注释。XML 声明也会保留。</p>
+        </details>
+        <details>
+            <summary>结果区的内容可以编辑吗</summary>
+            <p>结果区为只读模式，防止误操作。如需修改格式化结果，请复制到输入区调整后再重新格式化。</p>
+        </details>
+    </div>
+
+    <div class="card">
+        <h2>相关工具推荐</h2>
+        <div class="tool-links">
+            <a href="https://zhibanku.com/tools/json-yan-zheng-qi.html">JSON 校验与定位</a>
+            <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+            <a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义反转义</a>
+            <a href="https://zhibanku.com/tools/markdown-to-html.html">Markdown 转 HTML</a>
+            <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+            <a href="https://zhibanku.com/tools/zheng-ze-ce-shi.html">正则表达式测试器</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <a href="/tools/">返回在线工具</a>
+    <span>· 本工具完全在浏览器本地运行，无需联网</span>
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    const inputEl = document.getElementById('inputXml');
+    const outputEl = document.getElementById('outputXml');
+    const statusBar = document.getElementById('statusBar');
+    const indentSelect = document.getElementById('indentSelect');
+
+    function showStatus(message, type) {
+        statusBar.textContent = message;
+        statusBar.className = 'status-bar ' + (type === '成功了' ? 'status-success' : 'status-error');
+    }
+
+    function clearStatus() {
+        statusBar.className = 'status-bar';
+        statusBar.textContent = '';
+    }
+
+    function getIndentString() {
+        const val = indentSelect.value;
+        if (val === 'tab') return '\t';
+        return ' '.repeat(parseInt(val, 10));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function unescapeHtml(str) {
+        return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    }
+
+    // 简单的 XML 解析器（基于 DOM 解析）
+    function parseXml(xmlStr) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xmlStr, 'application/xml');
+        const parseError = doc.getElementsByTagName('parsererror');
+        if (parseError.length > 0) {
+            const errMsg = parseError[0].textContent || 'XML 解析错误';
+            throw new Error(errMsg.trim().substring(0, 200));
+        }
+        return doc;
+    }
+
+    function formatNode(node, indentLevel, indentStr) {
+        let result = '';
+        const indent = indentStr.repeat(indentLevel);
+        const childNodes = Array.from(node.childNodes).filter(n => n.nodeType === 1 || n.nodeType === 3 || n.nodeType === 4 || n.nodeType === 7 || n.nodeType === 8);
+        
+        if (node.nodeType === 9) { // Document
+            if (node.doctype) {
+                result += '<!DOCTYPE ' + node.doctype.name + '>\n';
+            }
+            for (const child of childNodes) {
+                result += formatNode(child, 0, indentStr);
+            }
+            return result;
+        }
+
+        if (node.nodeType === 1) { // Element
+            const tagName = node.tagName;
+            const attrs = Array.from(node.attributes).map(attr => {
+                return ' ' + attr.name + '="' + attr.value.replace(/"/g, '&quot;') + '"';
+            }).join('');
+            
+            const children = Array.from(node.childNodes).filter(n => n.nodeType === 1 || n.nodeType === 3 || n.nodeType === 4 || n.nodeType === 7 || n.nodeType === 8);
+            
+            if (children.length === 0) {
+                result += indent + '<' + tagName + attrs + '/>\n';
+            } else {
+                result += indent + '<' + tagName + attrs + '>\n';
+                for (const child of children) {
+                    result += formatNode(child, indentLevel + 1, indentStr);
+                }
+                result += indent + '</' + tagName + '>\n';
+            }
+            return result;
+        }
+
+        if (node.nodeType === 3) { // Text
+            const text = node.nodeValue.trim();
+            if (text) {
+                return indent + escapeHtml(text) + '\n';
+            }
+            return '';
+        }
+
+        if (node.nodeType === 4) { // CDATA
+            return indent + '<![CDATA[' + node.nodeValue + ']]>\n';
+        }
+
+        if (node.nodeType === 7) { // Processing instruction
+            return indent + '<?' + node.target + ' ' + node.nodeValue + '?>\n';
+        }
+
+        if (node.nodeType === 8) { // Comment
+            return indent + '<!--' + node.nodeValue + '-->\n';
+        }
+
+        return '';
+    }
+
+    function formatXml() {
+        const input = inputEl.value.trim();
+        if (!input) {
+            showStatus('请输入 XML 内容', '出错了');
+            return;
+        }
+        try {
+            const doc = parseXml(input);
+            const indentStr = getIndentString();
+            let formatted = '';
+            
+            // 处理 XML 声明
+            const xmlDecl = input.match(/^\s*<\?xml[^>]*\?>/);
+            if (xmlDecl) {
+                formatted += xmlDecl[0] + '\n';
+            }
+            
+            formatted += formatNode(doc, 0, indentStr);
+            outputEl.value = formatted.trimEnd() + '\n';
+            showStatus('格式化成功', '成功了');
+        } catch (e) {
+            showStatus('格式化失败：' + e.message, '出错了');
+            outputEl.value = '';
+        }
+    }
+
+    function compressXml() {
+        const input = inputEl.value.trim();
+        if (!input) {
+            showStatus('请输入 XML 内容', '出错了');
+            return;
+        }
+        try {
+            const doc = parseXml(input);
+            // 压缩：移除标签间的空白
+            let compressed = new XMLSerializer().serializeToString(doc);
+            // 移除标签之间的多余空白
+            compressed = compressed.replace(/>\s+</g, '><').trim();
+            outputEl.value = compressed;
+            showStatus('压缩成功', '成功了');
+        } catch (e) {
+            showStatus('压缩失败：' + e.message, '出错了');
+            outputEl.value = '';
+        }
+    }
+
+    function validateXml() {
+        const input = inputEl.value.trim();
+        if (!input) {
+            showStatus('请输入 XML 内容', '出错了');
+            return;
+        }
+        try {
+            parseXml(input);
+            showStatus('校验通过：XML 语法正确，标签闭合无误', '成功了');
+        } catch (e) {
+            showStatus('校验失败：' + e.message, '出错了');
+        }
+    }
+
+    function copyResult() {
+        const output = outputEl.value;
+        if (!output) {
+            showStatus('没有可复制的内容，请先格式化', '出错了');
+            return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(output).then(() => {
+                showStatus('已复制到剪贴板', '成功了');
+            }).catch(() => {
+                fallbackCopy(output);
+            });
+        } else {
+            fallbackCopy(output);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showStatus('已复制到剪贴板', '成功了');
+        } catch (e) {
+            showStatus('复制失败，请手动选择复制', '出错了');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function resetAll() {
+        inputEl.value = '';
+        outputEl.value = '';
+        clearStatus();
+    }
+
+    function loadSample(type) {
+        const samples = {
+            simple: '<?xml version="1.0" encoding="UTF-8"?>\n<bookstore>\n  <book category="编程">\n    <title>JavaScript 高级程序设计</title>\n    <author>张三</author>\n    <price>99.00</price>\n  </book>\n</bookstore>',
+            nested: '<?xml version="1.0" encoding="UTF-8"?>\n<root>\n  <level1>\n    <level2>\n      <level3>深层嵌套内容</level3>\n    </level2>\n  </level1>\n  <sibling>同级节点</sibling>\n</root>',
+            attr: '<?xml version="1.0" encoding="UTF-8"?>\n<config version="2.0" encoding="UTF-8">\n  <database host="localhost" port="3306">\n    <username>admin</username>\n    <password>123456</password>\n  </database>\n  <cache enabled="true" timeout="3600"/>\n</config>',
+            cdata: '<?xml version="1.0" encoding="UTF-8"?>\n<article>\n  <title>示例文章</title>\n  <content><![CDATA[<p>这是包含 HTML 标签的 CDATA 内容</p><p>第二段</p>]]></content>\n</article>',
+            comment: '<?xml version="1.0" encoding="UTF-8"?>\n<!-- 这是根节点 -->\n<root>\n  <!-- 子节点注释 -->\n  <item id="1">项目一</item>\n  <item id="2">项目二</item>\n</root>'
+        };
+        inputEl.value = samples[type] || '';
+        outputEl.value = '';
+        clearStatus();
+    }
+
+    // 暴露到全局供 onclick 使用
+    window.formatXml = formatXml;
+    window.compressXml = compressXml;
+    window.validateXml = validateXml;
+    window.copyResult = copyResult;
+    window.resetAll = resetAll;
+    window.loadSample = loadSample;
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/xml-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/xml-format" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/eed8a4c73297" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1Bxr6NolxmJPPxKvdYrxqFw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>8602</b> ｜ 百度提取码：<b>jhav</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/xml-format-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
