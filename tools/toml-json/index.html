@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOML 与 JSON 互转工具</title>
+    <meta name="description" content="TOML 与 JSON 双向转换并格式化，本地完成，支持复制结果。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/toml-json.html">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #1f2d3d;
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a5fe0;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .lead {
+            background: #eef4ff;
+            border-left: 4px solid #1a5fe0;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 28px;
+        }
+        .tool-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .tool-card h2 {
+            font-size: 20px;
+            color: #1f2d3d;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e8edf3;
+        }
+        .tool-card h3 {
+            font-size: 16px;
+            color: #34495e;
+            margin: 16px 0 8px;
+        }
+        .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .preset-btns button {
+            background: #f0f6ff;
+            border: 1px solid #b8d4f8;
+            color: #1a5fe0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .preset-btns button:hover {
+            background: #dcebff;
+            border-color: #1a5fe0;
+        }
+        .preset-btns button:active {
+            transform: scale(0.97);
+        }
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .input-area label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            border: 1px solid #d3dce6;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            background: #fafbfc;
+            color: #1f2d3d;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #1a5fe0;
+            box-shadow: 0 0 0 3px rgba(26, 95, 224, 0.1);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .btn-primary {
+            background: #1a5fe0;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #1554c4;
+        }
+        .btn-secondary {
+            background: #fff;
+            color: #1a5fe0;
+            border: 1px solid #1a5fe0;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #f0f6ff;
+        }
+        .btn-danger {
+            background: #fff;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover {
+            background: #fef0ef;
+        }
+        .result-area {
+            margin-top: 16px;
+        }
+        .result-area .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .result-area .result-header span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .result-area textarea {
+            background: #f8fafc;
+            border: 1px solid #d3dce6;
+        }
+        .error-msg {
+            background: #fef0ef;
+            border: 1px solid #f5c6c0;
+            color: #c0392b;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .tips-list {
+            padding-left: 20px;
+        }
+        .tips-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .steps-list {
+            padding-left: 20px;
+        }
+        .steps-list li {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #e8edf3;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        details summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: #1a5fe0;
+            font-size: 14px;
+        }
+        details p {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #34495e;
+        }
+        .related-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .related-links a {
+            display: inline-block;
+            background: #f0f6ff;
+            border: 1px solid #b8d4f8;
+            color: #1a5fe0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .related-links a:hover {
+            background: #dcebff;
+            border-color: #1a5fe0;
+        }
+        footer {
+            text-align: center;
+            padding: 24px 16px;
+            color: #7f8c9a;
+            font-size: 13px;
+            border-top: 1px solid #e8edf3;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+        footer a {
+            color: #1a5fe0;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #27ae60;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 22px;
+            }
+            .tool-card {
+                padding: 16px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-primary, .btn-secondary, .btn-danger {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6">
+        <a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a>
+        <a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a>
+    </nav>
+    <main>
+        <h1>TOML 与 JSON 互转工具</h1>
+        <p class="lead">
+            本工具用于在 TOML 与 JSON 两种数据格式之间进行双向转换。您只需在左侧输入框中粘贴原始内容，然后点击「TOML 转 JSON」或「JSON 转 TOML」按钮，转换结果会立即显示在下方结果区。整个过程完全在您的浏览器本地完成，数据不会上传到任何服务器。转换结果支持一键复制，方便您直接用于配置文件或开发调试。
+        </p>
+
+        <div class="tool-card">
+            <h2>转换工具</h2>
+            <div class="preset-btns">
+                <button type="button" onclick="loadPreset('basic')">基础示例</button>
+                <button type="button" onclick="loadPreset('nested')">嵌套结构</button>
+                <button type="button" onclick="loadPreset('array')">数组示例</button>
+                <button type="button" onclick="loadPreset('types')">多类型示例</button>
+                <button type="button" onclick="loadPreset('empty')">清空输入</button>
+            </div>
+            <div class="input-area">
+                <label for="inputText">输入内容</label>
+                <textarea id="inputText" placeholder="在此粘贴 TOML 或 JSON 内容，然后点击下方对应转换按钮..."></textarea>
+            </div>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="convertTomlToJson()">TOML 转 JSON</button>
+                <button class="btn-primary" onclick="convertJsonToToml()">JSON 转 TOML</button>
+                <button class="btn-secondary" onclick="copyResult()">复制结果</button>
+                <button class="btn-danger" onclick="resetAll()">重置</button>
+            </div>
+            <div class="result-area">
+                <div class="result-header">
+                    <span>转换结果</span>
+                    <span class="badge" id="statusBadge">等待输入</span>
+                </div>
+                <textarea id="outputText" placeholder="转换结果将显示在这里..." readonly></textarea>
+            </div>
+            <div class="出错了-msg" id="出错了Msg"></div>
+        </div>
+
+        <div class="tool-card">
+            <h2>注意事项</h2>
+            <ul class="tips-list">
+                <li>本工具完全在浏览器本地运行，您的数据不会上传到任何服务器，请放心使用。</li>
+                <li>TOML 转 JSON 时，TOML 中的日期时间类型（如 1979-05-27T07:32:00Z）会转换为 ISO 8601 字符串。</li>
+                <li>JSON 转 TOML 时，JSON 对象键名必须符合 TOML 的裸键规则（仅允许字母、数字、下划线、连字符），否则会报错。</li>
+                <li>TOML 中的多行字符串（使用三个引号）在转换时会保留换行符，JSON 中会显示为 \n 转义。</li>
+                <li>不支持 TOML 中的内联表（inline table）以外的复杂嵌套类型，如数组中的混合类型数组。</li>
+                <li>JSON 中的 null 值在 TOML 中没有对应类型，转换时会报错提示。</li>
+            </ul>
+        </div>
+
+        <div class="tool-card">
+            <h2>怎么用</h2>
+            <ol class="steps-list">
+                <li>在「输入内容」文本框中粘贴您要转换的 TOML 或 JSON 数据。</li>
+                <li>根据输入内容的格式，点击「TOML 转 JSON」或「JSON 转 TOML」按钮。</li>
+                <li>转换结果会显示在下方「转换结果」文本框中，并自动格式化缩进。</li>
+                <li>点击「复制结果」按钮可将转换后的内容复制到剪贴板。</li>
+                <li>如需重新开始，点击「重置」按钮清空所有输入和输出。</li>
+            </ol>
+        </div>
+
+        <div class="tool-card">
+            <h2>常见问题</h2>
+            <details>
+                <summary>转换失败提示语法错误怎么办</summary>
+                <p>请检查输入内容是否符合 TOML 或 JSON 的语法规范。特别注意引号是否闭合、逗号是否遗漏、键名是否合法。</p>
+            </details>
+            <details>
+                <summary>TOML 中的日期时间会变成什么</summary>
+                <p>TOML 的日期时间类型（如 1979-05-27T07:32:00Z）在转换为 JSON 时会变成 ISO 8601 格式的字符串，例如 1979-05-27T07:32:00.000Z。</p>
+            </details>
+            <details>
+                <summary>JSON 中的 null 值能转换吗</summary>
+                <p>不能。TOML 格式没有 null 类型，遇到 JSON 中的 null 值会报错。建议先将 null 替换为其他值或移除该字段。</p>
+            </details>
+            <details>
+                <summary>支持大文件转换吗</summary>
+                <p>受浏览器性能限制，建议输入内容不超过 1MB。过大的文件可能导致页面卡顿或内存不足。</p>
+            </details>
+        </div>
+
+        <div class="tool-card">
+            <h2>相关工具推荐</h2>
+            <div class="related-links">
+                <a href="https://zhibanku.com/tools/json-zhuan-yi.html">JSON 转义与反转义</a>
+                <a href="https://zhibanku.com/tools/yaml-json.html">YAML 与 JSON 互转</a>
+                <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+                <a href="https://zhibanku.com/tools/xml-format.html">XML 格式化工具</a>
+                <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+                <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <a href="/tools/">返回在线工具</a> · 本工具完全在浏览器本地运行，无需上传数据
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ====== 简易 TOML 解析器（支持常用语法） ======
+            function parseToml(text) {
+                const lines = text.split(/\r?\n/);
+                const root = {};
+                let currentTable = root;
+                let currentTablePath = [];
+
+                function setValue(obj, path, value) {
+                    let target = obj;
+                    for (let i = 0; i < path.length - 1; i++) {
+                        const key = path[i];
+                        if (!target[key] || typeof target[key] !== 'object') {
+                            target[key] = {};
+                        }
+                        target = target[key];
+                    }
+                    target[path[path.length - 1]] = value;
+                }
+
+                function getTable(obj, path) {
+                    let target = obj;
+                    for (const key of path) {
+                        if (!target[key] || typeof target[key] !== 'object') {
+                            target[key] = {};
+                        }
+                        target = target[key];
+                    }
+                    return target;
+                }
+
+                function parseValue(raw) {
+                    raw = raw.trim();
+                    // 字符串
+                    if (raw.startsWith('"')) {
+                        if (raw.endsWith('"') && raw.length >= 2) {
+                            return raw.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                        }
+                        throw new Error('字符串未正确闭合');
+                    }
+                    // 多行字符串
+                    if (raw.startsWith('"""')) {
+                        if (raw.endsWith('"""') && raw.length >= 6) {
+                            return raw.slice(3, -3).replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                        }
+                        throw new Error('多行字符串未正确闭合');
+                    }
+                    // 布尔值
+                    if (raw === 'true') return true;
+                    if (raw === 'false') return false;
+                    // 数字
+                    if (/^-?\d+$/.test(raw)) return parseInt(raw, 10);
+                    if (/^-?\d*\.\d+$/.test(raw)) return parseFloat(raw);
+                    if (/^-?\d+\.\d+[eE][+-]?\d+$/.test(raw)) return parseFloat(raw);
+                    // 日期时间
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+                    if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}/.test(raw)) {
+                        return new Date(raw).toISOString();
+                    }
+                    // 数组
+                    if (raw.startsWith('[')) {
+                        if (!raw.endsWith(']')) throw new Error('数组未正确闭合');
+                        const inner = raw.slice(1, -1).trim();
+                        if (inner === '') return [];
+                        const items = [];
+                        let depth = 0;
+                        let current = '';
+                        let inString = false;
+                        for (let i = 0; i < inner.length; i++) {
+                            const ch = inner[i];
+                            if (ch === '"' && inner[i - 1] !== '\\') inString = !inString;
+                            if (!inString) {
+                                if (ch === '[' || ch === '{') depth++;
+                                if (ch === ']' || ch === '}') depth--;
+                                if (ch === ',' && depth === 0) {
+                                    items.push(parseValue(current));
+                                    current = '';
+                                    continue;
+                                }
+                            }
+                            current += ch;
+                        }
+                        if (current.trim() !== '') items.push(parseValue(current));
+                        return items;
+                    }
+                    // 内联表
+                    if (raw.startsWith('{')) {
+                        if (!raw.endsWith('}')) throw new Error('内联表未正确闭合');
+                        const inner = raw.slice(1, -1).trim();
+                        if (inner === '') return {};
+                        const obj = {};
+                        let depth = 0;
+                        let current = '';
+                        let inString = false;
+                        const pairs = [];
+                        for (let i = 0; i < inner.length; i++) {
+                            const ch = inner[i];
+                            if (ch === '"' && inner[i - 1] !== '\\') inString = !inString;
+                            if (!inString) {
+                                if (ch === '[' || ch === '{') depth++;
+                                if (ch === ']' || ch === '}') depth--;
+                                if (ch === ',' && depth === 0) {
+                                    pairs.push(current);
+                                    current = '';
+                                    continue;
+                                }
+                            }
+                            current += ch;
+                        }
+                        if (current.trim() !== '') pairs.push(current);
+                        for (const pair of pairs) {
+                            const eqIdx = pair.indexOf('=');
+                            if (eqIdx === -1) throw new Error('内联表键值对格式错误');
+                            const key = pair.slice(0, eqIdx).trim().replace(/^"|"$/g, '');
+                            const val = parseValue(pair.slice(eqIdx + 1));
+                            obj[key] = val;
+                        }
+                        return obj;
+                    }
+                    throw new Error('无法识别的值类型: ' + raw);
+                }
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line === '' || line.startsWith('#')) continue;
+
+                    // 表定义 [table]
+                    if (line.startsWith('[') && line.endsWith(']')) {
+                        const pathStr = line.slice(1, -1).trim();
+                        currentTablePath = pathStr.split('.').map(s => s.trim());
+                        currentTable = getTable(root, currentTablePath);
+                        continue;
+                    }
+
+                    // 键值对
+                    const eqIdx = line.indexOf('=');
+                    if (eqIdx === -1) {
+                        throw new Error('第 ' + (i + 1) + ' 行格式错误：缺少等号');
+                    }
+                    const key = line.slice(0, eqIdx).trim().replace(/^"|"$/g, '');
+                    const valueStr = line.slice(eqIdx + 1).trim();
+                    const value = parseValue(valueStrhed);
+                    setValue(root, currentTablePath.concat(key), value);
+                }
+
+                return root;
+            }
+
+            // ====== JSON 转 TOML ======
+            function jsonToToml(obj, indent) {
+                indent = indent || '';
+                const lines = [];
+                const keys = Object.keys(objapse);
+                for (const key of keys) {
+                    const value = objapse[key];
+                    const keyStr = /^[A-Za-z0-9_-]+$/.test(key) ? key : JSON.stringify(key);
+
+                    if (value === null) {
+                        throw new Error('JSON 中的 null 值无法转换为 TOML，字段: ' + key);
+                    }
+
+                    if (typeof value === 'object' && !Array.isArray(value)) {
+                        // 嵌套对象
+                        if (Object.keys(value).length === 0) {
+                            lines.push(indent + keyStr + ' = {}');
+                        } else {
+                            lines.push(indent + '[' + keyStr + ']');
+                            lines.push(jsonToToml(value, indent + '  '));
+                        }
+                    } else if (Array.isArray(value)) {
+                        // 数组
+                        if (value.length === 0) {
+                            lines.push(indent + keyStr + ' = []');
+                        } else {
+                            const allObjects = value.every(v => typeof v === 'object' && v !== null && !Array.isArray(v));
+                            if (allObjects) {
+                                // 对象数组
+                                lines.push(indent + '[[' + keyStr + ']]');
+                                lines.push(jsonToToml(value[0], indent + '  '));
+                                for (let i = 1; i < value.length; i++) {
+                                    lines.push(indent + '[[' + keyStr + ']]');
+                                    lines.push(jsonToToml(value[i], indent + '  '));
+                                }
+                            } else {
+                                // 简单数组
+                                const items = value.map(v => {
+                                    if (typeof v === 'string') return JSON.stringify(v);
+                                    if (typeof v === 'object') return JSON.stringify(v);
+                                    return String(v);
+                                });
+                                lines.push(indent + keyStr + ' = [' + items.join(', ') + ']');
+                            }
+                        }
+                    } else if (typeof value === 'string') {
+                        lines.push(indent + keyStr + ' = ' + JSON.stringify(value));
+                    } else if (typeof value === 'boolean') {
+                        lines.push(indent + keyStr + ' = ' + (value ? 'true' : 'false'));
+                    } else if (typeof value === 'number') {
+                        lines.push(indent + keyStr + ' = ' + value);
+                    }
+                }
+                return lines.join('\n');
+            }
+
+            // ====== 格式化 JSON ======
+            function formatJson(text) {
+                try {
+                    const obj = JSON.parse(text);
+                    return JSON.stringify(obj, null, 2);
+                } catch (e) {
+                    throw new Error('JSON 解析失败：' + e.message);
+                }
+            }
+
+            // ====== 格式化 TOML ======
+            function formatToml(text) {
+                try {
+                    const obj = parseToml(text);
+                    return jsonToToml(obj);
+                } catch (e) {
+                    throw new Error('TOML 解析失败：' + e.message);
+                }
+            }
+
+            // ====== UI 交互 ======
+            const inputEl = document.getElementById('inputText');
+            const outputEl = document.getElementById('outputText');
+            const errorEl = document.getElementById('出错了Msg');
+            const statusBadge = document.getElementById('statusBadge');
+
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.classList.add('show');
+                statusBadge.textContent = '转换失败';
+                statusBadge.style.background = '#fdecea';
+                statusBadge.style.color = '#c0392b';
+            }
+
+            function clearError() {
+                errorEl.textContent = '';
+                errorEl.classList.remove('show');
+            }
+
+            function setSuccess() {
+                statusBadge.textContent = '转换成功';
+                statusBadge.style.background = '#e8f5e9';
+                statusBadge.style.color = '#27ae60';
+            }
+
+            function setWaiting() {
+                statusBadge.textContent = '等待输入';
+                statusBadge.style.background = '#e8f5e9';
+                statusBadge.style.color = '#27ae60';
+            }
+
+            // 预设示例
+            const presets = {
+                basic: `# 基础示例
+title = "TOML 示例"
+owner = "知办库"
+version = 1.0
+
+[server]
+host = "localhost"
+port = 8080
+enabled = true`,
+                nested: `# 嵌套结构示例
+[database]
+host = "db.example.com"
+port = 5432
+
+[database.credentials]
+username = "admin"
+password = "secret123"
+
+[database.options]
+pool_size = 10
+ssl = true`,
+                array: `# 数组示例
+ports = [8000, 8001, 8002]
+names = ["张三", "李四", "王五"]
+
+[[products]]
+name = "锤子"
+sku = 738594937
+
+[[products]]
+name = "钉子"
+sku = 284758393
+color = "灰色"`,
+                types: `# 多类型示例
+string = "hello"
+integer = 42
+float = 3.14
+boolean = true
+datetime = 1979-05-27T07:32:00Z
+
+[table]
+key1 = "value1"
+key2 = 100
+key3 = [1, 2, 3]`,
+                empty: ``
+            };
+
+            function loadPreset(name) {
+                inputEl.value = presets[name] || '';
+                outputEl.value = '';
+                clearError();
+                setWaiting();
+            }
+
+            // 转换函数
+            function convertTomlToJson() {
+                const input = inputEl.value.trim();
+                if (!input) {
+                    showError('请输入 TOML 内容');
+                    return;
+                }
+                try {
+                    const obj = parseToml(input);
+                    outputEl.value = JSON.stringify(obj, null, 2);
+                    clearError();
+                    setSuccess();
+                } catch (e) {
+                    showError(e.message);
+                    outputEl.value = '';
+                }
+            }
+
+            function convertJsonToToml() {
+                const input = inputEl.value.trim();
+                if (!input) {
+                    showError('请输入 JSON 内容');
+                    return;
+                }
+                try {
+                    const obj = JSON.parse(input);
+                    const toml = jsonToToml(obj);
+                    outputEl.value = toml;
+                    clearError();
+                    setSuccess();
+                } catch (e) {
+                    showError(e.message);
+                    outputEl.value = '';
+                }
+            }
+
+            // 复制结果
+            function copyResult() {
+                const output = outputEl.value;
+                if (!output) {
+                    showError('没有可复制的结果，请先进行转换');
+                    return;
+                }
+                navigator.clipboard.writeText(output).then(() => {
+                    const oldText = statusBadge.textContent;
+                    statusBadge.textContent = '已复制';
+                    statusBadge.style.background = '#e3f2fd';
+                    statusBadge.style.color = '#1565c0';
+                    setTimeout(() => {
+                        statusBadge.textContent = oldText;
+                        statusBadge.style.background = '#e8f5e9';
+                        statusBadge.style.color = '#27ae60';
+                    }, 1500);
+                }).catch(() => {
+                    // 降级方案
+                    outputEl.select();
+                    document.execCommand('copy');
+                    statusBadge.textContent = '已复制';
+                    statusBadge.style.background = '#e3f2fd';
+                    statusBadge.style.color = '#1565c0';
+                    setTimeout(() => {
+                        statusBadge.textContent = '转换成功';
+                        statusBadge.style.background = '#e8f5e9';
+                        statusBadge.style.color = '#27ae60';
+                    }, 1500);
+                });
+            }
+
+            // 重置
+            function resetAll() {
+                inputEl.value = '';
+                outputEl.value = '';
+                clearError();
+                setWaiting();
+            }
+
+            // 暴露到全局
+            window.convertTomlToJson = convertTomlToJson;
+            window.convertJsonToToml = convertJsonToToml;
+            window.copyResult = copyResult;
+            window.resetAll = resetAll;
+            window.loadPreset = loadPreset;
+
+            // 初始化
+            setWaiting();
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/toml-json" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/toml-json" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/2658dd7beb52" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1T0D2QpNjq57Ya9nLKCLmWQ" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>0461</b> ｜ 百度提取码：<b>g2c4</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/toml-json-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
