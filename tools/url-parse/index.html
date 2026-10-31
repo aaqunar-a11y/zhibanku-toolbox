@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL 解析工具 — 拆解链接的协议、主机、路径与参数</title>
+<meta name="description" content="URL 解析工具：粘贴链接一键拆解协议、主机、端口、路径与查询参数，逐项展示并支持复制结果。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/url-parse.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f7fb;
+    color: #1f2d3d;
+    line-height: 1.6;
+    padding-bottom: 40px;
+  }
+  .zbk-topnav a { transition: background .2s; }
+  .zbk-topnav a:hover { background: #e8f0fe; }
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1449b0;
+    margin-bottom: 8px;
+    letter-spacing: .5px;
+  }
+  .lead {
+    background: #eef4ff;
+    border-left: 4px solid #1449b0;
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    font-size: 15px;
+    color: #2c3e50;
+    margin-bottom: 28px;
+  }
+  .panel {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(20, 73, 176, .08);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-size: 20px;
+    color: #1449b0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e3ecfa;
+  }
+  textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid #c9d8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    resize: vertical;
+    background: #fafcff;
+    transition: border .2s;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #1449b0;
+    box-shadow: 0 0 0 3px rgba(20, 73, 176, .12);
+  }
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 8px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 9px 20px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    background: #fff;
+    border-color: #c9d8f0;
+    color: #1449b0;
+  }
+  .btn:hover { background: #eef4ff; }
+  .btn-primary {
+    background: #1449b0;
+    color: #fff;
+    border-color: #1449b0;
+  }
+  .btn-primary:hover { background: #0f3d94; }
+  .btn-outline { border-color: #c9d8f0; color: #1449b0; background: #fff; }
+  .btn-outline:hover { background: #f0f5ff; }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 4px;
+  }
+  .preset-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 20px;
+    border: 1px solid #b9cdf0;
+    background: #f4f8ff;
+    color: #1449b0;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .preset-btn:hover { background: #dce8ff; border-color: #1449b0; }
+  .result-area {
+    margin-top: 18px;
+    border-top: 1px dashed #d0ddf0;
+    padding-top: 16px;
+  }
+  .result-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f4fa;
+    font-size: 14px;
+  }
+  .result-label {
+    width: 100px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #1449b0;
+    padding-top: 2px;
+  }
+  .result-value {
+    flex: 1;
+    min-width: 200px;
+    word-break: break-all;
+    color: #2c3e50;
+    background: #f8faff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+  }
+  .result-value.empty { color: #9aa7b8; font-style: italic; }
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .param-table th {
+    background: #eef4ff;
+    color: #1449b0;
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid #d0ddf0;
+  }
+  .param-table td {
+    padding: 8px 10px;
+    border: 1px solid #e3ecfa;
+    word-break: break-all;
+    background: #fff;
+  }
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .error-msg {
+    background: #fff3f3;
+    color: #c0392b;
+    border: 1px solid #f5c6c6;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 12px;
+    display: none;
+  }
+  .note-list {
+    padding-left: 20px;
+  }
+  .note-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .steps {
+    padding-left: 20px;
+  }
+  .steps li {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  details {
+    background: #f8faff;
+    border: 1px solid #dce6f8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #1449b0;
+    font-size: 14px;
+  }
+  details p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #3d4f63;
+  }
+  .tool-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .tool-links a {
+    display: block;
+    padding: 10px 14px;
+    background: #f4f8ff;
+    border: 1px solid #cddffa;
+    border-radius: 8px;
+    color: #1449b0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all .2s;
+  }
+  .tool-links a:hover { background: #e0ecff; border-color: #1449b0; }
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: #7a8aa0;
+    font-size: 13px;
+    border-top: 1px solid #e3ecfa;
+    margin-top: 20px;
+  }
+  footer a {
+    color: #1449b0;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  @media (max-width: 600px) {
+    main { padding: 16px 12px; }
+    .panel { padding: 16px; }
+    .result-label { width: 80px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main>
+  <h1>URL 解析工具</h1>
+  <p class="lead">本工具用于将一段完整的网址（URL）拆解成协议、主机名、端口、路径、查询参数等组成部分，并逐项清晰展示。您只需在下方输入框中粘贴或输入网址，然后点击「解析 URL」按钮，结果就会在下方区域按条目列出，查询参数还会以表格形式呈现。整个过程完全在您的浏览器本地运行，不会把数据发送到任何服务器，请放心使用。</p>
+
+  <div class="panel">
+    <h2>输入网址</h2>
+    <textarea id="urlInput" placeholder="在此粘贴或输入需要解析的网址，例如：https://www.example.com:8080/path/page?name=张三&age=25#section"></textarea>
+    
+    <div class="preset-row">
+      <span style="font-size:13px;color:#5a6b82;align-self:center;">快捷预设：</span>
+      <button class="preset-btn" data-url="https://www.example.com:8080/path/page?name=张三&age=25#section">带端口与参数</button>
+      <button class="preset-btn" data-url="https://www.zhibanku.com/tools/url-parse.html">本站工具页</button>
+      <button class="preset-btn" data-url="http://localhost:3000/api/users?page=1&size=20">本地开发地址</button>
+      <button class="preset-btn" data-url="ftp://files.example.org:21/pub/docs/readme.txt">FTP 协议</button>
+      <button class="preset-btn" data-url="https://example.com/search?q=URL解析&lang=zh-CN">中文参数示例</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="parseBtn">解析 URL</button>
+      <button class="btn btn-outline" id="resetBtn">重置</button>
+    </div>
+
+    <div class="出错了-msg" id="出错了Msg"></div>
+
+    <div class="result-area" id="resultArea" style="display:none;">
+      <div id="resultItems"></div>
+      <div id="paramSection" style="margin-top:14px;"></div>
+      <div class="action-row">
+        <button class="btn btn-outline" id="copyBtn">复制结果</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>注意事项</h2>
+    <ul class="note-list">
+      <li>本工具仅支持标准格式的 URL 解析，若输入内容不是合法网址（如缺少协议头），将提示错误，请补全协议后再试。</li>
+      <li>查询参数中若包含中文或特殊字符，工具会以原始编码形式展示，不会自动解码，如需解码请配合 URL 编解码工具使用。</li>
+      <li>所有解析操作均在浏览器本地完成，您的网址内容不会上传到任何服务器，可放心粘贴敏感链接。</li>
+      <li>对于没有明确端口号的网址，工具会显示「默认端口」并标注常见协议的默认值（如 HTTP 为 80，HTTPS 为 443）。</li>
+      <li>哈希（锚点）部分不会被发送到服务器，但本工具会将其单独列出，方便您了解完整结构。</li>
+      <li>若网址包含用户名密码（如 ftp://user:pass@host），工具会一并展示，请注意不要在公共场合粘贴含敏感信息的链接。</li>
+    </ul>
+  </div>
+
+  <div class="panel">
+    <h2>怎么用</h2>
+    <ol class="steps">
+      <li>在「输入网址」文本框中粘贴或输入您需要解析的完整网址，也可以点击上方任意一个快捷预设按钮快速填入示例。</li>
+      <li>点击蓝色「解析 URL」按钮，工具会立即对网址进行拆解。</li>
+      <li>解析结果会显示在下方区域，包含协议、主机、端口、路径、查询参数、哈希等条目，其中查询参数会以表格形式列出键值对。</li>
+      <li>如需复制解析结果，点击「复制结果」按钮即可将全部内容复制到剪贴板。</li>
+      <li>点击「重置」按钮可清空输入框和结果区域，重新开始解析。</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h2>常见问题</h2>
+    <details>
+      <summary>为什么我输入网址后提示解析失败</summary>
+      <p>最常见原因是网址缺少协议头（如 http:// 或 https://）。请补全协议后再试，例如将 www.example.com 改为 https://www.example.com。</p>
+    </details>
+    <details>
+      <summary>查询参数里的中文显示为乱码怎么办</summary>
+      <p>这是 URL 编码的正常现象。本工具展示的是原始编码值，如需查看解码后的中文，请复制参数值到 URL 编解码工具中进行解码。</p>
+    </details>
+    <details>
+      <summary>端口号没有显示出来是什么情况</summary>
+      <p>当网址没有显式写端口时，工具会显示「默认端口」并标注该协议的标准端口号。例如 HTTPS 默认 443，HTTP 默认 80。</p>
+    </details>
+    <details>
+      <summary>解析结果会保存在服务器上吗</summary>
+      <p>不会。本工具是纯前端实现，所有解析逻辑都在您的浏览器中运行，没有任何数据上传，关闭页面即完全清除。</p>
+    </details>
+  </div>
+
+  <div class="panel">
+    <h2>相关工具推荐</h2>
+    <div class="tool-links">
+      <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+      <a href="https://zhibanku.com/tools/query-string.html">查询字符串互转</a>
+      <a href="https://zhibanku.com/tools/shi-jian-chuo-zhuan-huan.html">时间戳转换器</a>
+      <a href="https://zhibanku.com/tools/text-to-pinyin.html">汉字转拼音工具</a>
+      <a href="https://zhibanku.com/tools/word-count.html">在线字数统计</a>
+      <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <span>本工具页面完全在本地运行，无需联网即可使用</span>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var urlInput = document.getElementById('urlInput');
+  var parseBtn = document.getElementById('parseBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var copyBtn = document.getElementById('copyBtn');
+  var errorMsg = document.getElementById('出错了Msg');
+  var resultArea = document.getElementById('resultArea');
+  var resultItems = document.getElementById('resultItems');
+  var paramSection = document.getElementById('paramSection');
+
+  // 快捷预设按钮
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  presetBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      urlInput.value = this.getAttribute('data-url');
+      errorMsg.style.display = 'none';
+      resultArea.style.display = 'none';
+    });
+  });
+
+  // 解析 URL
+  function parseURL(urlStr) {
+    var url = new URL(urlStr);
+    var result = {};
+
+    result.protocol = url.protocol.replace(':', '');
+    result.hostname = url.hostname;
+    result.port = url.port || '';
+    result.pathname = url.pathname;
+    result.search = url.search;
+    result.hash = url.hash;
+    result.origin = url.origin;
+    result.host = url.host;
+
+    // 解析查询参数
+    var params = {};
+    url.searchParams.forEach(function(value, key) {
+      params[key] = value;
+    });
+    result.params = params;
+
+    return result;
+  }
+
+  // 获取默认端口
+  function getDefaultPort(protocol) {
+    var ports = {
+      'http': '80',
+      'https': '443',
+      'ftp': '21',
+      'ssh': '22',
+      'ws': '80',
+      'wss': '443'
+    };
+    return ports[protocol] || '';
+  }
+
+  // 渲染结果
+  function renderResult(parsed) {
+    var html = '';
+    var defaultPort = getDefaultPort(parsed.protocol);
+
+    // 协议
+    html += '<div class="result-item"><span class="result-label">协议</span><span class="result-value">' + escapeHtml(parsed.protocol) + '</span></div>';
+
+    // 主机名
+    html += '<div class="result-item"><span class="result-label">主机名</span><span class="result-value">' + escapeHtml(parsed.hostname) + '</span></div>';
+
+    // 端口
+    var portDisplay = parsed.port ? parsed.port : (defaultPort ? '默认端口（' + defaultPort + '）' : '未指定');
+    html += '<div class="result-item"><span class="result-label">端口</span><span class="result-value">' + escapeHtml(portDisplay) + '</span></div>';
+
+    // 完整主机（含端口）
+    html += '<div class="result-item"><span class="result-label">主机（含端口）</span><span class="result-value">' + escapeHtml(parsed.host) + '</span></div>';
+
+    // 路径
+    var pathDisplay = parsed.pathname || '/';
+    html += '<div class="result-item"><span class="result-label">路径</span><span class="result-value">' + escapeHtml(pathDisplay) + '</span></div>';
+
+    // 查询字符串
+    var searchDisplay = parsed.search || '（无）';
+    html += '<div class="result-item"><span class="result-label">查询字符串</span><span class="result-value">' + escapeHtml(searchDisplay) + '</span></div>';
+
+    // 哈希
+    var hashDisplay = parsed.hash || '（无）';
+    html += '<div class="result-item"><span class="result-label">哈希（锚点）</span><span class="result-value">' + escapeHtml(hashDisplay) + '</span></div>';
+
+    // 完整来源
+    html += '<div class="result-item"><span class="result-label">完整来源</span><span class="result-value">' + escapeHtml(parsed.origin) + '</span></div>';
+
+    resultItems.innerHTML = html;
+
+    // 渲染查询参数表格
+    var paramKeys = Object.keys(parsed.params);
+    var paramHtml = '';
+    if (paramKeys.length > 0) {
+      paramHtml += '<h3 style="font-size:16px;color:#1449b0;margin-bottom:8px;">查询参数明细</h3>';
+      paramHtml += '<table class="param-table"><thead><tr><th style="width:40%;">参数名</th><th>参数值</th></tr></thead><tbody>';
+      paramKeys.forEach(function(key) {
+        paramHtml += '<tr><td>' + escapeHtml(key) + '</td><td>' + escapeHtml(parsed.params[key]) + '</td></tr>';
+      });
+      paramHtml += '</tbody></table>';
+    } else {
+      paramHtml = '<p style="font-size:13px;color:#7a8aa0;">该网址没有查询参数。</p>';
+    }
+    paramSection.innerHTML = paramHtml | '';
+    paramSection.innerHTML = paramHtml;
+  }
+
+  // HTML 转义
+  function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // 解析按钮点击
+  parseBtn.addEventListener('click', function() {
+    var inputVal = urlInput.value.trim();
+    if (!inputVal) {
+      errorMsg.textContent = '请输入需要解析的网址。';
+      errorMsg.style.display = 'block';
+      resultArea.style.display = 'none';
+      return;
+    }
+
+    // 自动补全协议
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(inputVal)) {
+      inputVal = 'https://' + inputVal;
+    }
+
+    try {
+      var parsed = parseURL(inputVal);
+      errorMsg.style.display = 'none';
+      renderResult(parsed);
+      resultArea.style.display = 'block';
+    } catch (e) {
+      errorMsg.textContent = '网址格式无效，请检查后重新输入。';
+      errorMsg.style.display = 'block';
+      resultArea.style.display = 'none';
+    }
+  });
+
+  // 重置按钮
+  resetBtn.addEventListener('click', function() {
+    urlInput.value = '';
+    errorMsg.style.display = 'none';
+    resultArea.style.display = 'none';
+    resultItems.innerHTML = '';
+    paramSection.innerHTML = '';
+  });
+
+  // 复制结果
+  copyBtn.addEventListener('click', function() {
+    var textToCopy = '';
+    var items = resultItems.querySelectorAll('.result-item');
+    items.forEach(function(item) {
+      var label = item.querySelector('.result-label').textContent;
+      var value = item.querySelector('.result-value').textContent;
+      textToCopy += label + '：' + value + '\n';
+    });
+
+    // 添加参数表格
+    var table = paramSection.querySelector('table');
+    if (table) {
+      var rows = table.querySelectorAll('tbody tr');
+      if (rows.length > 0) {
+        textToCopy += '\n查询参数明细：\n';
+        rows.forEach(function(row) {
+          var cells = row.querySelectorAll('td');
+          textToCopy += cells[0].textContent + ' = ' + cells[1].textContent + '\n';
+        });
+      }
+    }
+
+    if (!textToCopy) {
+      alert('没有可复制的内容，请先解析网址。');
+      return;
+    }
+
+    // 使用剪贴板 API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(function() {
+        alert('已复制到剪贴板。');
+      }).catch(function() {
+        fallbackCopy(textToCopy);
+      });
+    } else {
+      fallbackCopy(textToCopy);
+    }
+  });
+
+  // 降级复制方案
+  function fallbackCopy(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      alert('已复制到剪贴板。');
+    } catch (err) {
+      alert('复制失败，请手动选择复制。');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 支持回车触发解析
+  urlInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      parseBtn.click();
+    }
+  });
+
+})();
+</script>
+
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/url-parse" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/url-parse" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/9f8dffd18992" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1lniUTF1CdjJNuVuzma4m4w" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>4176</b> ｜ 百度提取码：<b>58er</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/url-parse-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
