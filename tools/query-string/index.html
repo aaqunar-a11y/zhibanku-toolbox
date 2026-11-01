@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryString 生成解析工具</title>
+    <meta name="description" content="QueryString 生成解析工具，支持 URL 查询参数与键值对互转，自动处理编码与排序。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/query-string.html">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1a1a2e; line-height: 1.6; }
+        main { max-width: 920px; margin: 0 auto; padding: 16px 16px 40px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        h1 { font-size: 28px; margin-bottom: 8px; color: #1449b0; }
+        .lead { font-size: 15px; color: #4a5568; margin-bottom: 20px; }
+        h2 { font-size: 20px; margin: 24px 0 12px; padding-left: 10px; border-left: 4px solid #1449b0; }
+        .mode-switch { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .mode-btn { padding: 8px 20px; border: 1px solid #cddffa; background: #f4f8ff; color: #1449b0; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .mode-btn.active { background: #1449b0; color: #fff; border-color: #1449b0; }
+        .input-area { width: 100%; min-height: 160px; padding: 12px; border: 1px solid #d0d7e2; border-radius: 8px; font-size: 14px; font-family: "SF Mono", Consolas, monospace; resize: vertical; margin-bottom: 12px; }
+        .input-area:focus { outline: none; border-color: #1449b0; box-shadow: 0 0 0 3px rgba(20,73,176,0.1); }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+        .btn { padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .btn-primary { background: #1449b0; color: #fff; }
+        .btn-primary:hover { background: #1a5fe0; }
+        .btn-secondary { background: #e2e8f0; color: #1a1a2e; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-success { background: #059669; color: #fff; }
+        .btn-success:hover { background: #047857; }
+        .btn-warning { background: #d97706; color: #fff; }
+        .btn-warning:hover { background: #b45309; }
+        .preset-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .preset-btn { padding: 6px 14px; border: 1px dashed #94a3b8; background: #f8fafc; color: #475569; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .preset-btn:hover { border-color: #1449b0; color: #1449b0; background: #eff6ff; }
+        .result-area { width: 100%; min-height: 120px; padding: 12px; border: 1px solid #d0d7e2; border-radius: 8px; font-size: 14px; font-family: "SF Mono", Consolas, monospace; background: #f8fafc; resize: vertical; margin-bottom: 12px; }
+        .result-area:focus { outline: none; border-color: #1449b0; }
+        .tips { font-size: 13px; color: #64748b; margin-top: 8px; }
+        .note-list { padding-left: 20px; }
+        .note-list li { margin-bottom: 8px; font-size: 14px; }
+        .step-list { padding-left: 20px; }
+        .step-list li { margin-bottom: 8px; font-size: 14px; }
+        details { margin-bottom: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; }
+        summary { cursor: pointer; font-weight: 600; color: #1449b0; }
+        details p { margin-top: 8px; font-size: 14px; color: #4a5568; }
+        .tool-links { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tool-links a { display: inline-block; padding: 6px 14px; background: #f4f8ff; border: 1px solid #cddffa; color: #1449b0; border-radius: 6px; text-decoration: none; font-size: 14px; transition: all 0.2s; }
+        .tool-links a:hover { background: #e0ecff; }
+        footer { text-align: center; padding: 20px 16px; color: #64748b; font-size: 13px; border-top: 1px solid #e2e8f0; margin-top: 20px; }
+        footer a { color: #1449b0; text-decoration: none; }
+        .copy-tip { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; }
+        .copy-tip.show { opacity: 1; }
+        @media (max-width: 600px) {
+            .card { padding: 16px; }
+            h1 { font-size: 24px; }
+            .btn { flex: 1; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+    <main>
+        <h1>QueryString 生成解析工具</h1>
+        <p class="lead">本工具用于 URL 查询字符串（QueryString）与键值对之间的双向转换。您可以在上方输入框粘贴一段带查询参数的 URL 或纯查询字符串，也可以直接输入键值对（每行一个，格式为「键=值」）。点击「解析查询字符串」按钮，即可将 URL 中的参数拆解为清晰的键值对列表；点击「生成查询字符串」按钮，则可将键值对合并为规范的查询字符串。解析结果会显示在下方结果区，同时支持一键复制。所有操作均在浏览器本地完成，数据不会上传到任何服务器。</p>
+
+        <div class="card">
+            <div class="mode-switch">
+                <button class="mode-btn active" id="modeParse">解析模式</button>
+                <button class="mode-btn" id="modeGenerate">生成模式</button>
+            </div>
+            <div class="preset-group" id="presetGroup">
+                <span style="font-size:13px;color:#64748b;align-self:center;">快捷预设：</span>
+                <button class="preset-btn" data-preset="basic">基础参数</button>
+                <button class="preset-btn" data-preset="pagination">分页参数</button>
+                <button class="preset-btn" data-preset="search">搜索参数</button>
+                <button class="preset-btn" data-preset="user">用户信息</button>
+                <button class="preset-btn" data-preset="empty">清空</button>
+            </div>
+            <textarea id="inputArea" class="input-area" placeholder="在此输入要解析的 URL 或查询字符串，或输入键值对（每行一个，格式为 键=值）"></textarea>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btnParse">解析查询字符串</button>
+                <button class="btn btn-success" id="btnGenerate">生成查询字符串</button>
+                <button class="btn btn-secondary" id="btnReset">重置</button>
+            </div>
+            <div class="tips">提示：解析模式支持完整 URL（如 https://example.com/path?name=张三&age=25）或纯查询字符串（如 name=张三&age=25）。生成模式每行输入一个键值对，格式为「键=值」。</div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-top:0;">结果</h2>
+            <textarea id="resultArea" class="result-area" placeholder="结果将显示在这里" readonly></textarea>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btnCopy">复制结果</button>
+                <button class="btn btn-secondary" id="btnClearResult">清空结果</button>
+            </div>
+        </div>
+
+        <h2>注意事项</h2>
+        <ul class="note-list">
+            <li>解析时自动处理 URL 编码（如 %20 会解码为空格，%E4%B8%AD 会解码为「中」），生成时自动对特殊字符进行编码。</li>
+            <li>生成模式要求每行一个键值对，格式为「键=值」。如果某行没有「=」号，该行将被忽略并给出提示。</li>
+            <li>解析时若 URL 中包含多个同名参数（如 ?a=1&a=2），结果会保留所有值，每行显示一个。</li>
+            <li>本工具完全在浏览器本地运行，不会将任何数据发送到服务器，请放心使用。</li>
+            <li>生成结果默认按输入顺序排列，不会自动排序。如需排序，请手动调整输入顺序。</li>
+            <li>解析时若输入内容不是合法 URL 或查询字符串，会提示错误，请检查输入格式。</li>
+        </ul>
+
+        <h2>怎么用</h2>
+        <ol class="step-list">
+            <li>选择模式：点击「解析模式」或「生成模式」按钮切换功能。默认是解析模式。</li>
+            <li>输入内容：在输入框中粘贴 URL、查询字符串，或按「键=值」格式逐行输入键值对。</li>
+            <li>点击按钮：解析模式点击「解析查询字符串」，生成模式点击「生成查询字符串」。</li>
+            <li>查看结果：处理结果会显示在下方结果区，点击「复制结果」按钮可一键复制到剪贴板。</li>
+            <li>如需快速体验，可点击「快捷预设」中的按钮，自动填入示例数据。</li>
+        </ol>
+
+        <h2>常见问题</h2>
+        <details>
+            <summary>解析时遇到中文乱码怎么办</summary>
+            <p>本工具会自动进行 URL 解码，中文会正常显示。如果仍有乱码，请确认输入内容是否为标准 URL 编码格式。</p>
+        </details>
+        <details>
+            <summary>生成时键或值包含特殊字符如何处理</summary>
+            <p>工具会自动对特殊字符（如空格、&、=、# 等）进行 URL 编码，生成规范的查询字符串，无需手动处理。</p>
+        </details>
+        <details>
+            <summary>支持解析完整 URL 吗</summary>
+            <p>支持。您可以粘贴完整的 URL（包含协议、域名、路径），工具会自动提取问号后面的查询部分进行解析。</p>
+        </details>
+        <details>
+            <summary>结果可以复制到剪贴板吗</summary>
+            <p>可以。点击结果区下方的「复制结果」按钮，即可将结果内容复制到系统剪贴板，方便粘贴到其他地方。</p>
+        </details>
+
+        <h2>相关工具推荐</h2>
+        <div class="tool-links">
+            <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+            <a href="https://zhibanku.com/tools/url-parse.html">URL 解析工具</a>
+            <a href="https://zhibanku.com/tools/json-flatten.html">JSON 扁平化工具</a>
+            <a href="https://zhibanku.com/tools/yaml-json.html">YAML 与 JSON 互转</a>
+            <a href="https://zhibanku.com/tools/toml-json.html">TOML 与 JSON 互转</a>
+            <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+        </div>
+    </main>
+
+    <footer>
+        <a href="/tools/">返回在线工具</a> · 本工具在浏览器本地运行，数据不会上传
+    </footer>
+
+    <div class="copy-tip" id="copyTip">已复制到剪贴板</div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            const inputArea = document.getElementById('inputArea');
+            const resultArea = document.getElementById('resultArea');
+            const btnParse = document.getElementById('btnParse');
+            const btnGenerate = document.getElementById('btnGenerate');
+            const btnReset = document.getElementById('btnReset');
+            const btnCopy = document.getElementById('btnCopy');
+            const btnClearResult = document.getElementById('btnClearResult');
+            const modeParse = document.getElementById('modeParse');
+            const modeGenerate = document.getElementById('modeGenerate');
+            const presetGroup = document.getElementById('presetGroup');
+            const copyTip = document.getElementById('copyTip');
+
+            let currentMode = 'parse';
+
+            // 模式切换
+            modeParse.addEventListener('click', function () {
+                currentMode = 'parse';
+                modeParse.classList.add('active');
+                modeGenerate.classList.remove('active');
+                inputArea.placeholder = '在此输入要解析的 URL 或查询字符串';
+                inputArea.value = '';
+                resultArea.value = '';
+            });
+
+            modeGenerate.addEventListener('click', function () {
+                currentMode = 'generate';
+                modeGenerate.classList.add('active');
+                modeParse.classList.remove('active');
+                inputArea.placeholder = '每行输入一个键值对，格式为 键=值';
+                inputArea.value = '';
+                resultArea.value = '';
+            });
+
+            // 快捷预设
+            const presets = {
+                basic: 'https://example.com/api?name=张三&age=25&city=北京',
+                pagination: 'https://example.com/list?page=2&pageSize=20&sort=desc',
+                search: 'https://example.com/search?keyword=QueryString&lang=zh&limit=50',
+                user: 'https://example.com/user?id=1001&role=admin&active=true'
+            };
+
+            presetGroup.addEventListener('click', function (e) {
+                if (e.target.classList.contains('preset-btn')) {
+                    const preset = e.target.getAttribute('data-preset');
+                    if (preset === 'empty') {
+                        inputArea.value = '';
+                        resultArea.value = '';
+                        return;
+                    }
+                    if (preset === 'basic' || preset === 'pagination' || preset === 'search' || preset === 'user') {
+                        if (currentMode === 'parse') {
+                            inputArea.value = presets[preset];
+                        } else {
+                            // 生成模式：将预设的 URL 解析为键值对格式
+                            const url = new URL(presets[preset]);
+                            const params = url.searchParams;
+                            let kvText = '';
+                            params.forEach(function (value, key) {
+                                kvText += key + '=' + value + '\n';
+                            });
+                            inputArea.value = kvText.trim();
+                        }
+                    }
+                }
+            });
+
+            // 解析查询字符串
+            btnParse.addEventListener('click', function () {
+                const input = inputArea.value.trim();
+                if (!input) {
+                    alert('请输入要解析的 URL 或查询字符串');
+                    return;
+                }
+
+                let queryString = '';
+                try {
+                    // 尝试作为完整 URL 解析
+                    if (input.includes('?')) {
+                        const url = new URL(input);
+                        queryString = url.search.substring(1);
+                    } else {
+                        // 作为纯查询字符串处理
+                        queryString = input;
+                    }
+                } catch (e) {
+                    // 如果 URL 解析失败，尝试作为纯查询字符串处理
+                    if (input.includes('?')) {
+                        queryString = input.split('?')[1] || '';
+                    } else {
+                        queryString = input;
+                    }
+                }
+
+                if (!queryString) {
+                    resultArea.value = '未找到查询参数';
+                    return;
+                }
+
+                const params = new URLSearchParams(queryString);
+                if (params.size === 0) {
+                    resultArea.value = '未找到有效的查询参数';
+                    return;
+                }
+
+                let result = '';
+                params.forEach(function (value, key) {
+                    result += key + ' = ' + value + '\n';
+                });
+                resultArea.value = result.trim();
+            });
+
+            // 生成查询字符串
+            btnGenerate.addEventListener('click', function () {
+                const input = inputArea.value.trim();
+                if (!input) {
+                    alert('请输入键值对，每行一个，格式为 键=值');
+                    return;
+                }
+
+                const lines = input.split('\n');
+                const params = new URLSearchParams();
+                let hasError = false     ;
+                let errorLines = [];
+
+                lines.forEach(function (line, index) {
+                    line = line.trim();
+                    if (!line) return;
+                    const eqIndex = line.indexOf('=');
+                    if (eqIndex === -1) {
+                        hasError = true;
+                        errorLines.push('第 ' + (index + 1) + ' 行缺少等号');
+                        return;
+                    }
+                    const key = line.substring(0, eqIndex).trim();
+                    const value = line.substring(eqIndex + 1).trim();
+                    if (!key) {
+                        hasError = true;
+                        errorLines.push('第 ' + (index + 1) + ' 行键为空');
+                        return;
+                    }
+                    params.append(key, value);
+                });
+
+                if (hasError) {
+                    alert('以下行格式有误：\n' + errorLines.join('\n') + '\n\n这些行已被忽略。');
+                }
+
+                if (params.size === 0) {
+                    resultArea.value = '没有有效的键值对';
+                    return;
+                }
+
+                const queryString = params.toString();
+                resultArea.value = queryString;
+            });
+
+            // 重置
+            btnReset.addEventListener('click', function () {
+                inputArea.value = '';
+                resultArea.value = '';
+            });
+
+            // 复制结果
+            btnCopy.addEventListener('click', function () {
+                const text = resultArea.value;
+                if (!text) {
+                    alert('没有可复制的内容');
+                    return;
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function () {
+                        showCopyTip();
+                    }).catch(function () {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            });
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showCopyTip();
+                } catch (e) {
+                    alert('复制失败，请手动选择文本复制');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            function showCopyTip() {
+                copyTip.classList.add('show');
+                setTimeout(function () {
+                    copyTip.classList.remove('show');
+                }, 2000);
+            }
+
+            // 清空结果
+            btnClearResult.addEventListener('click', function () {
+                resultArea.value = '';
+            });
+
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/query-string" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/query-string" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="https://pan.baidu.com/s/1ZnKfQrgU9WJr_fkUxo1jOw" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>None</b> ｜ 百度提取码：<b>93ap</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/query-string-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
