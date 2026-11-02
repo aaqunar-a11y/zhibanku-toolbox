@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表去重排序工具 - 在线去重排序计数</title>
+    <meta name="description" content="粘贴多行文本，一键去重排序并计数，支持升序降序与忽略空行，结果可复制。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/list-dedupe.html">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+            padding: 0 16px 40px;
+        }
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 28px 32px 40px;
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a3a6b;
+            margin-bottom: 8px;
+            border-left: 4px solid #2d6cdf;
+            padding-left: 14px;
+        }
+        .lead {
+            background: #f0f5ff;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 15px;
+            color: #3a5a8c;
+            margin: 16px 0 24px;
+            border-left: 3px solid #2d6cdf;
+        }
+        h2 {
+            font-size: 20px;
+            color: #1a3a6b;
+            margin: 32px 0 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e8eef7;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 640px) {
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px 16px;
+            }
+        }
+        .panel {
+            background: #fafbfd;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .panel h3 {
+            font-size: 16px;
+            color: #2c5282;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        textarea {
+            width: 100%;
+            height: 260px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            resize: vertical;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #2d6cdf;
+            box-shadow: 0 0 0 3px rgba(45,108,223,0.12);
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 14px 0;
+            align-items: center;
+        }
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        .option-group label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .option-group input[type="radio"],
+        .option-group input[type="checkbox"] {
+            accent-color: #2d6cdf;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0 8px;
+        }
+        .btn {
+            padding: 9px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #2d6cdf;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1e5ac0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45,108,223,0.3);
+        }
+        .btn-secondary {
+            background: #e8eef7;
+            color: #2c5282;
+        }
+        .btn-secondary:hover {
+            background: #d5e0f0;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #1e8e4e;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #d68910;
+        }
+        .preset-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .preset-btn {
+            padding: 6px 14px;
+            border: 1px solid #cbd5e0;
+            background: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2c5282;
+        }
+        .preset-btn:hover {
+            background: #e8eef7;
+            border-color: #2d6cdf;
+        }
+        .result-area {
+            margin-top: 16px;
+        }
+        .result-stats {
+            background: #eef7ee;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #1e6e3e;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .result-stats span {
+            font-weight: 600;
+        }
+        .result-box {
+            background: #fff;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .result-box:empty::before {
+            content: "处理结果将在这里显示";
+            color: #a0aec0;
+            font-style: italic;
+        }
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .note-list {
+            padding-left: 20px;
+        }
+        .note-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .step-list {
+            padding-left: 20px;
+        }
+        .step-list li {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        details {
+            background: #fafbfd;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c5282;
+            font-size: 14px;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .related-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .related-links a {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f0f5ff;
+            border: 1px solid #cddffa;
+            border-radius: 8px;
+            color: #1449b0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .related-links a:hover {
+            background: #e0ecff;
+            transform: translateY(-1px);
+        }
+        footer {
+            max-width: 920px;
+            margin: 24px auto 0;
+            text-align: center;
+            font-size: 13px;
+            color: #718096;
+            padding: 16px 0;
+            border-top: 1px solid #e2e8f0;
+        }
+        footer a {
+            color: #2d6cdf;
+            text-decoration: none;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #2d3748;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+    <div class="container">
+        <h1>列表去重排序工具</h1>
+        <p class="lead">本工具用于对多行文本列表进行去重、排序和计数。您只需将需要处理的列表内容粘贴到左侧输入框中，每行一条数据，然后点击「开始处理」按钮，右侧结果区就会立即显示去重排序后的结果，并统计原始条数、去重后条数以及重复数量。支持升序、降序排列，可自由选择忽略空行或保留空行，所有操作都在您的浏览器本地完成，数据不会上传到任何服务器。</p>
+
+        <div class="tool-grid">
+            <div class="panel">
+                <h3>📥 输入列表</h3>
+                <textarea id="inputText" placeholder="在此粘贴您的列表内容&#10;每行一条数据，例如：&#10;苹果&#10;香蕉&#10;苹果&#10;橙子&#10;香蕉"></textarea>
+                
+                <div class="options">
+                    <div class="option-group">
+                        <label><input type="radio" name="sortOrder" value="asc" checked> 升序</label>
+                        <label><input type="radio" name="sortOrder" value="desc"> 降序</label>
+                    </div>
+                    <div class="option-group">
+                        <label><input type="checkbox" id="ignoreEmpty" checked> 忽略空行</label>
+                    </div>
+                </div>
+
+                <div class="preset-row">
+                    <span style="font-size:13px;color:#718096;align-self:center;">快捷示例：</span>
+                    <button class="preset-btn" onclick="loadPreset('fruit')">水果列表</button>
+                    <button class="preset-btn" onclick="loadPreset('number')">数字列表</button>
+                    <button class="preset-btn" onclick="loadPreset('city')">城市列表</button>
+                    <button class="preset-btn" onclick="loadPreset('name')">姓名列表</button>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="processList()">开始处理</button>
+                    <button class="btn btn-warning" onclick="resetAll()">重置</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>📤 处理结果</h3>
+                <div class="result-stats" id="resultStats">
+                    <span>原始条数：<span id="origCount">0</span></span>
+                    <span>去重后：<span id="dedupCount">0</span></span>
+                    <span>重复数量：<span id="dupCount">0</span></span>
+                </div>
+                <div class="result-box" id="resultBox"></div>
+                <div class="action-row">
+                    <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+                </div>
+            </div>
+        </div>
+
+        <h2>注意事项</h2>
+        <ul class="note-list">
+            <li>去重时区分大小写，例如「Apple」和「apple」会被视为两条不同的数据。</li>
+            <li>排序按 Unicode 编码顺序进行，中文按拼音首字母对应的编码排序，并非严格按拼音排序。</li>
+            <li>如果列表包含数字，升序排序时数字会排在字母前面，这是正常的编码排序规则。</li>
+            <li>所有处理均在浏览器本地完成，数据不会上传到任何服务器，关闭页面后数据自动清除。</li>
+            <li>输入框支持粘贴大量文本，但建议单次不超过 1 万行，以免浏览器卡顿。</li>
+            <li>勾选「忽略空行」后，空白行和仅含空格的行都会被过滤掉；取消勾选则保留空行。</li>
+        </ul>
+
+        <h2>怎么用</h2>
+        <ol class="step-list">
+            <li>将需要处理的列表内容粘贴到左侧输入框中，每行一条数据。</li>
+            <li>根据需要选择排序方式（升序或降序），以及是否忽略空行。</li>
+            <li>点击「开始处理」按钮，右侧结果区会立即显示去重排序后的结果。</li>
+            <li>查看结果区上方的统计信息，了解原始条数、去重后条数和重复数量。</li>
+            <li>如需保存结果，点击「复制结果」按钮即可复制到剪贴板。</li>
+        </ol>
+
+        <h2>常见问题</h2>
+        <details>
+            <summary>去重后顺序会变吗</summary>
+            <p>会变。去重后默认按升序排列，这是为了保证结果稳定可预测。如果您需要保持原始顺序，可以暂时不排序，但本工具目前不支持该模式。</p>
+        </details>
+        <details>
+            <summary>空行会被怎么处理</summary>
+            <p>默认勾选忽略空行，空行和只含空格的行会被过滤。如果取消勾选，空行会保留并参与排序，通常空行会排在最前面。</p>
+        </details>
+        <details>
+            <summary>支持 Excel 粘贴的数据吗</summary>
+            <p>支持。从 Excel 复制的多行单元格粘贴到输入框后，每行会自动成为一条数据。但请注意，如果单元格内包含换行符，会被拆分为多行。</p>
+        </details>
+        <details>
+            <summary>结果能导出为文件吗</summary>
+            <p>目前不提供文件导出功能，但您可以点击「复制结果」按钮复制到剪贴板，然后粘贴到任何文本编辑器或 Excel 中保存。</p>
+        </details>
+
+        <h2>相关工具推荐</h2>
+        <div class="related-links">
+            <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+            <a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+            <a href="https://zhibanku.com/tools/text-to-pinyin.html">汉字转拼音工具</a>
+            <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+            <a href="https://zhibanku.com/tools/zi-shu-tong-ji.html">在线字数统计</a>
+            <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+        </div>
+    </div>
+
+    <footer>
+        <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // 显示提示信息
+            function showToast(msg) {
+                var toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+
+            // 加载预设示例
+            window.loadPreset = function(type) {
+                var textarea = document.getElementById('inputText');
+                var presets = {
+                    fruit: '苹果\n香蕉\n橙子\n苹果\n葡萄\n香蕉\n西瓜\n橙子\n草莓\n苹果\n梨\n葡萄',
+                    number: '42\n17\n89\n23\n42\n56\n17\n91\n23\n78\n42\n56\n89\n17',
+                    city: '北京\n上海\n广州\n深圳\n北京\n杭州\n上海\n成都\n武汉\n广州\n南京\n深圳\n西安\n北京',
+                    name: '张三\n李四\n王五\n张三\n赵六\n李四\n钱七\n孙八\n王五\n张三\n周九\n吴十\n李四\n郑十一'
+                };
+                textarea.value = presets[type] || '';
+                // 自动处理
+                processList();
+            };
+
+            // 处理列表
+            window.processList = function() {
+                var textarea = document.getElementById('inputText');
+                var resultBox = document.getElementById('resultBox');
+                var origCountEl = document.getElementById('origCount');
+                var dedupCountEl = document.getElementById('dedupCount');
+                var dupCountEl = document.getElementById('dupCount');
+
+                var rawText = textarea.value;
+                if (!rawText.trim()) {
+                    resultBox.textContent = '';
+                    origCountEl.textContent = '0';
+                    dedupCountEl.textContent = '0';
+                    dupCountEl.textContent = '0';
+                    showToast('请输入需要处理的列表内容');
+                    return;
+                }
+
+                // 按行拆分
+                var lines = rawText.split('\n');
+                var origCount = lines.length;
+
+                // 是否忽略空行
+                var ignoreEmpty = document.getElementById('ignoreEmpty').checked;
+                if (ignoreEmpty) {
+                    lines = lines.filter(function(line) {
+                        return line.trim() !== '';
+                    });
+                }
+
+                // 获取排序方式
+                var sortOrder = document.querySelector('input[name="sortOrder"]:checked').value;
+
+                // 去重
+                var seen = {};
+                var uniqueList = [];
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+                    if (!seen.hasOwnProperty(line)) {
+                        seen[line] = true;
+                        uniqueList.push(line);
+                    }
+                }
+
+                // 排序
+                uniqueList.sort(function(a, b) {
+                    if (sortOrder === 'asc') {
+                        return a.localeCompare(b);
+                    } else {
+                        return b.localeCompare(a);
+                    }
+                });
+
+                // 统计
+                var dedupCount = uniqueList.length;
+                var dupCount = origCount - dedupCount;
+
+                // 显示结果
+                resultBox.textContent = uniqueList.join('\n');
+                origCountEl.textContent = origCount;
+                dedupCountEl.textContent = dedupCount;
+                dupCountEl.textContent = dupCount;
+
+                showToast('处理完成，共去重 ' + dupCount + ' 条重复数据');
+            };
+
+            // 复制结果
+            window.copyResult = function() {
+                var resultBox = document.getElementById('resultBox');
+                var text = resultBox.textContent;
+                if (!text) {
+                    showToast('暂无结果可复制');
+                    return;
+                }
+
+                // 使用 Clipboard API
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        showToast('结果已复制到剪贴板');
+                    }).catch(function() {
+                        // 回退方案
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            };
+
+            // 回退复制方案
+            function fallbackCopy(text) {
+                var textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('结果已复制到剪贴板');
+                } catch (err) {
+                    showToast('复制失败，请手动选择复制');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            // 重置
+            window.resetAll = function() {
+                document.getElementById('inputText').value = '';
+                document.getElementById('resultBox').textContent = '';
+                document.getElementById('origCount').textContent = '0';
+                document.getElementById('dedupCount').textContent = '0';
+                document.getElementById('dupCount').textContent = '0';
+                document.querySelector('input[name="sortOrder"][value="asc"]').checked = true;
+                document.getElementById('ignoreEmpty').checked = true;
+                showToast('已重置所有内容');
+            };
+
+            // 键盘快捷键：Ctrl+Enter 处理
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    processList();
+                }
+            });
+
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/list-dedupe" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/list-dedupe" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/list-dedupe-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

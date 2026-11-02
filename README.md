@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-58-blue.svg)
+![Tools](https://img.shields.io/badge/tools-59-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -48,6 +48,7 @@
 | JSON 压缩工具 | [在线使用](https://www.zhibanku.com/tools/json-ya-suo.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-ya-suo) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-ya-suo) |
 | JSON 校验工具 | [在线使用](https://www.zhibanku.com/tools/json-yan-zheng-qi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-yan-zheng-qi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-yan-zheng-qi) |
 | JSON 转义与反转义 | [在线使用](https://www.zhibanku.com/tools/json-zhuan-yi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-zhuan-yi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-zhuan-yi) |
+| 列表去重排序工具 - 在线去重排序计数 | [在线使用](https://www.zhibanku.com/tools/list-dedupe.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/list-dedupe) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/list-dedupe) |
 | 贷款月供计算器 | [在线使用](https://www.zhibanku.com/tools/loan-calc.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/loan-calc) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/loan-calc) |
 | Markdown 表格转换器 | [在线使用](https://www.zhibanku.com/tools/markdown-table.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/markdown-table) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/markdown-table) |
 | Markdown 转 HTML | [在线使用](https://www.zhibanku.com/tools/markdown-to-html.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/markdown-to-html) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/markdown-to-html) |
@@ -79,7 +80,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 58 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 59 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 
