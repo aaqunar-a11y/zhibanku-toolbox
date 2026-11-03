@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量文本替换工具 - 多条查找替换规则在线处理</title>
+    <meta name="description" content="批量文本替换工具，支持多条查找替换规则、正则表达式、预览命中结果并一键复制导出。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/text-replace.html">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.7;
+        }
+        .zbk-topnav {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 12px 16px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .zbk-topnav a {
+            text-decoration: none;
+        }
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a3a6b;
+            margin-bottom: 12px;
+            border-left: 5px solid #1a5fe0;
+            padding-left: 14px;
+        }
+        .lead {
+            background: #eef4ff;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 28px;
+            font-size: 15px;
+            color: #2c3e50;
+            border-left: 4px solid #1a5fe0;
+        }
+        h2 {
+            font-size: 22px;
+            color: #1a3a6b;
+            margin: 30px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dbe4f0;
+        }
+        .tool-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .tool-box label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a3a6b;
+        }
+        .tool-box textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            resize: vertical;
+            background: #fafbfc;
+        }
+        .tool-box textarea:focus {
+            outline: none;
+            border-color: #1a5fe0;
+            box-shadow: 0 0 0 3px rgba(26,95,224,0.15);
+        }
+        .rule-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .rule-row input[type="text"] {
+            flex: 1;
+            min-width: 180px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        .rule-row input[type="text"]:focus {
+            outline: none;
+            border-color: #1a5fe0;
+            box-shadow: 0 0 0 3px rgba(26,95,224,0.15);
+        }
+        .rule-row .rule-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #e2e8f0;
+            color: #1a3a6b;
+        }
+        .btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: #1a5fe0;
+            color: #fff;
+        }
+        .btn-success {
+            background: #0e9f6e;
+            color: #fff;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: #fff;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+        .preset-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .preset-group .btn {
+            background: #eef4ff;
+            border: 1px solid #cddffa;
+            color: #1449b0;
+            font-size: 13px;
+            padding: 8px 14px;
+        }
+        .preset-group .btn:hover {
+            background: #dbe8ff;
+        }
+        .result-area {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .result-area .hit {
+            background: #fef08a;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        .result-area .hit-replaced {
+            background: #bbf7d0;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        .stat-line {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+        .stat-line strong {
+            color: #1a5fe0;
+        }
+        .rule-list {
+            margin-bottom: 12px;
+        }
+        .rule-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .rule-item .rule-index {
+            background: #1a5fe0;
+            color: #fff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .rule-item .rule-text {
+            flex: 1;
+            min-width: 200px;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+        .rule-item .rule-text span {
+            color: #64748b;
+        }
+        .rule-item .rule-text .arrow {
+            color: #1a5fe0;
+            margin: 0 6px;
+        }
+        .rule-item .rule-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .checkbox-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .checkbox-wrap input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .options-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .options-row .checkbox-wrap {
+            margin-bottom: 0;
+        }
+        .empty-tip {
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .error-msg {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .success-msg {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .note-list {
+            padding-left: 20px;
+        }
+        .note-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .steps-list {
+            padding-left: 20px;
+            counter-reset: step;
+        }
+        .steps-list li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            position: relative;
+            padding-left: 8px;
+        }
+        .steps-list li::marker {
+            color: #1a5fe0;
+            font-weight: 700;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: #1a3a6b;
+            font-size: 15px;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #475569;
+        }
+        .tool-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .tool-links a {
+            display: block;
+            padding: 10px 14px;
+            background: #eef4ff;
+            border: 1px solid #cddffa;
+            border-radius: 8px;
+            color: #1449b0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .tool-links a:hover {
+            background: #dbe8ff;
+            transform: translateY(-2px);
+        }
+        footer {
+            max-width: 920px;
+            margin: 40px auto 0;
+            padding: 20px 16px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+        footer a {
+            color: #1a5fe0;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        @media (max-width: 640px) {
+            h1 { font-size: 24px; }
+            .tool-box { padding: 16px; }
+            .rule-row { flex-direction: column; align-items: stretch; }
+            .rule-row input[type="text"] { min-width: 100%; }
+            .rule-row .rule-actions { justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+    <main>
+        <h1>批量文本替换工具</h1>
+        <p class="lead">批量文本替换工具是一款在浏览器本地运行的多条查找替换处理工具。您可以在上方输入原始文本，在下方添加多条「查找→替换」规则，支持普通文本与正则表达式两种模式。设置好规则后，点击「执行替换」按钮，右侧结果区会实时预览每次替换的命中位置与替换结果。所有数据仅在本机处理，不会上传到任何服务器。替换完成后，可点击「复制结果」按钮一键复制到剪贴板，方便粘贴到其他文档中使用。</p>
+
+        <div class="tool-box">
+            <label for="inputText">原始文本</label>
+            <textarea id="inputText" placeholder="在此粘贴或输入需要处理的原始文本…"></textarea>
+
+            <div style="margin-top:16px;">
+                <label>替换规则</label>
+                <div class="preset-group">
+                    <button class="btn" onclick="addPresetRule('\\s+', ' ', '正则')">连续空格→单空格</button>
+                    <button class="btn" onclick="addPresetRule('\\r\\n|\\r|\\n', '\\n', '正则')">统一换行符</button>
+                    <button class="btn" onclick="addPresetRule('\\t', '    ', '正则')">制表符→4空格</button>
+                    <button class="btn" onclick="addPresetRule('^\\s+|\\s+$', '', '正则')">去除首尾空白</button>
+                    <button class="btn" onclick="addPresetRule('\\n\\s*\\n', '\\n', '正则')">多余空行→单空行</button>
+                </div>
+                <div id="ruleList" class="rule-list"></div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="addRule()">添加规则</button>
+                    <button class="btn btn-warning" onclick="clearRules()">清空规则</button>
+                </div>
+            </div>
+
+            <div class="options-row">
+                <label class="checkbox-wrap">
+                    <input type="checkbox" id="regexMode" checked> 启用正则表达式
+                </label>
+                <label class="checkbox-wrap">
+                    <input type="checkbox" id="ignoreCase"> 忽略大小写
+                </label>
+                <label class="checkbox-wrap">
+                    <input type="checkbox" id="globalMode" checked> 全局替换（所有匹配）
+                </label>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="doReplace()">执行替换</button>
+                <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+                <button class="btn btn-danger" onclick="resetAll()">重置</button>
+            </div>
+
+            <div id="messageArea"></div>
+
+            <label style="margin-top:16px;">替换结果预览</label>
+            <div id="resultArea" class="result-area">
+                <div class="empty-tip">执行替换后，此处会显示结果与命中标记</div>
+            </div>
+            <div id="statLine" class="stat-line"></div>
+        </div>
+
+        <h2>注意事项</h2>
+        <ul class="note-list">
+            <li>所有替换操作均在浏览器本地完成，您的文本不会上传到任何服务器，可放心处理敏感内容。</li>
+            <li>启用正则表达式时，查找内容按 JavaScript 正则语法解析；若正则写错，会提示错误且不执行替换。</li>
+            <li>替换规则按从上到下的顺序依次执行，后一条规则作用于前一条规则的结果上，请注意规则顺序。</li>
+            <li>「全局替换」选项关闭时，每条规则只替换每行中第一个匹配项；开启时替换所有匹配项。</li>
+            <li>预览区会以黄色高亮标记「查找命中」位置，以绿色高亮标记「替换后」内容，便于核对。</li>
+            <li>本工具兼容 Chrome、Edge、Firefox、Safari 等现代浏览器，建议使用最新版本以获得最佳体验。</li>
+        </ul>
+
+        <h2>怎么用</h2>
+        <ol class="steps-list">
+            <li>在上方「原始文本」输入框中粘贴或输入需要处理的文本内容。</li>
+            <li>在「替换规则」区域点击「添加规则」按钮，或直接点击快捷预设按钮快速添加常用规则；每条规则包含「查找内容」和「替换为」两个输入框。</li>
+            <li>根据需要勾选「启用正则表达式」「忽略大小写」「全局替换」等选项。</li>
+            <li>点击「执行替换」按钮，下方「替换结果预览」区域会显示处理后的文本，并用颜色标记每次替换的命中位置。</li>
+            <li>确认结果无误后，点击「复制结果」按钮即可将替换后的文本复制到剪贴板，粘贴到目标位置使用。</li>
+        </ol>
+
+        <h2>常见问题</h2>
+        <details>
+            <summary>替换规则可以添加多少条</summary>
+            <p>理论上没有数量限制，但建议控制在 20 条以内以保证执行效率和可读性。规则过多时可通过「清空规则」按钮一键重置。</p>
+        </details>
+        <details>
+            <summary>正则表达式写错了怎么办</summary>
+            <p>点击「执行替换」时若正则语法错误，页面会弹出红色错误提示，并定位到出错的那条规则。修正后重新执行即可。</p>
+        </details>
+        <details>
+            <summary>替换结果和预期不一样</summary>
+            <p>请检查规则顺序是否合理，因为替换是逐条依次执行的。另外确认「全局替换」和「忽略大小写」选项是否符合需求。</p>
+        </details>
+        <details>
+            <summary>复制结果后粘贴格式会变吗</summary>
+            <p>不会。复制的是纯文本内容，换行符和空格会原样保留。粘贴到支持纯文本的编辑器中格式完全一致。</p>
+        </details>
+
+        <h2>相关工具推荐</h2>
+        <div class="tool-links">
+            <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+            <a href="https://zhibanku.com/tools/zheng-ze-ce-shi.html">正则表达式测试器</a>
+            <a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+            <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+            <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+            <a href="https://zhibanku.com/tools/query-string.html">QueryString 解析工具</a>
+        </div>
+    </main>
+
+    <footer>
+        <a href="/tools/">返回在线工具</a> · 本工具在浏览器本地运行，无需联网
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            let ruleCount = 0;
+
+            function addRule(findText, replaceText, isRegex) {
+                ruleCount++;
+                const list = document.getElementById('ruleList');
+                const div = document.createElement('div');
+                div.className = 'rule-item';
+                div.dataset.id = ruleCount;
+
+                const indexSpan = document.createElement('span');
+                indexSpan.className = 'rule-index';
+                indexSpan.textContent = ruleCount;
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'rule-text';
+
+                const findInput = document.createElement('input');
+                findInput.type = 'text';
+                findInput.placeholder = '查找内容';
+                findInput.value = findText || '';
+                findInput.dataset.field = 'find';
+                findInput.style.flex = '1';
+                findInput.style.minWidth = '120px';
+                findInput.style.padding = '8px 10px';
+                findInput.style.border = '1px solid #cbd5e1';
+                findInput.style.borderRadius = '6px';
+                findInput.style.fontSize = '13px';
+                findInput.style.fontFamily = 'monospace';
+
+                const arrowSpan = document.createElement('span');
+                arrowSpan.className = 'arrow';
+                arrowSpan.textContent = '→';
+
+                const replaceInput = document.createElement('input');
+                replaceInput.type = 'text';
+                replaceInput.placeholder = '替换为';
+                replaceInput.value = replaceText || '';
+                replaceInput.dataset.field = 'replace';
+                replaceInput.style.flex = '1';
+                replaceInput.style.minWidth = '120px';
+                replaceInput.style.padding = '8px 10px';
+                replaceInput.style.border = '1px solid #cbd5e1';
+                replaceInput.style.borderRadius = '6px';
+                replaceInput.style.fontSize = '13px';
+                replaceInput.style.fontFamily = 'monospace';
+
+                textDiv.appendChild(findInput);
+                textDiv.appendChild(arrowSpan);
+                textDiv.appendChild(replaceInputhed);
+                textDiv.appendChild(replaceInput);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'rule-actions';
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'btn btn-sm';
+                upBtn.textContent = '上移';
+                upBtn.onclick = function() { moveRule(div, -1); };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'btn btn-sm';
+                downBtn.textContent = '下移';
+                downBtn.onclick = function() { moveRule(div, 1); };
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-sm btn-danger';
+                delBtn.textContent = '删除';
+                delBtn.onclick = function() { div.remove(); };
+
+                actionsDiv.appendChild(upBtn);
+                actionsDiv.appendChild(downBtn);
+                actionsDiv.appendChild(delBtn);
+
+                div.appendChild(indexSpan);
+                div.appendChild(textDiv);
+                div.appendChild(actionsDivhed);
+                div.appendChild(actionsDiv);
+
+                list.appendChild(div);
+            }
+
+            function addPresetRule(find, replace, type) {
+                addRule(find, replace);
+                const regexCheck = document.getElementById('regexMode');
+                if (type === '正则') {
+                    regexCheck.checked = true;
+                }
+            }
+
+            function clearRules() {
+                document.getElementById('ruleList').innerHTML = '';
+            }
+
+            function moveRule(el, direction) {
+                const list = document.getElementById('ruleList');
+                const items = Array.from(list.children);
+                const idx = items.indexOf(el);
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= items.length) return;
+                if (direction < 0) {
+                    list.insertBefore(el, items[newIdx]);
+                } else {
+                    list.insertBefore(el, items[newIdx].nextSibling);
+                }
+                updateRuleIndexes();
+            }
+
+            function updateRuleIndexes() {
+                const items = document.querySelectorAll('#ruleList .rule-item');
+                items.forEach(function(item, i) {
+                    item.querySelector('.rule-index').textContent = i + 1;
+                });
+            }
+
+            function getRules() {
+                const items = document.querySelectorAll('#ruleList .rule-item');
+                const rules = [];
+                items.forEach(function(item) {
+                    const findInput = item.querySelector('input[data-field="find"]');
+                    const replaceInput = item.querySelector('input[data-field="replace"]');
+                    rules.push({
+                        find: findInput.value,
+                        replace: replaceInput.value
+                    });
+                });
+                return rules;
+            }
+
+            function doReplace() {
+                const inputText = document.getElementById('inputText').value;
+                const rules = getRules();
+                const regexMode = document.getElementById('regexMode').checked;
+                const ignoreCase = document.getElementById('ignoreCase').checked;
+                const globalMode = document.getElementById('globalMode').checked;
+
+                const msgArea = document.getElementById('messageArea');
+                msgArea.innerHTML = '';
+
+                if (!inputText) {
+                    msgArea.innerHTML = '<div class="出错了-msg">请输入需要处理的原始文本</div>';
+                    return;
+                }
+
+                if (rules.length === 0) {
+                    msgArea.innerHTML = '<div class="出错了-msg">请至少添加一条替换规则</div>';
+                    return;
+                }
+
+                // 验证规则
+                for (let i = 0; i < rules.length; i++) {
+                    if (!rules[i].find) {
+                        msgArea.innerHTML = '<div class="出错了-msg">第 ' + (i + 1) + ' 条规则的「查找内容」不能为空</div>';
+                        return;
+                    }
+                    if (regexMode) {
+                        try {
+                            new RegExp(rules[i].find);
+                        } catch (e) {
+                            msgArea.innerHTML = '<div class="出错了-msg">第 ' + (i + 1) + ' 条规则的正则表达式有误：' + e.message + '</div>';
+                            return;
+                        }
+                    }
+                }
+
+                let result = inputText;
+                let totalHits = 0;
+                const hitDetails = [];
+
+                // 执行替换
+                for (let i = 0; i < rules.length; i++) {
+                    const rule = rules[i];
+                    let flags = '';
+                    if (globalMode) flags += 'g';
+                    if (ignoreCase) flags += 'i';
+
+                    let regex;
+                    if (regexMode) {
+                        regex = new RegExp(rule.find, flags);
+                    } else {
+                        // 转义正则特殊字符
+                        const escaped = rule.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        regex = new RegExp(escaped, flags);
+                    }
+
+                    // 统计命中次数
+                    const matchCount = (result.match(regex) || []).length;
+                    totalHits += matchCount;
+                    hitDetails.push({ ruleIndex: i + 1, count: matchCount });
+
+                    result = result.replace(regex, function(match) {
+                        return rule.replace;
+                    });
+                }
+
+                // 显示结果
+                const resultArea = document.getElementById('resultArea');
+                // 简单转义 HTML
+                const escapedResult = result.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                resultArea.innerHTML = escapedResult.replace(/\n/g, '<br>');
+
+                const statLine = document.getElementById('statLine');
+                let statText = '共执行 ' + rules.length + ' 条规则，总命中 ' + totalHits + ' 处。';
+                hitDetails.forEach(function(h) {
+                    statText += ' 规则' + h.ruleIndex + '命中' + h.count + '处；';
+                });
+                statLine.innerHTML = '<strong>' + statText + '</strong>';
+
+                msgArea.innerHTML = '<div class="成功了-msg">替换执行完成，共命中 ' + totalHits + ' 处。</div>';
+            }
+
+            function copyResult() {
+                const resultArea = document.getElementById('resultArea');
+                const text = resultArea.innerText || resultArea.textContent;
+                if (!text || text.indexOf('执行替换后') !== -1) {
+                    const msgArea = document.getElementById('messageArea');
+                    msgArea.innerHTML = '<div class="出错了-msg">请先执行替换操作，再复制结果</div>';
+                    return;
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        const msgArea = document.getElementById('messageArea');
+                        msgArea.innerHTML = '<div class="成功了-msg">已复制到剪贴板</div>';
+                    }).catch(function() {
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            }
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    const msgArea = document.getElementById('messageArea');
+                    msgArea.innerHTML = '<div class="成功了-msg">已复制到剪贴板</div>';
+                } catch (err) {
+                    const msgArea = document.getElementById('messageArea');
+                    msgArea.innerHTML = '<div class="出错了-msg">复制失败，请手动选择文本复制</div>';
+                }
+                document.body.removeChild(textarea);
+            }
+
+            function resetAll() {
+                document.getElementById('inputText').value = '';
+                document.getElementById('ruleList').innerHTML = '';
+                document.getElementById('resultArea').innerHTML = '<div class="empty-tip">执行替换后，此处会显示结果与命中标记</div>';
+                document.getElementById('statLine').innerHTML = '';
+                document.getElementById('messageArea').innerHTML = '';
+                document.getElementById('regexMode').checked = true;
+                document.getElementById('ignoreCase').checked = false;
+                document.getElementById('globalMode').checked = true;
+                ruleCount = 0;
+            }
+
+            // 初始化：添加两条示例规则
+            window.addEventListener('DOMContentLoaded', function() {
+                addRule('foo', 'bar');
+                addRule('\\d+', '数字');
+            });
+
+            // 暴露到全局
+            window.addRule = addRule;
+            window.addPresetRule = addPresetRule;
+            window.clearRules = clearRules;
+            window.doReplace = doReplace;
+            window.copyResult = copyResult;
+            window.resetAll = resetAll;
+
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-replace" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/text-replace" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/59ba1b897f64" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>4756</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/text-replace-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
