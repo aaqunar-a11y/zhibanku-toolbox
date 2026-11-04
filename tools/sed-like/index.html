@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文本行处理工具</title>
+<meta name="description" content="文本行处理工具：过滤、替换、取行区间、加行号，纯本地运行，无需上传数据。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/sed-like.html">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #2c3e50; line-height: 1.6; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+h1 { font-size: 28px; margin: 20px 0 8px; color: #1a3a5c; }
+.lead { background: #eef4ff; border-left: 4px solid #4a90d9; padding: 14px 18px; border-radius: 6px; font-size: 15px; color: #2c3e50; margin-bottom: 24px; }
+h2 { font-size: 22px; margin: 32px 0 12px; color: #1a3a5c; border-bottom: 2px solid #d0dce8; padding-bottom: 6px; }
+.card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+label { display: block; font-weight: 600; margin-bottom: 8px; color: #34495e; }
+textarea { width: 100%; min-height: 180px; border: 1px solid #cbd5e0; border-radius: 6px; padding: 12px; font-size: 14px; font-family: "SF Mono", Consolas, "Courier New", monospace; resize: vertical; background: #fafbfc; }
+textarea:focus { outline: none; border-color: #4a90d9; box-shadow: 0 0 0 3px rgba(74,144,217,0.15); }
+.btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+.btn { padding: 9px 18px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.btn-primary { background: #4a90d9; color: #fff; }
+.btn-primary:hover { background: #3a7bc0; }
+.btn-secondary { background: #e8eef5; color: #2c3e50; border: 1px solid #cbd5e0; }
+.btn-secondary:hover { background: #d5e0ec; }
+.btn-success { background: #27ae60; color: #fff; }
+.btn-success:hover { background: #219a52; }
+.btn-danger { background: #e74c3c; color: #fff; }
+.btn-danger:hover { background: #c0392b; }
+.btn-warning { background: #f39c12; color: #fff; }
+.btn-warning:hover { background: #d68910; }
+.preset-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.preset-btn { padding: 6px 14px; border: 1px solid #4a90d9; background: #f0f6ff; color: #1a5fa8; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.preset-btn:hover { background: #dbe9ff; }
+.result-box { background: #f8fafc; border: 1px solid #d0dce8; border-radius: 6px; padding: 14px; min-height: 120px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; font-family: "SF Mono", Consolas, "Courier New", monospace; font-size: 13px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1; min-width: 280px; }
+.option-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; align-items: center; }
+.option-row label { display: inline-flex; align-items: center; gap: 6px; font-weight: normal; margin: 0; }
+input[type="text"], input[type="number"] { padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; width: 100%; max-width: 200px; }
+input[type="checkbox"] { width: 16px; height: 16px; }
+.step-list { padding-left: 20px; }
+.step-list li { margin-bottom: 8px; }
+.details-list details { background: #f8fafc; border: 1px solid #e0e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 10px; }
+.details-list summary { cursor: pointer; font-weight: 600; color: #1a5fa8; }
+.details-list p { margin-top: 8px; font-size: 14px; color: #4a5a6a; }
+footer { text-align: center; padding: 24px 16px; color: #7f8c8d; font-size: 14px; border-top: 1px solid #e0e8f0; max-width: 920px; margin: 0 auto; }
+footer a { color: #4a90d9; text-decoration: none; margin-right: 12px; }
+.tool-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.tool-links a { display: block; padding: 10px 14px; background: #f0f6ff; border: 1px solid #d0e0f0; border-radius: 6px; color: #1a5fa8; text-decoration: none; font-size: 14px; transition: all 0.2s; }
+.tool-links a:hover { background: #dbe9ff; border-color: #4a90d9; }
+.notice-list { padding-left: 20px; }
+.notice-list li { margin-bottom: 6px; font-size: 14px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main>
+  <h1>文本行处理工具</h1>
+  <p class="lead">「文本行处理工具」是一款纯本地运行的文本行级处理器，支持按行过滤、替换、取行区间和加行号等常用操作。您只需在左侧输入框中粘贴或输入原始文本，然后选择需要的处理方式并点击对应的操作按钮，处理结果会实时显示在右侧结果区。无需上传数据到服务器，所有处理均在您的浏览器本地完成，保护您的数据隐私。</p>
+
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label for="inputText">原始文本</label>
+        <textarea id="inputText" placeholder="在此粘贴或输入需要处理的文本，每行一条记录..."></textarea>
+      </div>
+      <div class="col">
+        <label for="outputText">处理结果</label>
+        <div class="result-box" id="outputText">等待处理...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0;border:none;font-size:18px;">快捷预设</h2>
+    <div class="preset-group">
+      <button class="preset-btn" onclick="applyPreset('filter')">过滤包含关键词</button>
+      <button class="preset-btn" onclick="applyPreset('replace')">替换指定内容</button>
+      <button class="preset-btn" onclick="applyPreset('range')">取第 2-5 行</button>
+      <button class="preset-btn" onclick="applyPreset('number')">加行号</button>
+      <button class="preset-btn" onclick="applyPreset('trim')">去除首尾空格</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0;border:none;font-size:18px;">操作选项</h2>
+    <div class="option-row">
+      <label><input type="radio" name="action" value="filter" checked> 过滤行</label>
+      <label><input type="radio" name="action" value="replace"> 替换内容</label>
+      <label><input type="radio" name="action" value="range"> 取行区间</label>
+      <label><input type="radio" name="action" value="number"> 加行号</label>
+      <label><input type="radio" name="action" value="trim"> 清理空白</label>
+    </div>
+    <div id="filterOptions" class="option-row">
+      <label>关键词：<input type="text" id="filterKeyword" placeholder="输入过滤关键词"></label>
+      <label><input type="checkbox" id="filterInvert"> 反向过滤（排除）</label>
+      <label><input type="checkbox" id="filterCase"> 区分大小写</label>
+    </div>
+    <div id="replaceOptions" class="option-row" style="display:none;">
+      <label>查找：<input type="text" id="replaceFind" placeholder="要查找的内容"></label>
+      <label>替换为：<input type="text" id="replaceWith" placeholder="替换后的内容"></label>
+      <label><input type="checkbox" id="replaceAll"> 全部替换</label>
+    </div>
+    <div id="rangeOptions" class="option-row" style="display:none;">
+      <label>起始行：<input type="number" id="rangeStart" min="1" value="1" style="width:80px;"></label>
+      <label>结束行：<input type="number" id="rangeEnd" min="1" value="5" style="width:80px;"></label>
+    </div>
+    <div id="numberOptions" class="option-row" style="display:none;">
+      <label>起始编号：<input type="number" id="numberStart" min="1" value="1" style="width:80px;"></label>
+      <label>分隔符：<input type="text" id="numberSep" value=": " style="width:80px;"></label>
+    </div>
+    <div id="trimOptions" class="option-row" style="display:none;">
+      <label><input type="checkbox" id="trimSpace" checked> 去除每行首尾空格</label>
+      <label><input type="checkbox" id="trimEmpty"> 删除空行</label>
+      <label><input type="checkbox" id="trimTabs"> 将制表符转为空格</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="processText()">执行处理</button>
+      <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+      <button class="btn btn-danger" onclick="resetAll()">重置</button>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="notice-list">
+    <li>所有处理均在浏览器本地完成，数据不会上传到任何服务器，请放心使用。</li>
+    <li>过滤操作是「包含匹配」，即只要行内包含关键词就会被保留（或排除）。</li>
+    <li>取行区间时，起始行和结束行必须为正整数，且起始行不能大于结束行。</li>
+    <li>加行号操作会在每行前面添加「编号 + 分隔符」，分隔符默认为「: 」。</li>
+    <li>替换操作默认只替换每行第一次出现的内容，勾选「全部替换」后替换所有出现。</li>
+    <li>如果输入内容为空，执行操作时会弹出提示，请先粘贴或输入文本。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="step-list">
+    <li>在「原始文本」输入框中粘贴或输入需要处理的文本内容，每行一条记录。</li>
+    <li>在「操作选项」中选择需要的处理方式，如过滤、替换、取行区间等。</li>
+    <li>根据所选操作，填写对应的参数（如关键词、替换内容、行号范围等）。</li>
+    <li>点击「执行处理」按钮，处理结果会显示在右侧「处理结果」区域。</li>
+    <li>确认结果无误后，点击「复制结果」按钮即可将结果复制到剪贴板。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <div class="details-list">
+    <details>
+      <summary>过滤操作支持正则表达式吗？</summary>
+      <p>目前不支持正则表达式，仅支持普通文本关键词的包含匹配。如需正则功能，请使用专业的正则测试工具。</p>
+    </details>
+    <details>
+      <summary>替换操作会修改原始文本吗？</summary>
+      <p>不会。所有操作都是基于原始文本的副本进行，原始输入内容不会被修改，您可以放心多次尝试不同操作。</p>
+    </details>
+    <details>
+      <summary>取行区间时行号从几开始算？</summary>
+      <p>行号从 1 开始计数，第一行对应行号 1。如果输入文本末尾有空行，空行也会被计入行数。</p>
+    </details>
+    <details>
+      <summary>处理大量文本时会不会卡顿？</summary>
+      <p>对于普通大小的文本（几万行以内）处理速度很快。如果文本特别大（几十万行以上），建议分批次处理以避免浏览器卡顿。</p>
+    </details>
+  </div>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://zhibanku.com/tools/text-replace.html">批量文本替换工具</a>
+    <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+    <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+    <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+    <a href="https://zhibanku.com/tools/json-flatten.html">JSON 扁平化工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <span>本工具所有处理均在本地浏览器完成，无需联网。</span>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // 操作选项切换
+  const actionRadios = document.querySelectorAll('input[name="action"]');
+  const optionDivs = {
+    filter: document.getElementById('filterOptions'),
+    replace: document.getElementById('replaceOptions'),
+    range: document.getElementById('rangeOptions'),
+    number: document.getElementById('numberOptions'),
+    trim: document.getElementById('trimOptions')
+  };
+
+  actionRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      const action = this.value;
+      Object.keys(optionDivs).forEach(key => {
+        optionDivs[key].style.display = (key === action) ? 'flex' : 'none';
+      });
+    });
+  });
+
+  // 快捷预设
+  window.applyPreset = function(preset) {
+    const radioMap = {
+      filter: 'filter',
+      replace: 'replace',
+      range: 'range',
+      number: 'number',
+      trim: 'trim'
+    };
+    const radio = document.querySelector(`input[name="action"][value="${radioMap[preset]}"]`);
+    if (radio) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event('change'));
+    }
+    if (preset === 'filter') {
+      document.getElementById('filterKeyword').value = '出错了';
+      document.getElementById('filterInvert').checked = false;
+      document.getElementById('filterCase').checked = false;
+    } else if (preset === 'replace') {
+      document.getElementById('replaceFind').value = 'old';
+      document.getElementById('replaceWith').value = 'new';
+      document.getElementById('replaceAll').checked = true;
+    } else if (preset === 'range') {
+      document.getElementById('rangeStart').value = 2;
+      document.getElementById('rangeEnd').value = 5;
+    } else if (preset === 'number') {
+      document.getElementById('numberStart').value = 1;
+      document.getElementById('numberSep').value = ': ';
+    } else if (preset === 'trim') {
+      document.getElementById('trimSpace').checked = true;
+      document.getElementById('trimEmpty').checked = false;
+      document.getElementById('trimTabs').checked = false;
+    }
+  };
+
+  // 获取选中操作
+  function getSelectedAction() {
+    const checked = document.querySelector('input[name="action"]:checked');
+    return checked ? checked.value : 'filter';
+  }
+
+  // 执行处理
+  window.processText = function() {
+    const input = document.getElementById('inputText').value;
+    if (!input.trim()) {
+      alert('请先输入需要处理的文本内容。');
+      return;
+    }
+
+    const action = getSelectedAction();
+    let lines = input.split('\n');
+    let result = [];
+
+    switch (action) {
+      case 'filter': {
+        const keyword = document.getElementById('filterKeyword').value;
+        if (!keyword) {
+          alert('请输入过滤关键词。');
+          return;
+        }
+        const invert = document.getElementById('filterInvert').checked;
+        const caseSensitive = document.getElementById('filterCase').checked;
+        const searchKeyword = caseSensitive ? keyword : keyword.toLowerCase();
+        lines.forEach(line => {
+          const testLine = caseSensitive ? line : line.toLowerCase();
+          const match = testLine.includes(searchKeyword);
+          if (invert ? !match : match) {
+            result.push(line);
+          }
+        });
+        break;
+      }
+      case 'replace': {
+        const find = document.getElementById('replaceFind').value;
+        const replaceWith = document.getElementById('replaceWith').value;
+        if (!find) {
+          alert('请输入要查找的内容。');
+          return;
+        }
+        const replaceAll = document.getElementById('replaceAll').checked;
+        lines.forEach(line => {
+          if (replaceAll) {
+            // 使用 split/join 实现全部替换
+            const parts = line.split(find);
+            result.push(parts.join(replaceWith));
+          } else {
+            // 只替换第一次出现
+            const idx = line.indexOf(find);
+            if (idx !== -1) {
+              result.push(line.substring(0, idx) + replaceWith + line.substring(idx + find.length));
+            } else {
+              result.push(line);
+            }
+          }
+        });
+        break;
+      }
+      case 'range': {
+        const start = parseInt(document.getElementById('rangeStart').value, 10);
+        const end = parseInt(document.getElementById('rangeEnd').value, 10);
+        if (isNaN(start) || isNaN(end) || start < 1 || end < 1 || start > end) {
+          alert('请输入有效的行号范围，起始行和结束行必须为正整数且起始行不大于结束行。');
+          return;
+        }
+        for (let i = start - 1; i < Math.min(end, lines.length); i++) {
+          result.push(lines[i]);
+        }
+        break;
+      }
+      case 'number': {
+        const startNum = parseInt(document.getElementById('numberStart').value, 10);
+        const sep = document.getElementById('numberSep').value;
+        if (isNaN(startNum) || startNum < 1) {
+          alert('请输入有效的起始编号（正整数）。');
+          return;
+        }
+        lines.forEach((line, idx) => {
+          result.push((startNum + idx) + sep + line);
+        });
+        break;
+      }
+      case 'trim': {
+        const trimSpace = document.getElementById('trimSpace').checked;
+        const trimEmpty = document.getElementById('trimEmpty').checked;
+        const trimTabs = document.getElementById('trimTabs').checked;
+        lines.forEach(line => {
+          let processed = line;
+          if (trimTabs) {
+            processed = processed.replace(/\t/g, '    ');
+          }
+          if (trimSpace) {
+            processed = processed.trim();
+          }
+          if (trimEmpty && processed === '') {
+            return; // 跳过空行
+          }
+          result.push(processed);
+        });
+        break;
+      }
+      default:
+        alert('请选择有效的操作类型。');
+        return;
+    }
+
+    document.getElementById('outputText').textContent = result.join('\n');
+  };
+
+  // 复制结果
+  window.copyResult = function() {
+    const output = document.getElementById('outputText').textContent;
+    if (!output || output === '等待处理...') {
+      alert('没有可复制的结果，请先执行处理操作。');
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(output).then(() => {
+        alert('结果已复制到剪贴板。');
+      }).catch(() => {
+        fallbackCopy(output);
+      });
+    } else {
+      fallbackCopy(output);
+    }
+  };
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      alert('结果已复制到剪贴板。');
+    } catch (err) {
+      alert('复制失败，请手动选择文本复制。');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 重置
+  window.resetAll = function() {
+    document.getElementById('inputText').value = '';
+    document.getElementById('outputText').textContent = '等待处理...';
+    document.querySelector('input[name="action"][value="filter"]').checked = true;
+    document.querySelector('input[name="action"][value="filter"]').dispatchEvent(new Event('change'));
+    document.getElementById('filterKeyword').value = '';
+    document.getElementById('filterInvert').checked = false;
+    document.getElementById('filterCase').checked = false;
+    document.getElementById('replaceFind').value = '';
+    document.getElementById('replaceWith').value = '';
+    document.getElementById('replaceAll').checked = false;
+    document.getElementById('rangeStart').value = 1;
+    document.getElementById('rangeEnd').value = 5;
+    document.getElementById('numberStart').value = 1;
+    document.getElementById('numberSep').value = ': ';
+    document.getElementById('trimSpace').checked = true;
+    document.getElementById('trimEmpty').checked = false;
+    document.getElementById('trimTabs').checked = false;
+  };
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/sed-like" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/sed-like" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+<a href="https://pan.quark.cn/s/4d219d031332" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">夸克网盘下载</a>
+<a href="None" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">百度网盘下载</a>
+</div>
+<div style="margin-top:8px">夸克提取码：<b>1277</b> ｜ 百度提取码：<b>None</b></div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/sed-like-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
