@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空白字符清理工具 — 在线清除多余空格与空行</title>
+    <meta name="description" content="一键清理文本中的多余空格、空行、制表符与首尾空白，支持全角空格，结果实时预览并可复制。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/whitespace-clean.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.7;
+        }
+        .zbk-topnav {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 12px 16px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .zbk-topnav a {
+            display: inline-block;
+            padding: 7px 14px;
+            border: 1px solid #cddffa;
+            background: #f4f8ff;
+            color: #1449b0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .zbk-topnav a:last-child {
+            border: none;
+            background: transparent;
+            color: #1a5fe0;
+            font-weight: 400;
+        }
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a2b4a;
+            margin: 20px 0 12px;
+            text-align: center;
+        }
+        .lead {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin: 0 0 28px;
+            font-size: 15px;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a2b4a;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eef2f7;
+        }
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: "SF Mono", "Consolas", "Courier New", monospace;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fafbfc;
+            color: #2d3748;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #edf2f7;
+            color: #2d3748;
+        }
+        .btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: #3182ce;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #2b6cb0;
+        }
+        .btn-success {
+            background: #38a169;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #2f855a;
+        }
+        .btn-warning {
+            background: #dd6b20;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #c05621;
+        }
+        .preset-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 4px;
+        }
+        .preset-btn {
+            padding: 6px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 20px;
+            background: #f7fafc;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a5568;
+        }
+        .preset-btn:hover {
+            background: #ebf8ff;
+            border-color: #90cdf4;
+            color: #2b6cb0;
+        }
+        .result-box {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            min-height: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: "SF Mono", "Consolas", "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #2d3748;
+            margin-top: 12px;
+        }
+        .result-empty {
+            color: #a0aec0;
+            font-style: italic;
+        }
+        .info-line {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 8px;
+        }
+        .notice-list {
+            padding-left: 20px;
+        }
+        .notice-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .steps {
+            padding-left: 20px;
+            counter-reset: step;
+        }
+        .steps li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #4a5568;
+            position: relative;
+            padding-left: 8px;
+        }
+        .steps li::before {
+            counter-increment: step;
+            content: "第 " counter(step) " 步";
+            font-weight: 600;
+            color: #3182ce;
+            margin-right: 8px;
+        }
+        details {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 14px;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4a5568;
+            padding-left: 12px;
+            border-left: 3px solid #bee3f8;
+        }
+        .tool-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .tool-links a {
+            display: block;
+            padding: 10px 14px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #2b6cb0;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .tool-links a:hover {
+            background: #ebf8ff;
+            border-color: #90cdf4;
+        }
+        footer {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #a0aec0;
+            border-top: 1px solid #e2e8f0;
+        }
+        footer a {
+            color: #718096;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        .stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #718096;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .stats span {
+            background: #edf2f7;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 22px;
+            }
+            .card {
+                padding: 16px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6">
+        <a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a>
+        <a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a>
+    </nav>
+
+    <main>
+        <h1>空白字符清理工具</h1>
+        <p class="lead">
+            本工具用于清理文本中的各种空白字符，包括多余空格、空行、制表符、全角空格以及首尾空白。您只需在下方输入框中粘贴或输入需要处理的文本，然后点击「开始清理」按钮，处理后的结果会立即显示在右侧结果区域。您还可以使用「复制结果」按钮一键复制清理后的文本，方便粘贴到其他文档中。工具完全在浏览器本地运行，不会上传任何数据，请放心使用。
+        </p>
+
+        <div class="card">
+            <h2>文本输入与清理</h2>
+            <textarea id="inputText" placeholder="请在此粘贴或输入需要清理的文本…"></textarea>
+            
+            <div class="preset-group">
+                <span style="font-size:13px;color:#718096;align-self:center;">快捷预设：</span>
+                <button class="preset-btn" onclick="setPreset('spaces')">清理多余空格</button>
+                <button class="preset-btn" onclick="setPreset('tabs')">清理制表符</button>
+                <button class="preset-btn" onclick="setPreset('blanklines')">清理空行</button>
+                <button class="preset-btn" onclick="setPreset('fullwidth')">清理全角空格</button>
+                <button class="preset-btn" onclick="setPreset('all')">全部清理</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="cleanText()">开始清理</button>
+                <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+                <button class="btn btn-warning" onclick="resetAll()">重置</button>
+            </div>
+
+            <div class="info-line">当前模式：<span id="modeLabel">全部清理</span></div>
+            <div class="stats">
+                <span>输入字符：<span id="inputCount">0</span></span>
+                <span>输出字符：<span id="outputCount">0</span></span>
+                <span>减少：<span id="reducedCount">0</span></span>
+            </div>
+
+            <div class="result-box" id="resultBox">
+                <span class="result-empty">清理结果将显示在这里…</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>注意事项</h2>
+            <ul class="notice-list">
+                <li>本工具完全在浏览器本地运行，所有文本处理均在您的设备上完成，不会上传任何数据到服务器，请放心处理敏感内容。</li>
+                <li>「清理多余空格」会将连续的多个半角空格合并为一个，但不会删除单个空格；「清理全部空格」则会删除所有空格。</li>
+                <li>「清理空行」会删除所有空行（包括只包含空白字符的行），但保留单个换行符，不会影响段落结构。</li>
+                <li>全角空格（U+3000）与普通半角空格不同，需要单独勾选「清理全角空格」选项才能处理。</li>
+                <li>制表符（Tab）在文本中可能显示为多个空格宽度，清理后统一替换为单个空格或删除，请根据需求选择。</li>
+                <li>处理大量文本（超过 1MB）时，浏览器可能会出现短暂卡顿，建议分批处理。</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>怎么用</h2>
+            <ol class="steps">
+                <li>在输入框中粘贴或输入需要清理的文本内容。</li>
+                <li>根据需求选择快捷预设按钮（如「清理多余空格」），或直接点击「开始清理」使用默认的全部清理模式。</li>
+                <li>点击「开始清理」按钮，处理结果会立即显示在下方结果区域。</li>
+                <li>如果结果满意，点击「复制结果」按钮即可将清理后的文本复制到剪贴板。</li>
+                <li>如需重新处理，点击「重置」按钮清空所有内容，或直接修改输入文本后再次点击「开始清理」。</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>常见问题</h2>
+            <details>
+                <summary>清理后文本变少了，是不是误删了内容？</summary>
+                <p>不会误删有效内容。本工具只删除空白字符（空格、制表符、空行等），不会删除任何文字、数字或标点符号。</p>
+            </details>
+            <details>
+                <summary>为什么清理后段落之间的空行没有了？</summary>
+                <p>因为您选择了清理空行功能。如果希望保留段落间距，建议只使用清理多余空格功能，不要勾选清理空行。</p>
+            </details>
+            <details>
+                <summary>全角空格和普通空格有什么区别？</summary>
+                <p>全角空格是中文排版中常见的空白字符，占一个汉字宽度；普通空格是英文半角空格。两者编码不同，需要分别处理。</p>
+            </details>
+            <details>
+                <summary>清理结果可以撤销吗？</summary>
+                <p>本工具不提供撤销功能。建议在清理前先复制一份原始文本保存，或者使用重置按钮重新输入后再处理。</p>
+            </details>
+        </div>
+
+        <div class="card">
+            <h2>相关工具推荐</h2>
+            <div class="tool-links">
+                <a href="https://zhibanku.com/tools/text-replace.html">批量文本替换工具</a>
+                <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+                <a href="https://zhibanku.com/tools/text-reverse.html">文本反转工具</a>
+                <a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+                <a href="https://zhibanku.com/tools/sed-like.html">文本行处理工具</a>
+                <a href="https://zhibanku.com/tools/query-string.html">QueryString 解析工具</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <a href="/tools/">返回在线工具</a>
+        <span>本工具完全在浏览器本地运行，无需联网</span>
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            let currentMode = 'all';
+
+            const inputEl = document.getElementById('inputText');
+            const resultBox = document.getElementById('resultBox');
+            const modeLabel = document.getElementById('modeLabel');
+            const inputCount = document.getElementById('inputCount');
+            const outputCount = document.getElementById('outputCount');
+            const reducedCount = document.getElementById('reducedCount');
+
+            // 实时统计输入字符数
+            inputEl.addEventListener('input', function() {
+                inputCount.textContent = this.value.length;
+                if (this.value.length === 0) {
+                    resultBox.innerHTML = '<span class="result-empty">清理结果将显示在这里…</span>';
+                    outputCount.textContent = '0';
+                    reducedCount.textContent = '0';
+                }
+            });
+
+            // 设置预设模式
+            window.setPreset = function(mode) {
+                currentMode = mode;
+                const modeNames = {
+                    'spaces': '清理多余空格',
+                    'tabs': '清理制表符',
+                    'blanklines': '清理空行',
+                    'fullwidth': '清理全角空格',
+                    'all': '全部清理'
+                };
+                modeLabel.textContent = modeNames[mode] || '全部清理';
+                
+                // 如果有输入内容，自动执行清理
+                if (inputEl.value.length > 0) {
+                    cleanText();
+                }
+            };
+
+            // 清理文本
+            window.cleanText = function() {
+                const input = inputEl.value;
+                if (!input) {
+                    resultBox.innerHTML = '<span class="result-empty">请先输入需要清理的文本</span>';
+                    return;
+                }
+
+                let output = input;
+
+                switch (currentMode) {
+                    case 'spaces':
+                        // 清理多余空格：将连续多个空格合并为一个，并清理首尾空格
+                        output = output.replace(/[ \t]+/g, ' ');
+                        output = output.replace(/^[ \t]+|[ \t]+$/gm, '');
+                        break;
+                    case 'tabs':
+                        // 清理制表符：将制表符替换为单个空格
+                        output = output.replace(/\t/g, ' ');
+                        break;
+                    case 'blanklines':
+                        // 清理空行：删除所有空行（包括只包含空白字符的行）
+                        output = output.replace(/^\s*[\r\n]+/gm, '');
+                        // 清理首尾空行
+                        output = output.replace(/^[\s\r\n]+|[\s\r\n]+$/g, '');
+                        break;
+                    case 'fullwidth':
+                        // 清理全角空格
+                        output = output.replace(/\u3000/g, '');
+                        break;
+                    case 'all':
+                    default:
+                        // 全部清理：合并多余空格、清理制表符、清理空行、清理全角空格、清理首尾空白
+                        // 先清理全角空格
+                        output = output.replace(/\u3000/g, '');
+                        // 合并多余空格和制表符
+                        output = output.replace(/[ \t]+/g, ' ');
+                        // 清理空行
+                        output = output.replace(/^\s*[\r\n]+/gm, '');
+                        // 清理每行首尾空白
+                        output = output.replace(/^[ \t]+|[ \t]+$/gm, '');
+                        // 清理首尾空行和空白
+                        output = output.replace(/^[\s\r\n]+|[\s\r\n]+$/g, '');
+                        break;
+                }
+
+                // 显示结果
+                resultBox.textContent = output;
+                outputCount.textContent = output.length;
+                reducedCount.textContent = input.length - output.length;
+            };
+
+            // 复制结果
+            window.copyResult = function() {
+                const text = resultBox.textContent;
+                if (!text || text === '清理结果将显示在这里…') {
+                    alert('请先执行清理操作，再复制结果');
+                    return;
+                }
+
+                // 使用 Clipboard API
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        alert('已复制到剪贴板');
+                    }).catch(function() {
+                        // 降级方案
+                        fallbackCopy(text);
+                    });
+                } else {
+                    fallbackCopy(text);
+                }
+            };
+
+            // 降级复制方案
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('已复制到剪贴板');
+                } catch (err) {
+                    alert('复制失败，请手动选择文本复制');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            // 重置
+            window.resetAll = function() {
+                inputEl.value = '';
+                resultBox.innerHTML = '<span class="result-empty">清理结果将显示在这里…</span>';
+                inputCount.textContent = '0';
+                outputCount.textContent = '0';
+                reducedCount.textContent = '0';
+                currentMode = 'all';
+                modeLabel.textContent = '全部清理';
+                inputEl.focus();
+            };
+
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/whitespace-clean" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/whitespace-clean" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/whitespace-clean-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
