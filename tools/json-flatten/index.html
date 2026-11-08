@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON 拍平工具 - 嵌套 JSON 转点路径扁平结构</title>
+<meta name="description" content="JSON 拍平工具：将嵌套 JSON 一键拍平为点路径扁平结构，支持反向还原，纯本地处理。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/json-flatten.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #2c3e50; line-height: 1.6; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { text-decoration: none; }
+  main { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; color: #1a3a6b; margin-bottom: 8px; }
+  .lead { background: #eef4ff; border-left: 4px solid #4a7ddb; padding: 14px 16px; border-radius: 0 8px 8px 0; font-size: 15px; color: #1a3a6b; margin-bottom: 24px; }
+  h2 { font-size: 20px; color: #1a3a6b; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #dce6f5; }
+  .tool-box { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .preset-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .preset-btn { background: #eef4ff; border: 1px solid #b8cdf0; color: #1a5fe0; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .preset-btn:hover { background: #dbe8ff; }
+  .textarea-row { display: flex; flex-wrap: wrap; gap: 16px; }
+  .textarea-col { flex: 1; min-width: 280px; }
+  .textarea-col label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #34495e; }
+  textarea { width: 100%; height: 260px; border: 1px solid #ccd6e4; border-radius: 8px; padding: 12px; font-family: "SF Mono", "Consolas", "Courier New", monospace; font-size: 13px; resize: vertical; background: #fafcff; }
+  textarea:focus { outline: none; border-color: #4a7ddb; box-shadow: 0 0 0 3px rgba(74,125,219,0.15); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+  .btn { padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: #1a5fe0; color: #fff; }
+  .btn-primary:hover { background: #1449b0; }
+  .btn-secondary { background: #eef4ff; color: #1a5fe0; border: 1px solid #b8cdf0; }
+  .btn-secondary:hover { background: #dbe8ff; }
+  .btn-warning { background: #fff3e0; color: #b26a00; border: 1px solid #ffd591; }
+  .btn-warning:hover { background: #ffe8c2; }
+  .btn-success { background: #e6f7e6; color: #1a7a1a; border: 1px solid #a8e0a8; }
+  .btn-success:hover { background: #d0f0d0; }
+  .result-area { margin-top: 12px; }
+  .result-area .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .result-area .result-header span { font-size: 14px; font-weight: 600; color: #34495e; }
+  .result-area pre { background: #f8fafc; border: 1px solid #ccd6e4; border-radius: 8px; padding: 12px; font-family: "SF Mono", "Consolas", "Courier New", monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
+  .tips { background: #fffbea; border: 1px solid #ffe4a0; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-size: 14px; }
+  .tips strong { color: #8a6d00; }
+  ul, ol { padding-left: 20px; }
+  li { margin-bottom: 6px; font-size: 14px; }
+  details { background: #f8fafc; border: 1px solid #e0e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+  summary { cursor: pointer; font-weight: 600; color: #1a3a6b; font-size: 14px; }
+  details p { margin-top: 8px; font-size: 14px; color: #4a5a6a; }
+  .rec-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .rec-links a { background: #f0f4fa; border: 1px solid #d0dcec; padding: 6px 14px; border-radius: 20px; font-size: 13px; color: #1a5fe0; text-decoration: none; transition: all 0.2s; }
+  .rec-links a:hover { background: #e0eaf8; border-color: #a0bce0; }
+  footer { text-align: center; padding: 20px; color: #7a8a9a; font-size: 13px; border-top: 1px solid #e0e8f0; margin-top: 20px; }
+  footer a { color: #1a5fe0; text-decoration: none; }
+  .error-msg { background: #fdecea; border: 1px solid #f5b5b5; color: #c0392b; padding: 10px 14px; border-radius: 8px; margin: 10px 0; font-size: 14px; display: none; }
+  .success-msg { background: #eafaf0; border: 1px solid #a8e0b8; color: #1a7a1a; padding: 10px 14px; border-radius: 8px; margin: 10px 0; font-size: 14px; display: none; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main>
+  <h1>JSON 拍平工具</h1>
+  <p class="lead">本工具将嵌套的 JSON 对象拍平为「点路径」扁平结构，例如把 {"a":{"b":1}} 转换为 {"a.b":1}，方便数据展平、日志分析与表格导入。您只需在左侧输入框粘贴 JSON 内容，点击「拍平 JSON」按钮，结果即刻显示在右侧。若需要还原，将拍平后的 JSON 粘贴到左侧，点击「反向还原」即可恢复嵌套结构。整个过程完全在浏览器本地运行，数据不会上传到任何服务器。</p>
+
+  <div class="tool-box">
+    <div class="preset-bar">
+      <span style="font-size:13px;color:#7a8a9a;align-self:center;">快捷预设：</span>
+      <button class="preset-btn" data-preset="simple">简单嵌套</button>
+      <button class="preset-btn" data-preset="array">含数组</button>
+      <button class="preset-btn" data-preset="deep">深层嵌套</button>
+      <button class="preset-btn" data-preset="mixed">混合复杂</button>
+      <button class="preset-btn" data-preset="empty">空对象</button>
+    </div>
+
+    <div class="textarea-row">
+      <div class="textarea-col">
+        <label for="inputJson">输入 JSON</label>
+        <textarea id="inputJson" placeholder='在此粘贴 JSON 内容，例如：{"user":{"name":"张三","info":{"age":25}}}'></textarea>
+      </div>
+      <div class="textarea-col">
+        <label for="outputJson">输出结果</label>
+        <textarea id="outputJson" readonly placeholder="拍平或还原后的结果将显示在这里"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="flattenBtn">拍平 JSON</button>
+      <button class="btn btn-secondary" id="unflattenBtn">反向还原</button>
+      <button class="btn btn-success" id="copyBtn">复制结果</button>
+      <button class="btn btn-warning" id="resetBtn">重置</button>
+    </div>
+
+    <div class="出错了-msg" id="出错了Msg"></div>
+    <div class="成功了-msg" id="成功了Msg"></div>
+
+    <div class="tips">
+      <strong>提示：</strong> 拍平后的键名使用点号分隔路径，如 <code>a.b.c</code>。数组索引使用数字表示，如 <code>items.0.name</code>。反向还原时，工具会自动识别数字键并还原为数组。
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul>
+    <li>输入必须是合法的 JSON 格式，否则会提示错误。支持对象和数组作为根节点。</li>
+    <li>拍平后的键名使用点号分隔路径，如果原始键名本身包含点号，可能造成还原歧义，建议避免。</li>
+    <li>数组会被拍平为数字索引路径，如 <code>arr.0</code>、<code>arr.1</code>，反向还原时数字键会自动转回数组。</li>
+    <li>所有处理均在浏览器本地完成，数据不会上传到任何服务器，可放心处理敏感数据。</li>
+    <li>当 JSON 数据量较大（超过 1MB）时，处理速度可能变慢，建议分块处理。</li>
+    <li>反向还原时，如果拍平后的键名不符合点路径规则（如键名中有非法字符），可能无法正确还原。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol>
+    <li>在左侧输入框中粘贴您的 JSON 数据，或点击上方「快捷预设」按钮快速填入示例数据。</li>
+    <li>点击「拍平 JSON」按钮，将嵌套结构转换为点路径扁平格式，结果出现在右侧输出框。</li>
+    <li>如需还原嵌套结构，将拍平后的 JSON 粘贴到左侧，点击「反向还原」按钮。</li>
+    <li>点击「复制结果」按钮可将输出内容复制到剪贴板，点击「重置」清空所有输入输出。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>拍平和还原是精确可逆的吗</summary>
+    <p>对于标准 JSON 数据，拍平后再还原可以恢复原始结构。但如果原始键名包含点号或数字键与数组索引冲突，可能出现歧义。</p>
+  </details>
+  <details>
+    <summary>数组会被如何处理</summary>
+    <p>数组元素使用数字索引作为路径段，例如 items.0.name。反向还原时，工具检测到数字键会自动重建数组。</p>
+  </details>
+  <details>
+    <summary>数据会发送到服务器吗</summary>
+    <p>不会。所有处理逻辑都在您的浏览器本地运行，没有任何网络请求，数据完全不会离开您的设备。</p>
+  </details>
+  <details>
+    <summary>支持多深的嵌套层级</summary>
+    <p>理论上支持任意深度的嵌套，但过深的层级（超过 100 层）可能导致浏览器卡顿，建议控制在 50 层以内。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="rec-links">
+    <a href="https://zhibanku.com/tools/json-format.html">JSON 格式化与校验</a>
+    <a href="https://zhibanku.com/tools/yaml-json.html">YAML 与 JSON 互转</a>
+    <a href="https://zhibanku.com/tools/toml-json.html">TOML 与 JSON 互转</a>
+    <a href="https://zhibanku.com/tools/query-string.html">QueryString 生成解析</a>
+    <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具完全在浏览器本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var inputEl = document.getElementById('inputJson');
+  var outputEl = document.getElementById('outputJson');
+  var errorMsg = document.getElementById('出错了Msg');
+  var successMsg = document.getElementById('成功了Msg');
+
+  // 预设数据
+  var presets = {
+    simple: {
+      "user": {
+        "name": "张三",
+        "age": 28,
+        "email": "zhangsan@example.com"
+      }
+    },
+    array: {
+      "users": [
+        { "name": "李四", "age": 30 },
+        { "name": "王五", "age": 25 }
+      ]
+    },
+    deep: {
+      "level1": {
+        "level2": {
+          "level3": {
+            "level4": {
+              "value": "深层数据"
+            }
+          }
+        }
+      }
+    },
+    mixed: {
+      "id": 123,
+      "name": "测试",
+      "tags": ["a", "b", "c"],
+      "address": {
+        "city": "北京",
+        "district": {
+          "name": "朝阳区",
+          "code": 110105
+        }
+      },
+      "scores": [
+        { "subject": "数学", "score": 95 },
+        { "subject": "语文", "score": 88 }
+      ]
+    },
+    empty: {}
+  };
+
+  // 预设按钮点击
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  presetBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = this.getAttribute('data-preset');
+      if (presets[key]) {
+        inputEl.value = JSON.stringify(presets[key], null, 2);
+        outputEl.value = '';
+        hideMessages();
+      }
+    });
+  });
+
+  // 拍平 JSON
+  function flatten(data, parentKey, result) {
+    if (data === null || data === undefined) {
+      result[parentKey] = data;
+      return;
+    }
+    if (typeof data !== 'object') {
+      result[parentKey] = data;
+      return;
+    }
+    // 数组
+    if (Array.isArray(data)) {
+      if (data.length === 0) {
+        result[parentKey] = [];
+        return;
+      }
+      data.forEach(function(item, index) {
+        var newKey = parentKey ? parentKey + '.' + index : String(index);
+        flatten(item, newKey, result);
+      });
+      return;
+    }
+    // 对象
+    var keys = Object.keys(data);
+    if (keys.length === 0) {
+      result[parentKey] = {};
+      return;
+    }
+    keys.forEach(function(key) {
+      var newKey = parentKey ? parentKey + '.' + key : key;
+      flatten(data[key], newKey, result);
+    });
+  }
+
+  // 反向还原
+  function unflatten(flatObj) {
+    var result = {};
+    Object.keys(flatObj).forEach(function(path) {
+      var parts = path.split('.');
+      var current = result;
+      for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        var isLast = (i === parts.length - 1);
+        // 判断是否为数字索引
+        var isNum = /^\d+$/.test(part);
+        if (isLast) {
+          current[part] = flatObj[path];
+        } else {
+          var nextPart = parts[i + 1];
+          var nextIsNum = /^\d+$/.test(nextPart);
+          if (isNum) {
+            if (!Array.isArray(current)) {
+              // 将对象转换为数组
+              var objKeys = Object.keys(current);
+              var maxIdx = -1;
+              objKeys.forEach(function(k) {
+                if (/^\d+$/.test(k)) {
+                  var idx = parseInt(k, 10);
+                  if (idx > maxIdx) maxIdx = idx;
+                }
+              });
+              var arr = [];
+              for (var j = 0; j <= maxIdx; j++) {
+                arr.push(current[j] !== undefined ? current[j] : null);
+              }
+              // 替换 current 为数组
+              // 需要修改父级引用，这里简单处理：重建
+              // 由于 current 是引用，无法直接替换，这里采用递归方式
+              // 简化处理：在构建时用数组
+              // 重新处理
+              // 这里用另一种方式：在设置时直接处理
+              // 为简化，我们使用递归构建
+              // 重新实现
+              // 放弃此方案，改用递归构建
+              // 重新实现 unflatten
+              // 见下方新实现
+            }
+          }
+        }
+      }
+    });
+    return result;
+  }
+
+  // 重新实现反向还原（更健壮）
+  function unflattenBetter(flatObj) {
+    var root = {};
+    Object.keys(flatObj).forEach(function(path) {
+      var parts = path.split('.');
+      var current = root;
+      for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        var isLast = (i === parts.length - 1);
+        var nextPart = parts[i + 1];
+        var nextIsNum = nextPart !== undefined && /^\d+$/.test(nextParthed);
+        var currentIsNum = /^\d+$/.test(part);
+
+        if (isLast) {
+          // 设置值
+          if (currentIsNum) {
+            // 当前是数字，需要数组
+            if (!Array.isArray(current)) {
+              // 将对象转数组
+              var objKeys = Object.keys(current);
+              var maxIdx = -1;
+              objKeys.forEach(function(k) {
+                if (/^\d+$/.test(k)) {
+                  var idx = parseInt(k, 10);
+                  if (idx > maxIdx) maxIdx = idx;
+                }
+              });
+              var arr = [];
+              for (var j = 0; j <= maxIdx; j++) {
+                arr.push(current[j] !== undefined ? current[j] : null);
+              }
+              // 替换 current 为数组（需要修改父级）
+              // 这里无法直接替换，使用递归构建
+              // 放弃，采用另一种策略：先构建树，再转换
+            }
+          }
+          current[part] = flatObj[path];
+        } else {
+          // 非最后
+          if (currentIsNum) {
+            // 当前是数字，需要数组
+            if (!Array.isArray(current)) {
+              // 转换为数组
+              var objKeys = Object.keys(current);
+              var maxIdx = -1;
+              objKeys.forEach(function(k) {
+                if (/^\d+$/.test(k)) {
+                  var idx = parseInt(k, 10);
+                  if (idx > maxIdx) maxIdx = idx;
+                }
+              });
+              var arr = [];
+              for (var j = 0; j <= maxIdx; j++) {
+                arr.push(current[j] !== undefined ? current[j] : null);
+              }
+              // 替换 current 为数组（需要修改父级）
+              // 这里无法直接替换，使用递归构建
+              // 放弃，采用另一种策略：先构建树，再转换
+            }
+          }
+          if (current[part] === undefined) {
+            if (nextIsNum) {
+              current[part] = [];
+            } else {
+              current[part] = {};
+            }
+          }
+          current = current[part];
+        }
+      }
+    });
+    return root;
+  }
+
+  // 更可靠的反向还原实现
+  function unflattenReliable(flatObj) {
+    var root = {};
+    Object.keys(flatObj).forEach(function(path) {
+      var parts = path.split('.');
+      var current = root;
+      for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        var isLast = (i === parts.length - 1);
+        var nextPart = parts[i + 1];
+        var nextIsNum = nextPart !== undefined && /^\d+$/.test(nextPart);
+        var currentIsNum = /^\d+$/.test(part);
+
+        if (isLast) {
+          // 最后一项，设置值
+          if (currentIsNum) {
+            // 需要数组
+            if (!Array.isArray(current)) {
+              // 将当前对象转为数组
+              var objKeys = Object.keys(current);
+              var maxIdx = -1;
+              objKeys.forEach(function(k) {
+                if (/^\d+$/.test(k)) {
+                  var idx = parseInt(k, 10);
+                  if (idx > maxIdx) maxIdx = idx;
+                }
+              });
+              var arr = [];
+              for (var j = 0; j <= maxIdx; j++) {
+                arr.push(current[j] !== undefined ? current[j] : null);
+              }
+              // 替换 current 为数组（需要修改父级）
+              // 这里无法直接替换，使用递归构建
+              // 放弃，采用另一种策略：先构建树，再转换
+            }
+          }
+          current[part] = flatObj[path];
+        } else {
+          // 非最后
+          if (current[part] === undefined) {
+            if (nextIsNum) {
+              current[part] = [];
+            } else {
+              current[part] = {};
+            }
+          }
+          current = current[part];
+        }
+      }
+    });
+    return root;
+  }
+
+  // 最终实现：使用递归构建，避免引用问题
+  function buildTree(flatObj) {
+    var root = {};
+    Object.keys(flatObj).forEach(function(path) {
+      var parts = path.split('.');
+      var current = root;
+      for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        var isLast = (i === parts.length - 1);
+        var nextPart = parts[i + 1];
+        var nextIsNum = nextPart !== undefined && /^\d+$/.test(nextPart);
+
+        if (isLast) {
+          current[part] = flatObj[path];
+        } else {
+          if (current[part] === undefined) {
+            if (nextIsNum) {
+              current[part] = [];
+            } else {
+              current[part] = {};
+            }
+          }
+          current = current[part];
+        }
+      }
+    });
+    return root;
+  }
+
+  // 将对象中的数字键数组转换为真正的数组
+  function convertToArrays(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) {
+      obj.forEach(function(item, idx) {
+        obj[idx] = convertToArrays(item);
+      });
+      return obj;
+    }
+    // 对象
+    var keys = Object.keys(obj);
+    var allNumeric = keys.length > 0 && keys.every(function(k) { return /^\d+$/.test(k); });
+    if (allNumeric) {
+      var arr = [];
+      keys.forEach(function(k) {
+        var idx = parseInt(k, 10);
+        arr[idx] = convertToArrays(obj[k]);
+      });
+      return arr;
+    }
+    keys.forEach(function(k) {
+      obj[k] = convertToArrays(obj[k]);
+    });
+    return obj;
+  }
+
+  // 最终反向还原
+  function unflattenFinal(flatObj) {
+    var tree = buildTree(flatObj);
+    return convertToArrays(tree);
+  }
+
+  // 显示错误
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+    successMsg.style.display = 'none';
+  }
+
+  // 显示成功
+  function showSuccess(msg) {
+    successMsg.textContent = msg;
+    successMsg.style.display = 'block';
+    errorMsg.style.display = 'none';
+  }
+
+  // 隐藏消息
+  function hideMessages() {
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+  }
+
+  // 拍平按钮
+  document.getElementById('flattenBtn').addEventListener('click', function() {
+    hideMessages();
+    var input = inputEl.value.trim();
+    if (!input) {
+      showError('请输入 JSON 内容');
+      return;
+    }
+    try {
+      var data = JSON.parse(input);
+      var result = {};
+      flatten(data, '', result);
+      outputEl.value = JSON.stringify(result, null, 2);
+      showSuccess('拍平完成，共生成 ' + Object.keys(result).length + ' 个键');
+    } catch (e) {
+      showError('JSON 解析失败：' + e.message);
+    }
+  });
+
+  // 反向还原按钮
+  document.getElementById('unflattenBtn').addEventListener('click', function() {
+    hideMessages();
+    var input = inputEl.value.trim();
+    if (!input) {
+      showError('请输入拍平后的 JSON 内容');
+      return;
+    }
+    try {
+      var flatObj = JSON.parse(input);
+      var result = unflattenFinal(flatObj);
+      outputEl.value = JSON.stringify(result, null, 2);
+      showSuccess('还原完成');
+    } catch (e) {
+      showError('JSON 解析失败：' + e.message);
+    }
+  });
+
+  // 复制按钮
+  document.getElementById('copyBtn').addEventListener('click', function() {
+    var output = outputEl.value;
+    if (!output) {
+      showError('没有可复制的结果');
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(output).then(function() {
+        showSuccess('已复制到剪贴板');
+      }).catch(function() {
+        // 降级方案
+        outputEl.select();
+        document.execCommand('copy');
+        showSuccess('已复制到剪贴板');
+      });
+    } else {
+      outputEl.select();
+      document.execCommand('copy');
+      showSuccess('已复制到剪贴板');
+    }
+  });
+
+  // 重置按钮
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    hideMessages();
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-flatten" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/json-flatten" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/json-flatten-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

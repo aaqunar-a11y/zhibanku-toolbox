@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-63-blue.svg)
+![Tools](https://img.shields.io/badge/tools-65-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -44,6 +44,7 @@
 | HTML 转纯文本 | [在线使用](https://www.zhibanku.com/tools/html-to-text.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-to-text) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-to-text) |
 | 图片转 Base64 | [在线使用](https://www.zhibanku.com/tools/image-base64.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/image-base64) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/image-base64) |
 | JSON 对比工具 | [在线使用](https://www.zhibanku.com/tools/json-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-diff) |
+| JSON 拍平工具 - 嵌套 JSON 转点路径扁平结构 | [在线使用](https://www.zhibanku.com/tools/json-flatten.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-flatten) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-flatten) |
 | JSON 美化工具 | [在线使用](https://www.zhibanku.com/tools/json-mei-hua.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-mei-hua) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-mei-hua) |
 | JSON 压缩工具 | [在线使用](https://www.zhibanku.com/tools/json-ya-suo.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-ya-suo) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-ya-suo) |
 | JSON 校验工具 | [在线使用](https://www.zhibanku.com/tools/json-yan-zheng-qi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-yan-zheng-qi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-yan-zheng-qi) |
@@ -69,6 +70,7 @@
 | 文本对比工具 | [在线使用](https://www.zhibanku.com/tools/text-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-diff) |
 | 批量文本替换工具 - 多条查找替换规则在线处理 | [在线使用](https://www.zhibanku.com/tools/text-replace.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-replace) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-replace) |
 | 文本反转工具 - 整段倒序与逐行倒序 | [在线使用](https://www.zhibanku.com/tools/text-reverse.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-reverse) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-reverse) |
+| 标题转 URL Slug 生成器 | [在线使用](https://www.zhibanku.com/tools/text-slugify.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-slugify) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-slugify) |
 | 汉字转拼音工具 | [在线使用](https://www.zhibanku.com/tools/text-to-pinyin.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/text-to-pinyin) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/text-to-pinyin) |
 | 时区转换 | [在线使用](https://www.zhibanku.com/tools/timezone.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/timezone) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/timezone) |
 | TOML 与 JSON 互转工具 | [在线使用](https://www.zhibanku.com/tools/toml-json.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/toml-json) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/toml-json) |
@@ -84,7 +86,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 63 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 65 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 
