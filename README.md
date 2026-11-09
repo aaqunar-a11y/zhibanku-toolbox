@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-65-blue.svg)
+![Tools](https://img.shields.io/badge/tools-66-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -41,6 +41,7 @@
 | Flexbox 布局代码生成器 | [在线使用](https://www.zhibanku.com/tools/flexbox-gen.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/flexbox-gen) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/flexbox-gen) |
 | Grid 布局生成器 | [在线使用](https://www.zhibanku.com/tools/grid-gen.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/grid-gen) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/grid-gen) |
 | HTML 实体编解码 | [在线使用](https://www.zhibanku.com/tools/html-entity.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-entity) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-entity) |
+| HTML 实时预览工具 - 左写右预览 | [在线使用](https://www.zhibanku.com/tools/html-preview.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-preview) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-preview) |
 | HTML 转纯文本 | [在线使用](https://www.zhibanku.com/tools/html-to-text.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/html-to-text) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/html-to-text) |
 | 图片转 Base64 | [在线使用](https://www.zhibanku.com/tools/image-base64.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/image-base64) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/image-base64) |
 | JSON 对比工具 | [在线使用](https://www.zhibanku.com/tools/json-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/json-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/json-diff) |
@@ -86,7 +87,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 65 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 66 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 
