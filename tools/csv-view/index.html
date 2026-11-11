@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV 查看器 — 粘贴即分列成表</title>
+<meta name="description" content="CSV 查看器：粘贴 CSV 文本自动识别分隔符并分列成表，支持逗号、制表符、分号等，纯本地解析。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/csv-view.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2d3d; line-height: 1.6; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { text-decoration: none; }
+  .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; font-weight: 700; color: #1449b0; margin: 20px 0 8px; }
+  .lead { font-size: 15px; color: #4a5a6a; background: #eef3ff; border-left: 4px solid #1449b0; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 24px; }
+  h2 { font-size: 20px; font-weight: 700; color: #1f2d3d; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #d8e2f5; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .btn { display: inline-block; padding: 8px 16px; border: 1px solid #cddffa; background: #f4f8ff; color: #1449b0; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+  .btn:hover { background: #e0ecff; border-color: #9bb8e8; }
+  .btn-primary { background: #1449b0; color: #fff; border-color: #1449b0; }
+  .btn-primary:hover { background: #1a5fe0; }
+  .btn-secondary { background: #fff; color: #1f2d3d; border-color: #c0ccda; }
+  .btn-secondary:hover { background: #f0f4fa; }
+  textarea { width: 100%; height: 180px; border: 1px solid #c0ccda; border-radius: 8px; padding: 12px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 13px; resize: vertical; background: #fafcff; }
+  textarea:focus { outline: none; border-color: #1449b0; box-shadow: 0 0 0 3px rgba(20,73,176,0.12); }
+  .label { font-size: 14px; font-weight: 600; margin-bottom: 6px; display: block; color: #2a3b4d; }
+  .sep-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 14px 0; }
+  .sep-row label { font-size: 14px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+  .sep-row input[type="radio"] { accent-color: #1449b0; }
+  .table-wrap { overflow-x: auto; margin-top: 14px; border: 1px solid #d8e2f5; border-radius: 8px; max-height: 420px; overflow-y: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border: 1px solid #d8e2f5; padding: 8px 12px; text-align: left; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+  th { background: #f0f5ff; font-weight: 600; position: sticky; top: 0; z-index: 1; }
+  tr:nth-child(even) { background: #fafcff; }
+  tr:hover { background: #eef3ff; }
+  .meta-info { font-size: 13px; color: #5a6b7a; margin-top: 10px; }
+  .error-msg { background: #fff0f0; border: 1px solid #ffb3b3; color: #c0392b; padding: 10px 14px; border-radius: 8px; margin-top: 12px; font-size: 14px; display: none; }
+  .result-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .notice-list { padding-left: 20px; }
+  .notice-list li { margin-bottom: 6px; font-size: 14px; }
+  .steps { padding-left: 20px; }
+  .steps li { margin-bottom: 8px; font-size: 14px; }
+  details { background: #f8fafd; border: 1px solid #d8e2f5; border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 14px; color: #1449b0; }
+  details p { margin-top: 8px; font-size: 14px; color: #3a4a5a; }
+  .tool-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tool-links a { display: inline-block; padding: 8px 14px; background: #f4f8ff; border: 1px solid #cddffa; border-radius: 8px; color: #1449b0; text-decoration: none; font-size: 14px; }
+  .tool-links a:hover { background: #e0ecff; }
+  footer { max-width: 920px; margin: 30px auto 0; padding: 16px; text-align: center; font-size: 13px; color: #7a8a9a; border-top: 1px solid #d8e2f5; }
+  footer a { color: #1449b0; text-decoration: none; }
+  .sample-btn { font-size: 13px; padding: 6px 12px; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+<main class="container">
+  <h1>CSV 查看器</h1>
+  <p class="lead">CSV 查看器是一个纯本地运行的表格预览工具。您只需将 CSV 格式的文本（例如从 Excel、数据库导出的数据）粘贴到下方文本框中，选择或自动识别分隔符（逗号、制表符、分号等），点击「解析并查看表格」按钮，即可在下方看到分列后的结构化表格。整个过程完全在浏览器内完成，数据不会上传到任何服务器，适合处理敏感数据或快速预览大段 CSV 内容。</p>
+
+  <div class="card">
+    <span class="label">粘贴 CSV 文本</span>
+    <textarea id="csvInput" placeholder="在此粘贴 CSV 内容，例如：&#10;姓名,年龄,城市&#10;张三,28,北京&#10;李四,35,上海"></textarea>
+    <div class="sep-row">
+      <span style="font-weight:600;font-size:14px;">分隔符：</span>
+      <label><input type="radio" name="sep" value="auto" checked> 自动识别</label>
+      <label><input type="radio" name="sep" value=","> 逗号 ,</label>
+      <label><input type="radio" name="sep" value="\t"> 制表符 Tab</label>
+      <label><input type="radio" name="sep" value=";"> 分号 ;</label>
+      <label><input type="radio" name="sep" value="|"> 竖线 |</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="parseBtn">解析并查看表格</button>
+      <button class="btn btn-secondary" id="resetBtn">重置</button>
+    </div>
+    <div class="btn-row">
+      <span style="font-size:13px;color:#5a6b7a;margin-right:4px;">快捷示例：</span>
+      <button class="btn sample-btn" data-sample="1">人员名单</button>
+      <button class="btn sample-btn" data-sample="2">销售数据</button>
+      <button class="btn sample-btn" data-sample="3">制表符示例</button>
+      <button class="btn sample-btn" data-sample="4">分号示例</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0;border-bottom:none;padding-bottom:0;">解析结果</h2>
+    <div class="meta-info" id="metaInfo">尚未解析</div>
+    <div class="table-wrap" id="tableWrap" style="display:none;"></div>
+    <div class="出错了-msg" id="出错了Msg"></div>
+    <div class="result-actions" id="resultActions" style="display:none;">
+      <button class="btn btn-primary" id="copyBtn">复制结果（CSV 格式）</button>
+      <button class="btn btn-secondary" id="downloadBtn">下载为 .csv 文件</button>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="notice-list">
+    <li>本工具完全在浏览器本地运行，您粘贴的 CSV 数据不会上传到任何服务器，可放心处理敏感信息。</li>
+    <li>自动识别分隔符时，工具会统计每行中逗号、制表符、分号、竖线的出现次数，选择最稳定的一种；若数据中分隔符数量不一致，可能识别不准确，建议手动指定。</li>
+    <li>CSV 中若字段包含引号包裹的逗号（如 "北京,朝阳区"），本工具支持基础引号解析，但复杂转义（如双引号嵌套）可能无法完美处理。</li>
+    <li>表格列宽自适应，但单格内容过长时会被截断显示（鼠标悬停可查看完整内容），不影响复制或下载的原始数据。</li>
+    <li>大文件（超过 1MB）可能导致浏览器卡顿，建议分段查看或使用专业表格软件。</li>
+    <li>复制结果会保留原始 CSV 文本格式（含引号转义），下载文件使用 UTF-8 编码，Excel 打开时若乱码请用「数据→自文本」导入。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在文本框中粘贴您的 CSV 内容，或点击上方「快捷示例」按钮载入演示数据。</li>
+    <li>选择分隔符：默认「自动识别」，也可手动指定逗号、制表符、分号或竖线。</li>
+    <li>点击「解析并查看表格」按钮，下方会立即显示分列后的表格，并标注行列数。</li>
+    <li>如需复制或保存，点击「复制结果」或「下载为 .csv 文件」按钮。</li>
+    <li>点击「重置」可清空输入与结果，重新开始。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>为什么自动识别分隔符不准确？</summary>
+    <p>自动识别基于每行分隔符出现次数的稳定性。若数据中某行包含额外逗号（如备注字段），可能干扰判断。建议手动指定分隔符。</p>
+  </details>
+  <details>
+    <summary>表格里的内容显示不全怎么办？</summary>
+    <p>表格单元格有最大宽度限制，超长内容会以省略号显示。鼠标悬停可查看完整内容，复制或下载时仍是完整数据。</p>
+  </details>
+  <details>
+    <summary>下载的 CSV 用 Excel 打开乱码？</summary>
+    <p>本工具下载的文件为 UTF-8 编码。Excel 打开时请使用「数据→自文本→选择 UTF-8 编码」导入，即可正常显示中文。</p>
+  </details>
+  <details>
+    <summary>支持带引号的字段吗？</summary>
+    <p>支持基础引号解析，即字段被双引号包裹且内部含分隔符时可正确识别。但复杂的转义规则（如引号内再嵌套引号）可能解析不完整。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://www.zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://www.zhibanku.com/tools/text-replace.html">批量文本替换工具</a>
+    <a href="https://www.zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+    <a href="https://www.zhibanku.com/tools/json-format.html">JSON 格式化工具</a>
+    <a href="https://www.zhibanku.com/tools/word-count.html">字数统计工具</a>
+    <a href="https://www.zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具纯本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var csvInput = document.getElementById('csvInput');
+  var parseBtn = document.getElementById('parseBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var copyBtn = document.getElementById('copyBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var metaInfo = document.getElementById('metaInfo');
+  var tableWrap = document.getElementById('tableWrap');
+  var errorMsg = document.getElementById('出错了Msg');
+  var resultActions = document.getElementById('resultActions');
+
+  var currentParsedData = null;
+  var currentSep = ',';
+
+  // 示例数据
+  var samples = {
+    '1': '姓名,年龄,城市,职业\n张三,28,北京,工程师\n李四,35,上海,设计师\n王五,42,广州,产品经理\n赵六,31,深圳,数据分析师',
+    '2': '日期,产品,销量,销售额\n2024-01-01,手机,120,120000\n2024-01-02,平板,85,85000\n2024-01-03,笔记本,60,90000\n2024-01-04,耳机,200,40000',
+    '3': '姓名\t部门\t薪资\t入职日期\n张三\t技术部\t15000\t2020-03-15\n李四\t市场部\t12000\t2021-07-01\n王五\t人事部\t10000\t2019-11-20',
+    '4': '编号;名称;库存;单价\nA001;键盘;150;89\nA002;鼠标;230;45\nA003;显示器;80;1299'
+  };
+
+  // 解析 CSV（支持引号）
+  function parseCSV(text, sep) {
+    if (!text || !text.trim()) {
+      throw new Error('请输入 CSV 内容');
+    }
+    var lines = text.split(/\r?\n/);
+    // 去掉末尾空行
+    while (lines.length && lines[lines.length - 1].trim() === '') {
+      lines.pop();
+    }
+    if (lines.length === 0) {
+      throw new Error('没有可解析的数据行');
+    }
+
+    var result = [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var row = [];
+      var field = '';
+      var inQuotes = false;
+      for (var j = 0; j < line.length; j++) {
+        var ch = line[j];
+        if (inQuotes) {
+          if (ch === '"') {
+            if (j + 1 < line.length && line[j + 1] === '"') {
+              field += '"';
+              j++;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            field += ch;
+          }
+        } else {
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === sep) {
+            row.push(field);
+            field = '';
+          } else {
+            field += ch;
+          }
+        }
+      }
+      row.push(field);
+      result.push(row);
+    }
+    return result;
+  }
+
+  // 自动识别分隔符
+  function detectSep(text) {
+    var lines = text.split(/\r?\n/).filter(function(l) { return l.trim() !== ''; });
+    if (lines.length === 0) return ',';
+    var seps = [',', '\t', ';', '|'];
+    var bestSep = ',';
+    var bestScore = -1;
+    for (var s = 0; s < seps.length; s++) {
+      var sep = seps[s];
+      var counts = [];
+      var total = 0;
+      for (var i = 0; i < lines.length; i++) {
+        var count = 0;
+        var inQ = false;
+        for (var j = 0; j < lines[i].length; j++) {
+          var ch = lines[i][j];
+          if (inQ) {
+            if (ch === '"') {
+              if (j + 1 < lines[i].length && lines[i][j + 1] === '"') {
+                j++;
+              } else {
+                inQ = false;
+              }
+            }
+          } else {
+            if (ch === '"') {
+              inQ = true;
+            } else if (ch === sep) {
+              count++;
+            }
+          }
+        }
+        counts.push(count);
+        total += count;
+      }
+      if (total === 0) continue;
+      // 计算稳定性：平均数和方差
+      var avg = total / lines.length;
+      var variance = 0;
+      for (var k = 0; k < counts.length; k++) {
+        variance += Math.pow(counts[k] - avg, 2);
+      }
+      variance = variance / lines.length;
+      var score = avg - variance * 0.5;
+      if (score > bestScore) {
+        bestScore = score;
+        bestSep = sep;
+      }
+    }
+    return bestSep;
+  }
+
+  // 渲染表格
+  function renderTable(data) {
+    if (!data || data.length === 0) return;
+    var html = '<table><thead><tr>';
+    // 表头
+    var headerRow = data[0];
+    for (var i = 0; i < headerRow.length; i++) {
+      html += '<th>' + escapeHtml(headerRow[i]) + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+    for (var r = 1; r < data.length; r++) {
+      html += '<tr>';
+      var row = data[r];
+      for (var c = 0; c < row.length; c++) {
+        html += '<td title="' + escapeHtml(row[c]) + '">' + escapeHtml(row[c]) + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    tableWrap.innerHTML = html;
+    tableWrap.style.display = 'block';
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // 转回 CSV 字符串（带引号转义）
+  function toCSVString(data, sep) {
+    return data.map(function(row) {
+      return row.map(function(field) {
+        var str = String(field);
+        if (str.indexOf(sep) !== -1 || str.indexOf('"') !== -1 || str.indexOf('\n') !== -1 || str.indexOf('\r') !== -1) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }).join(sep);
+    }).join('\n');
+  }
+
+  // 解析主函数
+  function doParse() {
+    var text = csvInput.value;
+    if (!text.trim()) {
+      showError('请先粘贴 CSV 内容');
+      return;
+    }
+    var sep;
+    var sepRadio = document.querySelector('input[name="sep"]:checked');
+    var sepVal = sepRadio ? sepRadio.value : 'auto';
+    if (sepVal === 'auto') {
+      sep = detectSep(text);
+    } else if (sepVal === '\\t') {
+      sep = '\t';
+    } else {
+      sep = sepVal;
+    }
+    currentSep = sep;
+    try {
+      var data = parseCSV(text, sep);
+      if (data.length === 0) {
+        showError('解析结果为空');
+        return;
+      }
+      currentParsedData = data;
+      renderTable(data);
+      var sepName = sep === '\t' ? '制表符 Tab' : sep === ',' ? '逗号 ,' : sep === ';' ? '分号 ;' : sep === '|' ? '竖线 |' : sep;
+      metaInfo.textContent = '共 ' + data.length + ' 行，' + data[0].length + ' 列（使用分隔符：' + sepName + '）';
+      metaInfo.style.color = '#1a5fe0';
+      errorMsg.style.display = 'none';
+      resultActions.style.display = 'flex';
+    } catch (e) {
+      showError(e.message || '解析失败，请检查 CSV 格式');
+    }
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+    tableWrap.style.display = 'none';
+    resultActions.style.display = 'none';
+    metaInfo.textContent = '解析失败';
+    metaInfo.style.color = '#c0392b';
+    currentParsedData = null;
+  }
+
+  // 重置
+  function doReset() {
+    csvInput.value = '';
+    document.querySelector('input[name="sep"][value="auto"]').checked = true;
+    tableWrap.innerHTML = '';
+    tableWrap.style.display = 'none';
+    errorMsg.style.display = 'none';
+    metaInfo.textContent = '尚未解析';
+    metaInfo.style.color = '#5a6b7a';
+    resultActions.style.display = 'none';
+    currentParsedData = null;
+  }
+
+  // 复制
+  function doCopy() {
+    if (!currentParsedData) return;
+    var csvStr = toCSVString(currentParsedData, currentSep);
+    navigator.clipboard.writeText(csvStr).then(function() {
+      var oldText = copyBtn.textContent;
+      copyBtn.textContent = '已复制！';
+      setTimeout(function() { copyBtn.textContent = oldText; }, 1500);
+    }).catch(function() {
+      // 降级方案
+      var ta = document.createElement('textarea');
+      ta.value = csvStr;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      var oldText = copyBtn.textContent;
+      copyBtn.textContent = '已复制！';
+      setTimeout(function() { copyBtn.textContent = oldText; }, 1500);
+    });
+  }
+
+  // 下载
+  function doDownload() {
+    if (!currentParsedData) return;
+    var csvStr = toCSVString(currentParsedData, currentSep);
+    var blob = new Blob(['\ufeff' + csvStr], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'csv-export.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // 事件绑定
+  parseBtn.addEventListener('click', doParse);
+  resetBtn.addEventListener('click', doReset);
+  copyBtn.addEventListener('click', doCopy);
+  downloadBtn.addEventListener('click', doDownload);
+
+  // 示例按钮
+  var sampleBtns = document.querySelectorAll('.sample-btn');
+  sampleBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = btn.getAttribute('data-sample');
+      if (samples[key]) {
+        csvInput.value = samples[key];
+        // 自动选择对应分隔符
+        if (key === '3') {
+          document.querySelector('input[name="sep"][value="\\t"]').checked = true;
+        } else if (key === '4') {
+          document.querySelector('input[name="sep"][value=";"]').checked = true;
+        } else {
+          document.querySelector('input[name="sep"][value="auto"]').checked = true;
+        }
+        doParse();
+      }
+    });
+  });
+
+  // 支持 Ctrl+Enter 快捷键
+  csvInput.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      doParse();
+    }
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/csv-view" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/csv-view" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/csv-view-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
