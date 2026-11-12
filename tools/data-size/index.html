@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据容量换算工具 - 字节KBMBGBTB在线互转</title>
+    <meta name="description" content="数据容量换算工具，支持字节、KB、MB、GB、TB 等单位的实时互转，提供二进制与十进制两种进制标准，一键复制结果。">
+    <link rel="canonical" href="https://www.zhibanku.com/tools/data-size.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.7;
+            padding: 20px 16px 40px;
+        }
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            padding: 32px 28px 40px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a2a3a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h1 .icon {
+            font-size: 30px;
+        }
+        .lead {
+            font-size: 15px;
+            color: #5a6b7a;
+            background: #f0f4fa;
+            border-left: 4px solid #4a90d9;
+            padding: 14px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 16px 0 28px;
+            line-height: 1.8;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a2a3a;
+            margin: 36px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e8edf2;
+            position: relative;
+        }
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 48px;
+            height: 2px;
+            background: #4a90d9;
+        }
+        .converter-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px 22px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 18px;
+        }
+        .input-field {
+            flex: 1;
+            min-width: 180px;
+        }
+        .input-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5a6a;
+            margin-bottom: 6px;
+        }
+        .input-field input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #fff;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        .input-field input[type="number"]:focus {
+            border-color: #4a90d9;
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.12);
+        }
+        .input-field select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #4a90d9;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #3a7cc0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74, 144, 217, 0.25);
+        }
+        .btn-secondary {
+            background: #e8edf2;
+            color: #2c3e50;
+        }
+        .btn-secondary:hover {
+            background: #d5dde5;
+        }
+        .btn-outline {
+            background: #fff;
+            color: #4a90d9;
+            border: 1px solid #4a90d9;
+        }
+        .btn-outline:hover {
+            background: #f0f4fa;
+        }
+        .preset-label {
+            font-size: 13px;
+            color: #5a6b7a;
+            margin: 14px 0 8px;
+            font-weight: 600;
+        }
+        .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .preset-btn {
+            padding: 7px 14px;
+            background: #fff;
+            border: 1px solid #cbd5e0;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2c3e50;
+        }
+        .preset-btn:hover {
+            background: #4a90d9;
+            color: #fff;
+            border-color: #4a90d9;
+        }
+        .result-area {
+            background: #fff;
+            border: 2px solid #4a90d9;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .result-area.show {
+            display: block;
+        }
+        .result-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a90d9;
+            margin-bottom: 10px;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .result-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        .result-item .unit {
+            font-size: 12px;
+            color: #7a8a9a;
+            margin-bottom: 4px;
+        }
+        .result-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2a3a;
+            word-break: break-all;
+        }
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .note-list {
+            padding-left: 20px;
+        }
+        .note-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5a6a;
+        }
+        .steps {
+            counter-reset: step;
+            padding-left: 0;
+            list-style: none;
+        }
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: #4a5a6a;
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: #4a90d9;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+            outline: none;
+        }
+        details p {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #5a6b7a;
+            line-height: 1.7;
+        }
+        .tool-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .tool-links a {
+            display: block;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #1a5fe0;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tool-links a:hover {
+            background: #eef2f7;
+            border-color: #4a90d9;
+            transform: translateY(-2px);
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid #e8edf2;
+            font-size: 13px;
+            color: #7a8a9a;
+        }
+        footer a {
+            color: #4a90d9;
+            text-decoration: none;
+            margin: 0 6px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .binary-toggle {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .binary-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            background: #fff;
+            transition: all 0.2s;
+        }
+        .binary-toggle label.active {
+            background: #4a90d9;
+            color: #fff;
+            border-color: #4a90d9;
+        }
+        .binary-toggle input[type="radio"] {
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+    <div class="container">
+        <h1><span class="icon">💾</span> 数据容量换算工具</h1>
+        <p class="lead">本工具用于数据存储容量的在线换算，支持字节（B）、千字节（KB）、兆字节（MB）、吉字节（GB）、太字节（TB）等常见单位之间的互转。您只需在输入框中填写数值并选择对应的原始单位，然后点击「开始换算」按钮，所有单位的换算结果就会立即显示在下方结果区域中。工具同时支持二进制（1KB=1024B）和十进制（1KB=1000B）两种进制标准，您可以根据实际需求切换。换算结果清晰列出每个单位对应的数值，并支持一键复制，方便您直接使用。</p>
+
+        <div class="converter-box">
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="inputValue">输入数值</label>
+                    <input type="number" id="inputValue" placeholder="请输入数字" min="0" step="any">
+                </div>
+                <div class="input-field">
+                    <label for="inputUnit">原始单位</label>
+                    <select id="inputUnit">
+                        <option value="B">字节 (B)</option>
+                        <option value="KB" selected>千字节 (KB)</option>
+                        <option value="MB">兆字节 (MB)</option>
+                        <option value="GB">吉字节 (GB)</option>
+                        <option value="TB">太字节 (TB)</option>
+                        <option value="PB">拍字节 (PB)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="binary-toggle" id="binaryToggle">
+                <label class="active">
+                    <input type="radio" name="base" value="1024" checked> 二进制 (1KB=1024B)
+                </label>
+                <label>
+                    <input type="radio" name="base" value="1000"> 十进制 (1KB=1000B)
+                </label>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="convertBtn">开始换算</button>
+                <button class="btn btn-secondary" id="resetBtn">重置</button>
+            </div>
+
+            <div class="preset-label">快捷预设：</div>
+            <div class="preset-btns">
+                <button class="preset-btn" data-value="1" data-unit="KB">1 KB</button>
+                <button class="preset-btn" data-value="1" data-unit="MB">1 MB</button>
+                <button class="preset-btn" data-value="1" data-unit="GB">1 GB</button>
+                <button class="preset-btn" data-value="1024" data-unit="KB">1024 KB</button>
+                <button class="preset-btn" data-value="1" data-unit="TB">1 TB</button>
+            </div>
+
+            <div class="出错了-msg" id="出错了Msg">请输入有效的非负数字</div>
+
+            <div class="result-area" id="resultArea">
+                <div class="result-title">换算结果：</div>
+                <div class="result-grid" id="resultGrid"></div>
+                <div class="action-row">
+                    <button class="btn btn-outline" id="copyBtn">复制结果</button>
+                </div>
+            </div>
+        </div>
+
+        <h2>注意事项</h2>
+        <ul class="note-list">
+            <li>本工具支持二进制（1KB=1024B）和十进制（1KB=1000B）两种进制标准，请根据您的实际使用场景选择正确的进制。</li>
+            <li>硬盘厂商通常使用十进制标注容量，而操作系统显示容量时使用二进制，因此同一块硬盘在系统中显示的容量会小于标称值。</li>
+            <li>输入数值支持小数，但请确保数值为非负数；若输入负数或非数字内容，工具会提示错误。</li>
+            <li>所有换算均在您的浏览器本地完成，数据不会上传到任何服务器，您可以放心使用。</li>
+            <li>对于超大数值（如 PB 级别），结果可能显示为科学计数法，这是正常现象。</li>
+            <li>本工具不支持 IE 浏览器，建议使用 Chrome、Firefox、Edge 等现代浏览器获得最佳体验。</li>
+        </ul>
+
+        <h2>怎么用</h2>
+        <ol class="steps">
+            <li>在「输入数值」框中填写需要换算的数字，例如 1024。</li>
+            <li>在「原始单位」下拉菜单中选择该数值对应的单位，例如 KB。</li>
+            <li>根据需要选择「二进制」或「十进制」进制标准，默认使用二进制。</li>
+            <li>点击「开始换算」按钮，下方结果区域会立即显示所有单位的换算结果。</li>
+            <li>如需复制结果，点击「复制结果」按钮即可将换算结果复制到剪贴板。</li>
+        </ol>
+
+        <h2>常见问题</h2>
+        <details>
+            <summary>为什么硬盘标称 500GB 但系统显示只有 465GB</summary>
+            <p>硬盘厂商使用十进制（1GB=1000MB）标注容量，而操作系统使用二进制（1GB=1024MB）计算，两者换算差异导致显示容量小于标称值。</p>
+        </details>
+        <details>
+            <summary>二进制和十进制有什么区别</summary>
+            <p>二进制以 1024 为进位基数，十进制以 1000 为进位基数。二进制常用于计算机内部计算，十进制常用于存储设备厂商标注容量。</p>
+        </details>
+        <details>
+            <summary>可以换算 PB 或更大的单位吗</summary>
+            <p>本工具支持到 PB 级别，更大单位如 EB、ZB 暂不支持。如需换算更大单位，建议先换算为 TB 再手动计算。</p>
+        </details>
+        <details>
+            <summary>结果可以保留几位小数</summary>
+            <p>结果默认保留 6 位有效数字，对于极大或极小的数值会自动使用科学计数法显示，确保精度和可读性。</p>
+        </details>
+
+        <h2>相关工具推荐</h2>
+        <div class="tool-links">
+            <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+            <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+            <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算工具</a>
+            <a href="https://zhibanku.com/tools/word-count.html">字数统计</a>
+            <a href="https://zhibanku.com/tools/timezone.html">时区转换工具</a>
+        </div>
+
+        <footer>
+            <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const inputValue = document.getElementById('inputValue');
+            const inputUnit = document.getElementById('inputUnit');
+            const convertBtn = document.getElementById('convertBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const resultArea = document.getElementById('resultArea');
+            const resultGrid = document.getElementById('resultGrid');
+            const errorMsg = document.getElementById('出错了Msg');
+            const binaryToggle = document.getElementById('binaryToggle');
+
+            const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+            const unitNames = {
+                'B': '字节',
+                'KB': '千字节',
+                'MB': '兆字节',
+                'GB': '吉字节',
+                'TB': '太字节',
+                'PB': '拍字节'
+            };
+
+            let currentBase = 1024;
+
+            // 进制切换
+            binaryToggle.addEventListener('change', function(e) {
+                if (e.target.name === 'base') {
+                    currentBase = parseInt(e.target.value);
+                    document.querySelectorAll('.binary-toggle label').forEach(function(label) {
+                        label.classList.remove('active');
+                    });
+                    e.target.parentElement.classList.add('active');
+                }
+            });
+
+            // 快捷预设按钮
+            document.querySelectorAll('.preset-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const unit = this.getAttribute('data-unit');
+                    inputValue.value = value;
+                    inputUnit.value = unit;
+                    convert();
+                });
+            });
+
+            // 开始换算
+            convertBtn.addEventListener('click', convert);
+
+            // 重置
+            resetBtn.addEventListener('click', function() {
+                inputValue.value = '';
+                inputUnit.value = 'KB';
+                resultArea.classList.remove('show');
+                errorMsg.classList.remove('show');
+                // 重置进制为二进制
+                document.querySelector('input[name="base"][value="1024"]').checked = true;
+                currentBase = 1024;
+                document.querySelectorAll('.binary-toggle label').forEach(function(label) {
+                    label.classList.remove('active');
+                });
+                document.querySelector('input[name="base"][value="1024"]').parentElement.classList.add('active');
+            });
+
+            // 复制结果
+            copyBtn.addEventListener('click', function() {
+                const resultText = generateResultText();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(resultText).then(function() {
+                        showToast('复制成功');
+                    }).catch(function() {
+                        fallbackCopy(resultText);
+                    });
+                } else {
+                    fallbackCopy(resultText);
+                }
+            });
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('复制成功');
+                } catch (err) {
+                    showToast('复制失败，请手动复制');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            function showToast(msg) {
+                const toast = document.createElement('div');
+                toast.textContent = msg;
+                toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2c3e50;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity 0.3s;';
+                document.body.appendChild(toast);
+                setTimeout(function() {
+                    toast.style.opacity = '0';
+                    setTimeout(function() {
+                        document.body.removeChild(toast);
+                    }, 300);
+                }, 2000);
+            }
+
+            function convert() {
+                const value = parseFloat(inputValue.value);
+                const unit = inputUnit.value;
+
+                if (isNaN(value) || value < 0) {
+                    errorMsg.classList.add('show');
+                    resultArea.classList.remove('show');
+                    return;
+                }
+
+                errorMsg.classList.remove('show');
+
+                // 将输入值转换为字节
+                const unitIndex = units.indexOf(unit);
+                let bytes = value * Math.pow(currentBase, unitIndex);
+
+                // 生成结果
+                const results = [];
+                for (let i = 0; i < units.length; i++) {
+                    const convertedValue = bytes / Math.pow(currentBase, i);
+                    results.push({
+                        unit: units[i],
+                        name: unitNames[units[i]],
+                        value: formatNumber(convertedValue)
+                    });
+                }
+
+                // 渲染结果
+                resultGrid.innerHTML = '';
+                results.forEach(function(item) {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerHTML = '<div class="unit">' + item.name + ' (' + item.unit + ')</div><div class="value">' + item.value + '</div>';
+                    resultGrid.appendChild(div);
+                });
+
+                resultArea.classList.add('show');
+            }
+
+            function formatNumber(num) {
+                if (num === 0) return '0';
+                if (Math.abs(num) >= 1e15 || (Math.abs(num) < 1e-6 && num !== 0)) {
+                    return num.toExponential(6);
+                }
+                // 保留最多6位有效数字，去掉多余的0
+                const str = num.toPrecision(6);
+                return parseFloat(str).toString();
+            }
+
+            function generateResultText() {
+                const value = parseFloat(inputValue.value);
+                const unit = inputUnit.value;
+                if (isNaN(value) || value < 0) return '';
+
+                const unitIndex = units.indexOf(unit);
+                const bytes = value * Math.pow(currentBase, unitIndexipse);
+                let text = '数据容量换算结果（' + (currentBase === 1024 ? '二进制' : '十进制') + '）：\n';
+                text += '原始输入：' + value + ' ' + unit + ' (' + unitNames[unit] + ')\n\n';
+
+                for (let i = 0; i < units.length; i++) {
+                    const convertedValue = bytes / Math.pow(currentBase, i);
+                    text += unitNames[units[i]] + ' (' + units[i] + ')：' + formatNumber(convertedValue) + '\n';
+                }
+
+                return text;
+            }
+
+            // 回车触发换算
+            inputValue.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    convert();
+                }
+            });
+        })();
+    </script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/data-size" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/data-size" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/data-size-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>

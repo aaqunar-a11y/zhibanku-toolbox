@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-68-blue.svg)
+![Tools](https://img.shields.io/badge/tools-69-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -33,6 +33,7 @@
 | CSS 渐变生成器 | [在线使用](https://www.zhibanku.com/tools/css-gradient.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/css-gradient) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/css-gradient) |
 | CSV 与 JSON 互转工具 | [在线使用](https://www.zhibanku.com/tools/csv-json.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/csv-json) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/csv-json) |
 | CSV 查看器 | [在线使用](https://www.zhibanku.com/tools/csv-view.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/csv-view) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/csv-view) |
+| 数据容量换算工具 - 字节KBMBGBTB在线互转 | [在线使用](https://www.zhibanku.com/tools/data-size.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/data-size) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/data-size) |
 | 日期差计算器 | [在线使用](https://www.zhibanku.com/tools/date-diff.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/date-diff) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/date-diff) |
 | Cron 表达式解析器 | [在线使用](https://www.zhibanku.com/tools/dev-cron-parser.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-cron-parser) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-cron-parser) |
 | IPv4 子网计算器 | [在线使用](https://www.zhibanku.com/tools/dev-ipv4-subnet.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/dev-ipv4-subnet) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/dev-ipv4-subnet) |
@@ -89,7 +90,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 68 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 69 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 
