@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取色器 — 在线拾色与色值互转工具</title>
+<meta name="description" content="本地取色器，支持 HEX、RGB、HSL 色值互转，一键复制，快捷预设常用色，无需上传，保护隐私。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/color-picker.html">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1e2a3a; line-height: 1.6; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { text-decoration: none; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { font-size: 2rem; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
+  .lead { background: #eef4ff; border-left: 4px solid #1a5fe0; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 0.98rem; color: #2a3f5e; margin-bottom: 28px; }
+  h2 { font-size: 1.4rem; font-weight: 600; color: #0f2a4a; margin: 36px 0 16px; padding-bottom: 6px; border-bottom: 2px solid #dbe4f0; }
+  .tool-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 20px; }
+  .color-preview { width: 100%; height: 140px; border-radius: 10px; border: 2px solid #e2e8f0; margin-bottom: 20px; transition: background 0.2s; position: relative; }
+  .color-preview span { position: absolute; bottom: 10px; right: 12px; background: rgba(0,0,0,0.5); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.5px; }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .preset-btn { flex: 1 1 auto; min-width: 90px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: #1e293b; transition: all 0.15s; }
+  .preset-btn:hover { border-color: #1a5fe0; background: #eef4ff; color: #1a5fe0; }
+  .preset-btn .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; border: 1px solid rgba(0,0,0,0.1); }
+  .input-group { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; }
+  .input-group label { font-weight: 500; min-width: 60px; color: #334155; }
+  .input-group input[type="text"] { flex: 1; min-width: 180px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: "SF Mono", "Consolas", monospace; }
+  .input-group input[type="color"] { width: 60px; height: 40px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; background: #fff; padding: 2px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: #1a5fe0; color: #fff; }
+  .btn-primary:hover { background: #154bb5; }
+  .btn-secondary { background: #e2e8f0; color: #1e293b; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .btn-success { background: #16a34a; color: #fff; }
+  .btn-success:hover { background: #12853c; }
+  .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 20px; }
+  .result-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; }
+  .result-item .label { font-size: 0.85rem; color: #64748b; margin-bottom: 6px; }
+  .result-item .value { font-family: "SF Mono", "Consolas", monospace; font-size: 1.1rem; font-weight: 600; color: #0f2a4a; word-break: break-all; }
+  .result-item .copy-btn { margin-top: 8px; padding: 5px 12px; font-size: 0.8rem; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer; }
+  .result-item .copy-btn:hover { background: #cbd5e1; }
+  .note-list { padding-left: 20px; }
+  .note-list li { margin-bottom: 8px; }
+  .steps { padding-left: 20px; }
+  .steps li { margin-bottom: 10px; }
+  details { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 500; color: #1e293b; }
+  details p { margin-top: 10px; color: #475569; }
+  .tool-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .tool-links a { display: inline-block; padding: 8px 14px; background: #eef4ff; border: 1px solid #cddffa; border-radius: 8px; color: #1449b0; text-decoration: none; font-size: 0.9rem; transition: all 0.15s; }
+  .tool-links a:hover { background: #dbe8ff; border-color: #1a5fe0; }
+  footer { max-width: 920px; margin: 0 auto; padding: 20px 16px 30px; text-align: center; color: #94a3b8; font-size: 0.85rem; border-top: 1px solid #e2e8f0; }
+  footer a { color: #1a5fe0; text-decoration: none; margin: 0 8px; }
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f2a4a; color: #fff; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main>
+  <h1>取色器</h1>
+  <p class="lead">这是一款纯本地运行的取色与色值互转工具，您可以在下方色块中直接点选颜色，或在输入框中手动输入 HEX、RGB、HSL 任意一种格式的色值，然后点击「转换色值」按钮，即可在结果区看到三种格式的完整色值。每个结果旁都有「复制」按钮，方便您一键复制到剪贴板。工具还提供了 5 个快捷预设按钮，覆盖常用颜色，点一下即可快速取色。所有计算均在您的浏览器内完成，不会上传任何数据。</p>
+
+  <div class="tool-card">
+    <div class="color-preview" id="colorPreview">
+      <span id="previewHex">#1A5FE0</span>
+    </div>
+
+    <div class="preset-row">
+      <button class="preset-btn" data-color="#1A5FE0"><span class="dot" style="background:#1A5FE0"></span>品牌蓝</button>
+      <button class="preset-btn" data-color="#16A34A"><span class="dot" style="background:#16A34A"></span>成功绿</button>
+      <button class="preset-btn" data-color="#DC2626"><span class="dot" style="background:#DC2626"></span>警示红</button>
+      <button class="preset-btn" data-color="#F59E0B"><span class="dot" style="background:#F59E0B"></span>提醒橙</button>
+      <button class="preset-btn" data-color="#8B5CF6"><span class="dot" style="background:#8B5CF6"></span>优雅紫</button>
+    </div>
+
+    <div class="input-group">
+      <label for="hexInput">HEX</label>
+      <input type="text" id="hexInput" placeholder="#1A5FE0" value="#1A5FE0">
+    </div>
+    <div class="input-group">
+      <label for="rgbInput">RGB</label>
+      <input type="text" id="rgbInput" placeholder="rgb(26, 95, 224)" value="rgb(26, 95, 224)">
+    </div>
+    <div class="input-group">
+      <label for="hslInput">HSL</label>
+      <input type="text" id="hslInput" placeholder="hsl(219, 82%, 49%)" value="hsl(219, 82%, 49%)">
+    </div>
+    <div class="input-group">
+      <label for="colorPicker">取色</label>
+      <input type="color" id="colorPicker" value="#1A5FE0">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="convertBtn">转换色值</button>
+      <button class="btn btn-secondary" id="resetBtn">重置</button>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="label">HEX 色值</div>
+        <div class="value" id="resultHex">#1A5FE0</div>
+        <button class="copy-btn" data-copy="resultHex">复制</button>
+      </div>
+      <div class="result-item">
+        <div class="label">RGB 色值</div>
+        <div class="value" id="resultRgb">rgb(26, 95, 224)</div>
+        <button class="copy-btn" data-copy="resultRgb">复制</button>
+      </div>
+      <div class="result-item">
+        <div class="label">HSL 色值</div>
+        <div class="value" id="resultHsl">hsl(219, 82%, 49%)</div>
+        <button class="copy-btn" data-copy="resultHsl">复制</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>注意事项</h2>
+  <ul class="note-list">
+    <li>本工具完全在浏览器本地运行，您输入的颜色数据不会上传到任何服务器，可放心使用。</li>
+    <li>HEX 格式支持 3 位缩写（如 #1A5）和 6 位完整格式（如 #1A5FE0），也支持带透明度的 8 位格式（如 #1A5FE080）。</li>
+    <li>RGB 格式支持 0-255 的整数，也支持 0%-100% 的百分比写法（如 rgb(10%, 37%, 88%)）。</li>
+    <li>HSL 格式中 H 为 0-360 的角度值，S 和 L 为 0%-100% 的百分比，输入时请确保格式正确。</li>
+    <li>如果输入格式有误，点击「转换色值」按钮后结果区会显示「格式错误」提示，请检查后重试。</li>
+    <li>复制功能依赖浏览器剪贴板 API，部分旧版浏览器可能不支持，建议使用最新版 Chrome、Edge 或 Firefox。</li>
+  </ul>
+
+  <h2>怎么用</h2>
+  <ol class="steps">
+    <li>在「取色」处点击色块，直接弹出系统取色器选择任意颜色；或点击上方 5 个快捷预设按钮快速选用常用色。</li>
+    <li>您也可以在 HEX、RGB、HSL 三个输入框中手动输入任意一种格式的色值。</li>
+    <li>点击「转换色值」按钮，工具会自动将当前颜色转换为三种格式，并显示在下方结果区。</li>
+    <li>结果区每个色值右侧都有「复制」按钮，点击即可将该色值复制到剪贴板。</li>
+    <li>如需重新开始，点击「重置」按钮即可恢复默认颜色。</li>
+  </ol>
+
+  <h2>常见问题</h2>
+  <details>
+    <summary>为什么我输入的 RGB 颜色转换后结果不对</summary>
+    <p>请检查 RGB 格式是否为 rgb(0-255, 0-255, 0-255) 或 rgb(0%-100%, 0%-100%, 0%-100%)，数值之间用英文逗号分隔，不要带多余空格。</p>
+  </details>
+  <details>
+    <summary>支持带透明度的颜色吗</summary>
+    <p>支持。HEX 格式可输入 8 位（如 #1A5FE080），RGB 格式可输入 rgba(26, 95, 224, 0.5)，HSL 格式可输入 hsla(219, 82%, 49%, 0.5)。</p>
+  </details>
+  <details>
+    <summary>复制按钮没有反应怎么办</summary>
+    <p>请确认浏览器是否为最新版本，并检查是否开启了剪贴板权限。部分浏览器在非安全上下文（如 http 协议）下会限制剪贴板功能。</p>
+  </details>
+  <details>
+    <summary>颜色预览区域显示的颜色和实际有色差</summary>
+    <p>不同显示器的色彩表现存在差异，这是硬件特性导致的正常现象。建议在专业显示器上校准色彩后使用。</p>
+  </details>
+
+  <h2>相关工具推荐</h2>
+  <div class="tool-links">
+    <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算工具</a>
+    <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+    <a href="https://zhibanku.com/tools/url-encoder.html">URL 编解码工具</a>
+    <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+    <a href="https://zhibanku.com/tools/word-count.html">字数统计</a>
+    <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a>
+  <span>本工具为纯本地运行，数据不会离开您的浏览器。</span>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  const colorPreview = document.getElementById('colorPreview');
+  const previewHex = document.getElementById('previewHex');
+  const hexInput = document.getElementById('hexInput');
+  const rgbInput = document.getElementById('rgbInput');
+  const hslInput = document.getElementById('hslInput');
+  const colorPicker = document.getElementById('colorPicker');
+  const convertBtn = document.getElementById('convertBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultHex = document.getElementById('resultHex');
+  const resultRgb = document.getElementById('resultRgb');
+  const resultHsl = document.getElementById('resultHsl');
+  const toast = document.getElementById('toast');
+
+  let currentColor = { r: 26, g: 95, b: 224 };
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function() {
+      toast.classList.remove('show');
+    }, 1800);
+  }
+
+  function rgbToHex(r, g, b) {
+    function toHex(n) {
+      var hex = n.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }
+    return '#' + toHex(r) + toHex(g) + toHex(b);
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    var max = Math.max(r, g, b);
+    var min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) {
+      h = s = 0;
+    } else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+    return { h: h, s: s, l: l };
+  }
+
+  function hslToRgb(h, s, l) {
+    h = ((h % 360) + 360) % 360;
+    s = Math.max(0, Math.min(100, s)) / 100;
+    l = Math.max(0, Math.min(100, l)) / 100;
+    var c = (1 - Math.abs(2 * l - 1)) * s;
+    var x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    var m = l - c / 2;
+    var r = 0, g = 0, b = 0;
+    if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+    else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+    else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+    else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+    else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+    else if (h >= 300 && h < 360) { r = c; g = 0; b = x; }
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+    return { r: r, g: g, b: b };
+  }
+
+  function parseHex(hex) {
+    hex = hex.trim().replace(/^#/, '');
+    if (hex.length === 3) {
+      hex = hex.split('').map(function(c) { return c + c; }).join('');
+    }
+    if (hex.length === 6) {
+      var r = parseInt(hex.substring(0, 2), 16);
+      var g = parseInt(hex.substring(2, 4), 16);
+      var b = parseInt(hex.substring(4, 6), 16);
+      if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+      return { r: r, g: g, b: b };
+    }
+    if (hex.length === 8) {
+      var r2 = parseInt(hex.substring(0, 2), 16);
+      var g2 = parseInt(hex.substring(2, 4), 16);
+      var b2 = parseInt(hex.substring(4, 6), 16);
+      if (isNaN(r2) || isNaN(g2) || isNaN(b2)) return null;
+      return { r: r2, g: g2, b: b2 };
+    }
+    return null;
+  }
+
+  function parseRgb(str) {
+    var match = str.match(/rgba?\(([^)]+)\)/i);
+    if (!match) return null;
+    var parts = match[1].split(',').map(function(s) { return s.trim(); });
+    if (parts.length < 3) return null;
+    var r, g, b;
+    if (parts[0].indexOf('%') !== -1) {
+      r = Math.round(parseFloat(parts[0]) * 255 / 100);
+      g = Math.round(parseFloat(parts[1]) * 255 / 100);
+      b = Math.round(parseFloat(parts[2]) * 255 / 100);
+    } else {
+      r = parseInt(parts[0], 10);
+      g = parseInt(parts[1], 10);
+      b = parseInt(parts[2], 10);
+    }
+    if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) return null;
+    return { r: r, g: g, b: b };
+  }
+
+  function parseHsl(str) {
+    var match = str.match(/hsla?\(([^)]+)\)/i);
+    if (!match) return null;
+    var parts = match[1].split(',').map(function(s) { return s.trim(); });
+    if (parts.length < 3) return null;
+    var h = parseFloat(parts[0]);
+    var s = parseFloat(parts[1]);
+    var l = parseFloat(parts[2]);
+    if (isNaN(h) || isNaN(s) || isNaN(l)) return null;
+    if (h < 0 || h > 360 || s < 0 || s > 100 || l < 0 || l > 100) return null;
+    return hslToRgb(h, s, l);
+  }
+
+  function updateUI(color) {
+    currentColor = color;
+    var hex = rgbToHex(color.r, color.g, color.b);
+    var hsl = rgbToHsl(color.r, color.g, color.bhed);
+    var hsl = rgbToHsl(color.r, color.g, color.b);
+    var rgbStr = 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
+    var hslStr = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+
+    colorPreview.style.background = hex;
+    previewHex.textContent = hex;
+    hexInput.value = hex;
+    rgbInput.value = rgbStr;
+    hslInput.value = hslStr;
+    colorPicker.value = hex;
+
+    resultHex.textContent = hex;
+    resultRgb.textContent = rgbStr;
+    resultHsl.textContent = hslStr;
+  }
+
+  function convertFromInput() {
+    var hexVal = hexInput.value.trim();
+    var rgbVal = rgbInput.value.trim();
+    var hslVal = hslInput.value.trim();
+
+    var color = null     if (hexVal) {
+      color = parseHex(hexVal);
+      if (color) {
+        updateUI(color);
+        return;
+      }
+    }
+    if (rgbVal) {
+      color = parseRgb(rgbVal);
+      if (color) {
+        updateUI(color);
+        return;
+      }
+    }
+    if (hslVal) {
+      color = parseHsl(hslVal);
+      if (color) {
+        updateUI(color);
+        return;
+      }
+    }
+    showToast('格式错误，请检查输入');
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast('已复制到剪贴板');
+      }, function() {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      showToast('已复制到剪贴板');
+    } catch (e) {
+      showToast('复制失败，请手动复制');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // 事件绑定
+  convertBtn.addEventListener('click', convertFromInput);
+
+  resetBtn.addEventListener('click', function() {
+    updateUI({ r: 26, g: 95, b: 224 });
+    showToast('已重置');
+  });
+
+  colorPicker.addEventListener('input', function(e) {
+    var color = parseHex(e.target.value);
+    if (color) {
+      updateUI(color);
+    }
+  });
+
+  // 预设按钮
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  presetBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var color = parseHex(btn.getAttribute('data-color'));
+      if (color) {
+        updateUI(color);
+      }
+    });
+  });
+
+  // 复制按钮
+  var copyBtns = document.querySelectorAll('.copy-btn');
+  copyBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-copy');
+      var target = document.getElementById(targetId);
+      if (target) {
+        copyText(target.textContent);
+      }
+    });
+  });
+
+  // 初始化
+  updateUI({ r: 26, g: 95, b: 224 });
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/color-picker" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/color-picker" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/color-picker-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
