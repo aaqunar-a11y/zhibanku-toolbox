@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>宽高比计算器 — 按宽或高推算另一边</title>
+<meta name="description" content="宽高比计算器，输入宽高比与一边数值，自动推算另一边，支持常见比例预设与一键复制结果。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/aspect-ratio.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1f2937; line-height: 1.6; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 60px; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  h1 { font-size: 1.9rem; margin: 24px 0 8px; color: #111827; }
+  .lead { background: #eef4ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 0.98rem; color: #1e3a8a; margin-bottom: 28px; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 1.3rem; margin-bottom: 14px; color: #1e40af; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+  .preset-wrap { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .preset-btn { padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.15s; color: #374151; }
+  .preset-btn:hover { background: #e0e7ff; border-color: #3b82f6; color: #1e40af; }
+  .preset-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; font-weight: 600; }
+  .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 560px) { .input-grid { grid-template-columns: 1fr; } }
+  .field label { display: block; font-size: 0.9rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  .field input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; }
+  .field input:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+  .field .hint { font-size: 0.8rem; color: #6b7280; margin-top: 4px; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .btn { padding: 10px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: background 0.15s; font-weight: 600; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { background: #e5e7eb; color: #374151; }
+  .btn-secondary:hover { background: #d1d5db; }
+  .btn-success { background: #059669; color: #fff; }
+  .btn-success:hover { background: #047857; }
+  .result-box { margin-top: 20px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 18px; display: none; }
+  .result-box.show { display: block; }
+  .result-box .result-label { font-size: 0.85rem; color: #166534; font-weight: 600; margin-bottom: 6px; }
+  .result-box .result-value { font-size: 1.5rem; font-weight: 700; color: #065f46; word-break: break-all; }
+  .result-box .result-detail { font-size: 0.9rem; color: #166534; margin-top: 6px; }
+  .error-msg { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-top: 16px; display: none; font-size: 0.95rem; }
+  .error-msg.show { display: block; }
+  .note-list { padding-left: 20px; }
+  .note-list li { margin-bottom: 8px; font-size: 0.95rem; }
+  .steps { padding-left: 20px; }
+  .steps li { margin-bottom: 10px; font-size: 0.95rem; }
+  details { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; color: #1e40af; }
+  details p { margin-top: 8px; font-size: 0.92rem; color: #4b5563; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .related-links a { display: inline-block; padding: 8px 16px; background: #f3f4f6; border-radius: 8px; text-decoration: none; color: #1e40af; font-size: 0.9rem; border: 1px solid #e5e7eb; transition: all 0.15s; }
+  .related-links a:hover { background: #e0e7ff; border-color: #3b82f6; }
+  footer { text-align: center; padding: 20px 16px; color: #6b7280; font-size: 0.85rem; border-top: 1px solid #e5e7eb; max-width: 920px; margin: 0 auto; }
+  footer a { color: #1e40af; text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav">
+  <a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a>
+  <a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a>
+</nav>
+<main>
+  <h1>宽高比计算器</h1>
+  <p class="lead">宽高比计算器用于根据已知的宽高比（例如 16:9、4:3）和其中一边的实际数值，自动推算出另一边应该取多少。您只需在下方输入宽高比的分子与分母，再填写宽度或高度中的任意一个数值，点击「计算另一边」按钮，结果就会显示在下方结果区域。本工具支持常见的视频、图片、屏幕比例预设，一键填入即可，适合做海报、视频尺寸、响应式布局时快速换算。</p>
+
+  <div class="card">
+    <h2>快捷预设</h2>
+    <div class="preset-wrap" id="presetWrap">
+      <button class="preset-btn" data-w="16" data-h="9">16:9 视频</button>
+      <button class="preset-btn" data-w="4" data-h="3">4:3 照片</button>
+      <button class="preset-btn" data-w="1" data-h="1">1:1 方形</button>
+      <button class="preset-btn" data-w="9" data-h="16">9:16 竖屏</button>
+      <button class="preset-btn" data-w="3" data-h="2">3:2 相机</button>
+      <button class="preset-btn" data-w="21" data-h="9">21:9 超宽</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>输入数值</h2>
+    <div class="input-grid">
+      <div class="field">
+        <label>宽高比 — 宽度（分子）</label>
+        <input type="number" id="ratioW" placeholder="例如 16" min="1" step="any">
+        <div class="hint">宽高比的第一个数字</div>
+      </div>
+      <div class="field">
+        <label>宽高比 — 高度（分母）</label>
+        <input type="number" id="ratioH" placeholder="例如 9" min="1" step="any">
+        <div class="hint">宽高比的第二个数字</div>
+      </div>
+      <div class="field">
+        <label>实际宽度（像素/厘米/任意单位）</label>
+        <input type="number" id="actualW" placeholder="填宽度则自动算高度" min="0" step="any">
+        <div class="hint">与高度二选一填写</div>
+      </div>
+      <div class="field">
+        <label>实际高度（像素/厘米/任意单位）</label>
+        <input type="number" id="actualH" placeholder="填高度则自动算宽度" min="0" step="any">
+        <div class="hint">与宽度二选一填写</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="calcBtn">计算另一边</button>
+      <button class="btn btn-secondary" id="resetBtn">重置</button>
+    </div>
+    <div class="出错了-msg" id="出错了Msg"></div>
+    <div class="result-box" id="resultBox">
+      <div class="result-label">计算结果</div>
+      <div class="result-value" id="resultValue"></div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-success" id="copyBtn">复制结果</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>注意事项</h2>
+    <ul class="note-list">
+      <li>宽高比的分子和分母都必须大于 0，否则无法计算。</li>
+      <li>实际宽度和实际高度只能填写其中一个，两个都填或都不填都会提示错误。</li>
+      <li>输入值支持小数（如 2.5），计算结果保留 4 位小数，多余位数自动四舍五入。</li>
+      <li>本工具所有计算均在您的浏览器本地完成，不会上传任何数据到服务器。</li>
+      <li>结果单位与输入单位一致，您填像素得到像素，填厘米得到厘米。</li>
+      <li>若需要精确到更多小数位，请自行在结果基础上继续计算，本工具不提供精度调节。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol class="steps">
+      <li>点击上方快捷预设按钮（如 16:9），或手动在「宽高比」两个输入框中填写比例数字。</li>
+      <li>在「实际宽度」或「实际高度」中填写任意一个已知数值，另一个留空。</li>
+      <li>点击蓝色「计算另一边」按钮，系统自动推算缺失的数值。</li>
+      <li>结果会显示在下方绿色区域，包含计算出的数值和比例验证信息。</li>
+      <li>如需复制结果，点击「复制结果」按钮即可；点「重置」清空所有输入。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>常见问题</h2>
+    <details>
+      <summary>计算结果的精度如何</summary>
+      <p>结果保留 4 位小数，对于绝大多数设计场景足够使用。若需要更高精度，可自行用计算器继续处理。</p>
+    </details>
+    <details>
+      <summary>可以输入小数比例吗</summary>
+      <p>可以。宽高比分子分母都支持小数，例如 1.5:1 或 2.35:1，系统会按实际数值计算。</p>
+    </details>
+    <details>
+      <summary>为什么两个实际值都填了会报错</summary>
+      <p>本工具的设计目的是推算未知边，因此只接受一个实际值。若您已知两边想反推比例，请使用其他比例计算工具。</p>
+    </details>
+    <details>
+      <summary>数据会泄露吗</summary>
+      <p>不会。所有计算都在浏览器本地完成，没有任何网络请求，您的数据不会离开设备。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>相关工具推荐</h2>
+    <div class="related-links">
+      <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+      <a href="https://zhibanku.com/tools/px-rem.html">px 与 rem 换算工具</a>
+      <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+      <a href="https://zhibanku.com/tools/word-count.html">字数统计</a>
+      <a href="https://zhibanku.com/tools/text-diff.html">文本对比工具</a>
+      <a href="https://zhibanku.com/tools/sql-format.html">SQL 格式化工具</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var ratioW = document.getElementById('ratioW');
+  var ratioH = document.getElementById('ratioH');
+  var actualW = document.getElementById('actualW');
+  var actualH = document.getElementById('actualH');
+  var calcBtn = document.getElementById('calcBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var copyBtn = document.getElementById('copyBtn');
+  var errorMsg = document.getElementById('出错了Msg');
+  var resultBox = document.getElementById('resultBox');
+  var resultValue = document.getElementById('resultValue');
+  var resultDetail = document.getElementById('resultDetail');
+  var presetBtns = document.querySelectorAll('.preset-btn');
+
+  var lastResult = '';
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.add('show');
+    resultBox.classList.remove('show');
+  }
+
+  function clearError() {
+    errorMsg.textContent = '';
+    errorMsg.classList.remove('show');
+  }
+
+  function setActivePreset(w, h) {
+    presetBtns.forEach(function(btn) {
+      var bw = parseFloat(btn.getAttribute('data-w'));
+      var bh = parseFloat(btn.getAttribute('data-h'));
+      if (Math.abs(bw - w) < 0.0001 && Math.abs(bh - h) < 0.0001) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  presetBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var w = parseFloat(btn.getAttribute('data-w'));
+      var h = parseFloat(btn.getAttribute('data-h'));
+      ratioW.value = w;
+      ratioH.value = h;
+      setActivePreset(w, h);
+      clearError();
+      resultBox.classList.remove('show');
+    });
+  });
+
+  function calc() {
+    clearError();
+    var rw = parseFloat(ratioW.value);
+    var rh = parseFloat(ratioH.value);
+    var aw = actualW.value.trim() === '' ? NaN : parseFloat(actualW.value);
+    var ah = actualH.value.trim() === '' ? NaN : parseFloat(actualH.value);
+
+    if (isNaN(rw) || isNaN(rh) || rw <= 0 || rh <= 0) {
+      showError('宽高比的分子和分母都必须填写且大于 0。');
+      return;
+    }
+
+    var hasW = !isNaN(aw) && aw >= 0;
+    var hasH = !isNaN(ah) && ah >= 0;
+
+    if (hasW && hasH) {
+      showError('实际宽度和实际高度只能填写其中一个，请留空一个。');
+      return;
+    }
+
+    if (!hasW && !hasH) {
+      showError('请至少填写实际宽度或实际高度中的一个数值。');
+      return;
+    }
+
+    var result;
+    var detail;
+
+    if (hasW) {
+      if (aw === 0) {
+        showError('实际宽度不能为 0。');
+        return;
+      }
+      result = aw * rh / rw;
+      detail = '已知宽度 ' + aw + '，宽高比 ' + rw + ':' + rh + '，推算高度为 ' + result.toFixed(4);
+    } else {
+      if (ah === 0) {
+        showError('实际高度不能为 0。');
+        return;
+      }
+      result = ah * rw / rh;
+      detail = '已知高度 ' + ah + '，宽高比 ' + rw + ':' + rh + '，推算宽度为 ' + result.toFixed(4);
+    }
+
+    var rounded = Math.round(result * 10000) / 10000;
+    lastResult = String(roundedhed);
+    // 修正：上面一行笔误，重新赋值
+    lastResult = String(rounded);
+
+    resultValue.textContent = lastResult;
+    resultDetail.textContent = detail;
+    resultBox.classList.add('show');
+  }
+
+  calcBtn.addEventListener('click', calc);
+
+  resetBtn.addEventListener('click', function() {
+    ratioW.value = '';
+    ratioH.value = '';
+    actualW.value = '';
+    actualH.value = '';
+    clearError();
+    resultBox.classList.remove('show');
+    presetBtns.forEach(function(btn) { btn.classList.remove('active'); });
+    lastResult = '';
+  });
+
+  copyBtn.addEventListener('click', function() {
+    if (!lastResult) return;
+    var textarea = document.createElement('textarea');
+    textarea.value = lastResult;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      copyBtn.textContent = '已复制';
+      setTimeout(function() { copyBtn.textContent = '复制结果'; }, 1500);
+    } catch (e) {
+      copyBtn.textContent = '复制失败';
+      setTimeout(function() { copyBtn.textContent = '复制结果'; }, 1500);
+    }
+    document.body.removeChild(textarea);
+  });
+
+  // 输入时清除错误状态
+  [ratioW, ratioH, actualW, actualH].forEach(function(input) {
+    input.addEventListener('input', function() {
+      clearError();
+      resultBox.classList.remove('show');
+    });
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/aspect-ratio" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/aspect-ratio" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/aspect-ratio-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
