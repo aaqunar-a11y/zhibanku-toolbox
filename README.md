@@ -2,7 +2,7 @@
 
 > [知办库在线工具](https://www.zhibanku.com/tools/) 的完整前端源码集合 —— 每个工具都是**单文件、零依赖、无网络请求**，下载 `index.html` 双击即可离线使用。
 
-![Tools](https://img.shields.io/badge/tools-72-blue.svg)
+![Tools](https://img.shields.io/badge/tools-73-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![Single File](https://img.shields.io/badge/single--file-HTML-orange.svg)
 ![Zero Dependency](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -82,6 +82,7 @@
 | 时区转换 | [在线使用](https://www.zhibanku.com/tools/timezone.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/timezone) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/timezone) |
 | TOML 与 JSON 互转工具 | [在线使用](https://www.zhibanku.com/tools/toml-json.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/toml-json) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/toml-json) |
 | 单位换算工具 | [在线使用](https://www.zhibanku.com/tools/unit-converter.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/unit-converter) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/unit-converter) |
+| 单价对比工具 | [在线使用](https://www.zhibanku.com/tools/unit-price.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/unit-price) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/unit-price) |
 | URL 编解码工具 | [在线使用](https://www.zhibanku.com/tools/url-encoder.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/url-encoder) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/url-encoder) |
 | URL 解析工具 | [在线使用](https://www.zhibanku.com/tools/url-parse.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/url-parse) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/url-parse) |
 | UUID 批量生成器 | [在线使用](https://www.zhibanku.com/tools/uuid-generator.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/uuid-generator) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/uuid-generator) |
@@ -93,7 +94,7 @@
 | 正则表达式测试器 | [在线使用](https://www.zhibanku.com/tools/zheng-ze-ce-shi.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zheng-ze-ce-shi) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zheng-ze-ce-shi) |
 | 在线字数统计 | [在线使用](https://www.zhibanku.com/tools/zi-shu-tong-ji.html) | [GitHub](https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/zi-shu-tong-ji) · [Gitee](https://gitee.com/xie881018/go-go-go/tree/main/tools/zi-shu-tong-ji) |
 
-共 72 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
+共 73 个工具，源码自动同步自 <https://www.zhibanku.com/tools/>。
 
 ## 🚀 使用方式
 

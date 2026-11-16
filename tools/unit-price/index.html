@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>单价对比工具 — 统一规格比价</title>
+<meta name="description" content="商品单价对比工具，支持不同规格统一换算，快速找出最划算的购买方案。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/unit-price.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#f0f4f8;color:#1a2b3c;line-height:1.6;padding-bottom:40px}
+.wrap{max-width:920px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(20,40,80,.08);padding:24px;margin-bottom:20px}
+h1{font-size:28px;color:#0d2b52;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+h1 .icon{font-size:32px}
+.lead{background:#eef4ff;border-left:4px solid #2b6de8;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15px;color:#234;margin-bottom:20px}
+h2{font-size:20px;color:#0d2b52;margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid #e3ecf7}
+.row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.col{flex:1;min-width:200px}
+label{display:block;font-size:14px;font-weight:600;color:#2a4a6e;margin-bottom:6px}
+input[type=number],input[type=text]{width:100%;padding:10px 12px;border:1px solid #c8d6e8;border-radius:8px;font-size:16px;background:#fafcff;transition:border .2s}
+input:focus{outline:none;border-color:#2b6de8;box-shadow:0 0 0 3px rgba(43,109,232,.12)}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;background:#e8eef7;color:#1a3a5e}
+.btn:hover{background:#d5e2f2;transform:translateY(-1px)}
+.btn-primary{background:#2b6de8;color:#fff}
+.btn-primary:hover{background:#1f5ad0}
+.btn-success{background:#0e9f6e;color:#fff}
+.btn-success:hover{background:#0b8a5e}
+.btn-danger{background:#e05a5a;color:#fff}
+.btn-danger:hover{background:#c94a4a}
+.preset{background:#f0f6ff;border:1px solid #b8d0f0;color:#1a5fe0;font-size:14px;padding:8px 14px;border-radius:20px}
+.preset:hover{background:#dce9ff}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px}
+th{background:#f0f5fc;color:#0d2b52;font-weight:600;padding:10px 8px;text-align:center;border:1px solid #dbe6f2}
+td{padding:10px 8px;text-align:center;border:1px solid #e4ecf5}
+tr:nth-child(even){background:#f8fbff}
+tr.best{background:#e6f9f0;font-weight:700}
+tr.best td:first-child::before{content:"✓ ";color:#0e9f6e}
+.result-box{background:#f8fbff;border:1px solid #d0e0f0;border-radius:10px;padding:16px;margin-top:16px;font-size:15px}
+.result-box .highlight{color:#0e9f6e;font-weight:700;font-size:18px}
+.result-box .warn{color:#d97706;font-weight:600}
+ul,ol{margin-left:20px;margin-bottom:10px}
+li{margin-bottom:6px;font-size:15px}
+details{background:#f8fbff;border:1px solid #dbe6f2;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600;color:#1a4a7a;font-size:15px}
+details p{margin-top:8px;font-size:14px;color:#3a4a5a}
+.tool-links{display:flex;flex-wrap:wrap;gap:10px}
+.tool-links a{display:inline-block;padding:8px 16px;background:#f0f6ff;border:1px solid #b8d0f0;border-radius:8px;color:#1a5fe0;text-decoration:none;font-size:14px;transition:all .15s}
+.tool-links a:hover{background:#dce9ff;transform:translateY(-1px)}
+footer{text-align:center;color:#6a7a8a;font-size:13px;margin-top:30px;padding:16px}
+footer a{color:#1a5fe0;text-decoration:none;margin:0 8px}
+.note{font-size:13px;color:#7a8a9a;margin-top:6px}
+@media(max-width:600px){.col{min-width:100%}.btn{width:100%}}
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main class="wrap">
+  <div class="card">
+    <h1><span class="icon">⚖️</span> 单价对比工具</h1>
+    <div class="lead">
+      本工具用于对比不同包装规格商品的实际单价，帮您快速判断哪种买法更划算。您只需在下方输入每个选项的名称、价格和规格数量（如重量、容量、件数），然后点击「开始对比」按钮，系统会自动换算成统一单位（每 100 克 / 每 100 毫升 / 每 10 件）的单价，并在结果表格中高亮显示最优惠的选项。所有计算均在您本地浏览器完成，数据不会上传到任何服务器。
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>选项名称（如：大包装）</label>
+        <input type="text" id="name1" placeholder="例如：500克装" value="500克装">
+      </div>
+      <div class="col">
+        <label>价格（元）</label>
+        <input type="number" id="price1" placeholder="例如：12.9" value="12.9" min="0" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格数量</label>
+        <input type="number" id="qty1" placeholder="例如：500" value="500" min="0.01" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格单位</label>
+        <select id="unit1" style="width:100%;padding:10px;border:1px solid #c8d6e8;border-radius:8px;font-size:15px;background:#fafcff">
+          <option value="g">克 (g)</option>
+          <option value="ml">毫升 (ml)</option>
+          <option value="件">件</option>
+          <option value="个">个</option>
+          <option value="kg">千克 (kg)</option>
+          <option value="l">升 (L)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>选项名称</label>
+        <input type="text" id="name2" placeholder="例如：小包装" value="小包装">
+      </div>
+      <div class="col">
+        <label>价格（元）</label>
+        <input type="number" id="price2" placeholder="例如：5.9" value="5.9" min="0" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格数量</label>
+        <input type="number" id="qty2" placeholder="例如：200" value="200" min="0.01" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格单位</label>
+        <select id="unit2" style="width:100%;padding:10px;border:1px solid #c8d6e8;border-radius:8px;font-size:15px;background:#fafcff">
+          <option value="g">克 (g)</option>
+          <option value="ml">毫升 (ml)</option>
+          <option value="件">件</option>
+          <option value="个">个</option>
+          <option value="kg">千克 (kg)</option>
+          <option value="l">升 (L)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>选项名称</label>
+        <input type="text" id="name3" placeholder="可留空" value="">
+      </div>
+      <div class="col">
+        <label>价格（元）</label>
+        <input type="number" id="price3" placeholder="可留空" value="" min="0" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格数量</label>
+        <input type="number" id="qty3" placeholder="可留空" value="" min="0.01" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格单位</label>
+        <select id="unit3" style="width:100%;padding:10px;border:1px solid #c8d6e8;border-radius:8px;font-size:15px;background:#fafcff">
+          <option value="g">克 (g)</option>
+          <option value="ml">毫升 (ml)</option>
+          <option value="件">件</option>
+          <option value="个">个</option>
+          <option value="kg">千克 (kg)</option>
+          <option value="l">升 (L)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>选项名称</label>
+        <input type="text" id="name4" placeholder="可留空" value="">
+      </div>
+      <div class="col">
+        <label>价格（元）</label>
+        <input type="number" id="price4" placeholder="可留空" value="" min="0" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格数量</label>
+        <input type="number" id="qty4" placeholder="可留空" value="" min="0.01" step="0.01">
+      </div>
+      <div class="col">
+        <label>规格单位</label>
+        <select id="unit4" style="width:100%;padding:10px;border:1px solid #c8d6e8;border-radius:8px;font-size:15px;background:#fafcff">
+          <option value="g">克 (g)</option>
+          <option value="ml">毫升 (ml)</option>
+          <option value="件">件</option>
+          <option value="个">个</option>
+          <option value="kg">千克 (kg)</option>
+          <option value="l">升 (L)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="compare()">开始对比</button>
+      <button class="btn btn-danger" onclick="resetAll()">重置</button>
+      <button class="btn btn-success" onclick="copyResult()">复制结果</button>
+    </div>
+
+    <div class="preset-row" style="margin-bottom:10px">
+      <span style="font-size:14px;color:#5a6a7a;margin-right:8px">快捷预设：</span>
+      <button class="btn preset" onclick="preset('g')">克重比价</button>
+      <button class="btn preset" onclick="preset('ml')">容量比价</button>
+      <button class="btn preset" onclick="preset('件')">件数比价</button>
+      <button class="btn preset" onclick="preset('kg')">千克比价</button>
+      <button class="btn preset" onclick="preset('l')">升比价</button>
+    </div>
+
+    <div id="resultArea" class="result-box" style="display:none">
+      <h3 style="margin-bottom:10px;color:#0d2b52">📊 对比结果</h3>
+      <div id="resultTable"></div>
+      <div id="resultSummary" style="margin-top:12px;font-size:15px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>注意事项</h2>
+    <ul>
+      <li>所有计算完全在您的浏览器本地进行，数据不会上传到任何服务器，可放心使用。</li>
+      <li>规格数量必须大于 0，价格必须大于等于 0，否则该选项会被忽略。</li>
+      <li>不同单位的选项会自动换算：克与千克互通，毫升与升互通；但克和毫升不能直接互相换算（密度不同），请确保对比的选项单位属于同一类别。</li>
+      <li>「件」和「个」视为不同单位，不会自动换算，请手动统一单位后再对比。</li>
+      <li>结果按每 100 单位（克/毫升/件）计算单价，方便直观比较。</li>
+      <li>最多支持 4 个选项同时对比，第 3、4 个选项可留空不填。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol>
+      <li>在「选项名称」「价格」「规格数量」「规格单位」中输入您要对比的商品信息，最多可填 4 个选项。</li>
+      <li>点击「开始对比」按钮，系统会自动换算所有选项为统一单位（每 100 单位）的单价。</li>
+      <li>对比结果会显示在下方表格中，最划算的选项会以绿色高亮并打勾标记。</li>
+      <li>如需复制结果，点击「复制结果」按钮即可将对比表格复制到剪贴板。</li>
+      <li>点击「重置」按钮可清空所有输入，重新开始。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>常见问题</h2>
+    <details>
+      <summary>为什么克和毫升不能直接对比</summary>
+      <p>因为不同物质的密度不同，1克水的体积是1毫升，但1克油的体积大于1毫升。只有同种物质或密度相近的商品才能直接换算。</p>
+    </details>
+    <details>
+      <summary>规格数量填错了怎么办</summary>
+      <p>直接修改输入框中的数值，然后重新点击「开始对比」按钮即可。系统会重新计算所有选项的单价。</p>
+    </details>
+    <details>
+      <summary>可以对比超过4个选项吗</summary>
+      <p>当前版本最多支持4个选项同时对比。如果您需要对比更多，可以分批次进行，或者先对比出最优的几个再进一步比较。</p>
+    </details>
+    <details>
+      <summary>复制结果会包含格式吗</summary>
+      <p>复制的内容为纯文本表格，会保留对齐和换行，方便粘贴到聊天工具或笔记软件中。不会包含颜色等样式。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>相关工具推荐</h2>
+    <div class="tool-links">
+      <a href="https://zhibanku.com/tools/percentage-calc.html">百分比计算器</a>
+      <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+      <a href="https://zhibanku.com/tools/salary-tax.html">个税计算器</a>
+      <a href="https://zhibanku.com/tools/discount-calc.html">折扣计算工具</a>
+      <a href="https://zhibanku.com/tools/word-count.html">字数统计工具</a>
+      <a href="https://zhibanku.com/tools/text-replace.html">批量文本替换</a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/tools/">返回在线工具</a> · 本工具完全在本地运行，无需联网
+  </footer>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  // 预设按钮：设置所有单位为指定类型
+  window.preset = function(unit) {
+    document.getElementById('unit1').value = unit;
+    document.getElementById('unit2').value = unit;
+    document.getElementById('unit3').value = unit;
+    document.getElementById('unit4').value = unit;
+    // 给用户一个视觉反馈
+    document.getElementById('resultArea').style.display = 'none';
+  };
+
+  // 重置所有输入
+  window.resetAll = function() {
+    document.getElementById('name1').value = '500克装';
+    document.getElementById('price1').value = '12.9';
+    document.getElementById('qty1').value = '500';
+    document.getElementById('unit1').value = 'g';
+    document.getElementById('name2').value = '小包装';
+    document.getElementById('price2').value = '5.9';
+    document.getElementById('qty2').value = '200';
+    document.getElementById('unit2').value = 'g';
+    document.getElementById('name3').value = '';
+    document.getElementById('price3').value = '';
+    document.getElementById('qty3').value = '';
+    document.getElementById('unit3').value = 'g';
+    document.getElementById('name4').value = '';
+    document.getElementById('price4').value = '';
+    document.getElementById('qty4').value = '';
+    document.getElementById('unit4').value = 'g';
+    document.getElementById('resultArea').style.display = 'none';
+  };
+
+  // 单位换算为基准单位（克/毫升/件）
+  function toBase(unit, qty) {
+    switch(unit) {
+      case 'g': return qty;
+      case 'kg': return qty * 1000;
+      case 'ml': return qty;
+      case 'l': return qty * 1000;
+      case '件': return qty;
+      case '个': return qty;
+      default: return qty;
+    }
+  }
+
+  // 获取单位类别
+  function getCategory(unit) {
+    if(unit === 'g' || unit === 'kg') return 'weight';
+    if(unit === 'ml' || unit === 'l') return 'volume';
+    return 'count';
+  }
+
+  // 主对比函数
+  window.compare = function() {
+    var items = [];
+    var categories = new Set();
+
+    for(var i = 1; i <= 4; i++) {
+      var name = document.getElementById('name' + i).value.trim();
+      var price = parseFloat(document.getElementById('price' + i).value);
+      var qty = parseFloat(document.getElementById('qty' + i).value);
+      var unit = document.getElementById('unit' + i).value;
+
+      // 跳过完全空白的行
+      if(!name && isNaN(price) && isNaN(qty)) continue;
+      // 如果名称空但价格或数量有值，提示
+      if(!name) {
+        alert('第 ' + i + ' 个选项请填写名称');
+        return;
+      }
+      if(isNaN(price) || price < 0) {
+        alert('第 ' + i + ' 个选项的价格无效，请输入大于等于 0 的数字');
+        return;
+      }
+      if(isNaN(qty) || qty <= 0) {
+        alert('第 ' + i + ' 个选项的规格数量无效，请输入大于 0 的数字');
+        return;
+      }
+
+      var baseQty = toBase(unit, qty);
+      var unitPrice = price / baseQty * 100; // 每100单位的价格
+      var cat = getCategory(unit);
+
+      items.push({
+        name: name,
+        price: price,
+        qty: qty,
+        unit: unit,
+        baseQty: baseQty,
+        unitPrice: unitPrice,
+        category: cat
+      });
+      categories.add(cat);
+    }
+
+    if(items.length < 2) {
+      alert('请至少填写 2 个选项进行对比');
+      return;
+    }
+
+    // 检查单位类别是否一致
+    if(categories.size > 1) {
+      alert('注意：您填写的选项包含不同类别的单位（如克和毫升），无法直接对比。请统一为同一类别（重量或容量）后再试。');
+      return;
+    }
+
+    // 找出最优
+    var bestIndex = 0;
+    for(var j = 1; j < items.length; j++) {
+      if(items[j].unitPrice < items[bestIndex].unitPrice) {
+        bestIndex = j;
+      }
+    }
+
+    // 生成表格
+    var html = '<table>';
+    html += '<tr><th>选项</th><th>价格（元）</th><th>规格</th><th>每100单位单价</th><th>性价比</th></tr>';
+
+    for(var k = 0; k < items.length; k++) {
+      var cls = (k === bestIndex) ? 'class="best"' : '';
+      var ratio = (items[k].unitPrice / items[bestIndex].unitPrice).toFixed(2);
+      var ratioText = (k === bestIndex) ? '最优' : '贵 ' + ((ratio - 1) * 100).toFixed(1) + '%';
+      html += '<tr ' + cls + '>';
+      html += '<td>' + items[k].name + '</td>';
+      html += '<td>' + items[k].price.toFixed(2) + '</td>';
+      html += '<td>' + items[k].qty + ' ' + items[k].unit + '</td>';
+      html += '<td>' + items[k].unitPrice.toFixed(2) + ' 元</td>';
+      html += '<td>' + ratioText + '</td>';
+      html += '</tr>';
+    }
+    html += '</table>';
+
+    var summary = '';
+    summary += '<div class="highlight">🏆 最划算：' + items[bestIndex].name + '</div>';
+    summary += '<div>每 100 ' + (items[bestIndex].category === 'weight' ? '克' : (items[bestIndex].category === 'volume' ? '毫升' : '单位')) + ' 仅需 ' + items[bestIndex].unitPrice.toFixed(2) + ' 元</div>';
+    if(items.length > 2) {
+      summary += '<div class="warn">💡 提示：对比了 ' + items.length + ' 个选项，' + items[bestIndex].name + ' 单价最低。</div>';
+    }
+
+    document.getElementById('resultTable').innerHTML = html;
+    document.getElementById('resultSummary').innerHTML = summary;
+    document.getElementById('resultArea').style.display = 'block';
+  };
+
+  // 复制结果
+  window.copyResult = function() {
+    var area = document.getElementById('resultArea');
+    if(area.style.display === 'none') {
+      alert('请先点击「开始对比」生成结果，再复制');
+      return;
+    }
+
+    var table = document.getElementById('resultTable');
+    var rows = table.querySelectorAll('tr');
+    var text = '单价对比结果\n';
+    text += '==============\n';
+
+    for(var i = 0; i < rows.length; i++) {
+      var cells = rows[i].querySelectorAll('th, td');
+      var line = [];
+      for(var j = 0; j < cells.length; j++) {
+        line.push(cells[j].textContent.trim());
+      }
+      text += line.join(' | ') + '\n';
+    }
+
+    var summary = document.getElementById('resultSummary').textContent.trim();
+    text += '==============\n' + summary;
+
+    // 使用剪贴板 API
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        alert('结果已复制到剪贴板');
+      }).catch(function() {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('结果已复制到剪贴板');
+    } catch(e) {
+      alert('复制失败，请手动选择复制');
+    }
+    document.body.removeChild(ta);
+  }
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/unit-price" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/unit-price" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/unit-price-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
