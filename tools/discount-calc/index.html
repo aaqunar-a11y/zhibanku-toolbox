@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>折扣计算器 — 折后价、折扣率与省钱金额一键算清</title>
+<meta name="description" content="折扣计算器：输入原价与折扣，一键算出折后价、折扣率与省下金额，支持满减叠加，结果可复制。">
+<link rel="canonical" href="https://www.zhibanku.com/tools/discount-calc.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2937; line-height: 1.6; }
+  .zbk-topnav { max-width: 920px; margin: 0 auto; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 1.6; }
+  .zbk-topnav a { display: inline-block; padding: 7px 14px; border: 1px solid #cddffa; background: #f4f8ff; color: #1449b0; border-radius: 8px; text-decoration: none; font-weight: 600; }
+  .zbk-topnav a:last-child { border: none; background: transparent; color: #1a5fe0; font-weight: 400; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { font-size: 1.9rem; color: #0f2b5b; margin-bottom: 8px; }
+  .lead { background: #eef4ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0 28px; font-size: 0.98rem; color: #1e3a5f; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 1.3rem; color: #0f2b5b; margin-bottom: 14px; border-bottom: 2px solid #e5edf8; padding-bottom: 8px; }
+  .input-group { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+  .input-item { flex: 1 1 200px; }
+  .input-item label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: #374151; }
+  .input-item input, .input-item select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background: #fff; }
+  .input-item input:focus, .input-item select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
+  .preset-btn { padding: 7px 16px; border: 1px solid #d1d9e6; background: #f8fafc; border-radius: 20px; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; color: #1e3a5f; }
+  .preset-btn:hover { background: #e0edff; border-color: #3b82f6; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .btn { padding: 10px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: #1a5fe0; color: #fff; }
+  .btn-primary:hover { background: #1449b0; }
+  .btn-secondary { background: #e5edf8; color: #1a5fe0; }
+  .btn-secondary:hover { background: #d0e0f5; }
+  .btn-success { background: #10b981; color: #fff; }
+  .btn-success:hover { background: #059669; }
+  .result-box { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 18px; margin-top: 20px; }
+  .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .result-item { background: #fff; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .result-item .label { font-size: 0.82rem; color: #6b7280; margin-bottom: 4px; }
+  .result-item .value { font-size: 1.4rem; font-weight: 700; color: #0f2b5b; }
+  .result-item .value.saved { color: #059669; }
+  .result-item .value.rate { color: #b45309; }
+  .note { font-size: 0.85rem; color: #6b7280; margin-top: 8px; }
+  .faq details { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+  .faq summary { font-weight: 600; cursor: pointer; color: #1e3a5f; }
+  .faq p { margin-top: 8px; font-size: 0.92rem; color: #4b5563; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .related-links a { display: inline-block; padding: 8px 16px; background: #f0f4fa; border: 1px solid #dbe4f0; border-radius: 8px; text-decoration: none; color: #1a5fe0; font-size: 0.9rem; transition: all 0.2s; }
+  .related-links a:hover { background: #e0edff; border-color: #3b82f6; }
+  footer { max-width: 920px; margin: 0 auto; padding: 20px 16px; text-align: center; font-size: 0.85rem; color: #6b7280; border-top: 1px solid #e5e7eb; }
+  footer a { color: #1a5fe0; text-decoration: none; }
+  .error-tip { color: #dc2626; font-size: 0.88rem; margin-top: 6px; display: none; }
+  .input-error { border-color: #dc2626 !important; }
+  @media (max-width: 640px) {
+    h1 { font-size: 1.5rem; }
+    .card { padding: 16px; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<nav class="zbk-topnav" style="max-width:920px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;line-height:1.6"><a href="/" style="display:inline-block;padding:7px 14px;border:1px solid #cddffa;background:#f4f8ff;color:#1449b0;border-radius:8px;text-decoration:none;font-weight:600">&larr; 返回首页</a><a href="/tools/" style="display:inline-block;padding:7px 14px;color:#1a5fe0;text-decoration:none">在线工具</a></nav>
+
+<main>
+  <h1>折扣计算器</h1>
+  <p class="lead">折扣计算器帮你快速算清购物优惠：输入商品原价和折扣力度（如 8.5 折或 75% 折扣），点击「计算折扣」按钮，即可在下方结果区看到折后价、折扣率以及省下的金额。支持满减叠加计算，结果可一键复制。无论是网购比价、商场促销还是批量算账，都能帮你省心省力，避免算错钱。</p>
+
+  <div class="card">
+    <h2>折扣计算</h2>
+    <div class="input-group">
+      <div class="input-item">
+        <label for="originalPrice">原价（元）</label>
+        <input type="number" id="originalPrice" placeholder="例如：199" min="0" step="0.01">
+      </div>
+      <div class="input-item">
+        <label for="discountType">折扣类型</label>
+        <select id="discountType">
+          <option value="percent">折扣（如 8.5 折）</option>
+          <option value="off">降价金额（如减 50 元）</option>
+        </select>
+      </div>
+      <div class="input-item">
+        <label for="discountValue">折扣数值</label>
+        <input type="number" id="discountValue" placeholder="例如：8.5" min="0" step="0.1">
+      </div>
+    </div>
+
+    <div class="preset-row">
+      <span style="font-size:0.88rem;color:#6b7280;align-self:center;">快捷预设：</span>
+      <button class="preset-btn" data-type="percent" data-value="9.5">9.5 折</button>
+      <button class="preset-btn" data-type="percent" data-value="8.8">8.8 折</button>
+      <button class="preset-btn" data-type="percent" data-value="8">8 折</button>
+      <button class="preset-btn" data-type="percent" data-value="7.5">7.5 折</button>
+      <button class="preset-btn" data-type="percent" data-value="5">5 折</button>
+    </div>
+
+    <div class="input-group" style="margin-top:8px;">
+      <div class="input-item">
+        <label for="fullReduction">满减叠加（可选）</label>
+        <input type="text" id="fullReduction" placeholder="格式：满300减50，满200减20" style="font-size:0.9rem;">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="calcBtn">计算折扣</button>
+      <button class="btn btn-secondary" id="resetBtn">重置</button>
+      <button class="btn btn-success" id="copyBtn">复制结果</button>
+    </div>
+    <div class="出错了-tip" id="出错了Tip"></div>
+
+    <div class="result-box" id="resultBox" style="display:none;">
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="label">折后价</div>
+          <div class="value" id="finalPrice">—</div>
+        </div>
+        <div class="result-item">
+          <div class="label">折扣率</div>
+          <div class="value rate" id="discountRate">—</div>
+        </div>
+        <div class="result-item">
+          <div class="label">省下金额</div>
+          <div class="value saved" id="savedAmount">—</div>
+        </div>
+      </div>
+      <div class="note" id="calcDetail"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>注意事项</h2>
+    <ul style="padding-left:20px;display:flex;flex-direction:column;gap:8px;">
+      <li>原价和折扣数值必须为大于等于 0 的数字，折扣值请按常见习惯输入：如 8.5 折输入 8.5，75% 折扣输入 75（选择「折扣」类型时，系统自动将大于 10 的值视为百分比）。</li>
+      <li>满减叠加格式为「满300减50」，多个满减用逗号分隔。系统自动按从高到低匹配，同一订单只享受最优的一档满减。</li>
+      <li>所有计算均在您的浏览器本地完成，数据不会上传到任何服务器，关闭页面即全部清除。</li>
+      <li>结果保留两位小数，四舍五入。若出现无限循环小数，以显示值为准。</li>
+      <li>本工具适用于常规折扣场景，不包含「第二件半价」「买一送一」等复杂促销组合。</li>
+      <li>若输入非法字符或负数，点击「计算折扣」会提示错误，请修正后重试。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol style="padding-left:20px;display:flex;flex-direction:column;gap:10px;">
+      <li>在「原价」输入框中填写商品原价，例如 199 元。</li>
+      <li>选择折扣类型：默认「折扣」，输入 8.5 表示 8.5 折；也可切换为「降价金额」，输入具体减多少钱。</li>
+      <li>如需满减叠加，在「满减叠加」中按格式填写，例如「满300减50，满200减20」。</li>
+      <li>点击蓝色「计算折扣」按钮，下方结果区立即显示折后价、折扣率和省下金额。</li>
+      <li>如需复制结果，点击「复制结果」按钮即可粘贴到聊天或记账软件。</li>
+    </ol>
+  </div>
+
+  <div class="card faq">
+    <h2>常见问题</h2>
+    <details>
+      <summary>折扣值输入 8.5 和 85 有什么区别？</summary>
+      <p>输入 8.5 表示 8.5 折，即原价的 85%。输入 85 会被自动识别为 85% 折扣，同样按 8.5 折计算。系统对大于 10 的数值自动按百分比处理。</p>
+    </details>
+    <details>
+      <summary>满减叠加是怎么计算的？</summary>
+      <p>先按折扣算出折后价，再判断是否满足满减条件。多个满减同时满足时，自动选择优惠金额最大的一档，不叠加多档。</p>
+    </details>
+    <details>
+      <summary>结果可以保留几位小数？</summary>
+      <p>默认保留两位小数，四舍五入。例如 99.999 会显示为 100.00。您复制的结果就是显示值。</p>
+    </details>
+    <details>
+      <summary>数据会上传到服务器吗？</summary>
+      <p>不会。所有计算都在您的浏览器本地完成，没有任何网络请求，关闭页面后数据即消失，请放心使用。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>相关工具推荐</h2>
+    <div class="related-links">
+      <a href="https://zhibanku.com/tools/unit-price.html">⚖️ 单价对比工具</a>
+      <a href="https://zhibanku.com/tools/unit-converter.html">常用单位换算</a>
+      <a href="https://zhibanku.com/tools/salary-tax.html">个税计算器</a>
+      <a href="https://zhibanku.com/tools/word-count.html">字数统计</a>
+      <a href="https://zhibanku.com/tools/text-replace.html">批量文本替换工具</a>
+      <a href="https://zhibanku.com/tools/url-encode.html">URL 编解码工具</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p><a href="/tools/">返回在线工具</a> · 本工具为纯本地运行，无需联网，数据不出浏览器。</p>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var originalPriceInput = document.getElementById('originalPrice');
+  var discountTypeSelect = document.getElementById('discountType');
+  var discountValueInput = document.getElementById('discountValue');
+  var fullReductionInput = document.getElementById('fullReduction');
+  var calcBtn = document.getElementById('calcBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var copyBtn = document.getElementById('copyBtn');
+  var errorTip = document.getElementById('出错了Tip');
+  var resultBox = document.getElementById('resultBox');
+  var finalPriceEl = document.getElementById('finalPrice');
+  var discountRateEl = document.getElementById('discountRate');
+  var savedAmountEl = document.getElementById('savedAmount');
+  var calcDetailEl = document.getElementById('calcDetail');
+
+  // 快捷预设按钮
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  presetBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var type = btn.getAttribute('data-type');
+      var value = btn.getAttribute('data-value');
+      discountTypeSelect.value = type;
+      discountValueInput.value = value;
+      // 清除错误状态
+      clearError();
+    });
+  });
+
+  // 计算主逻辑
+  function calculate() {
+    clearError();
+    var originalPrice = parseFloat(originalPriceInput.value);
+    var discountType = discountTypeSelect.value;
+    var discountValue = parseFloat(discountValueInput.valueapsed);
+    var discountValue = parseFloat(discountValueInput.value);
+
+    // 校验
+    if (isNaN(originalPrice) || originalPrice < 0) {
+      showError('请输入有效的原价（大于等于 0 的数字）');
+      originalPriceInput.classList.add('input-error');
+      return;
+    }
+    if (isNaN(discountValue) || discountValue < 0) {
+      showError('请输入有效的折扣数值（大于等于 0 的数字）');
+      discountValueInput.classList.add('input-error');
+      return;
+    }
+
+    var finalPrice = 0;
+    var discountRate = 0; // 折扣率，如 0.85 表示 85%
+    var savedAmount = 0     ;
+    var detailText = '';
+
+    if (discountType === 'percent') {
+      // 折扣类型：输入 8.5 表示 8.5 折；输入 85 表示 85%
+      var discountPercent = 0;
+      if (discountValue > 10) {
+        discountPercent = discountValue / 100;
+      } else {
+        discountPercent = discountValue / 10;
+      }
+      // 限制范围
+      if (discountPercent > 1) discountPercent = 1;
+      if (discountPercent < 0) discountPercent = 0;
+      finalPrice = originalPrice * discountPercent;
+      discountRate = discountPercent;
+      detailText = '折扣率：' + (discountPercent * 100).toFixed(2) + '%';
+    } else {
+      // 降价金额类型
+      var offAmount = discountValue;
+      if (offAmount > originalPrice) offAmount = originalPrice;
+      finalPrice = originalPrice - offAmount;
+      discountRate = finalPrice / originalPrice;
+      detailText = '降价金额：' + offAmount.toFixed(2) + ' 元';
+    }
+
+    // 满减叠加
+    var fullReductionText = fullReductionInput.value.trim();
+    if (fullReductionText) {
+      var bestReduction = 0;
+      var bestRule = '';
+      var rules = fullReductionText.split(/[,，;；]/);
+      rules.forEach(function(rule) {
+        rule = rule.trim();
+        var match = rule.match(/满(\d+(?:\.\d+)?)减(\d+(?:\.\d+)?)/);
+        if (match) {
+          var threshold = parseFloat(match[1]);
+          var reduction = parseFloat(match[2]);
+          if (finalPrice >= threshold && reduction > bestReduction) {
+            bestReduction = reduction;
+            bestRule = rule;
+          }
+        }
+      });
+      if (bestReduction > 0) {
+        finalPrice = finalPrice - bestReduction;
+        if (finalPrice < 0) finalPrice = 0;
+        discountRate = finalPrice / originalPrice;
+        detailText += '；满减优惠：' + bestRule + '，减 ' + bestReduction.toFixed(2) + ' 元';
+      } else {
+        detailText += '；未满足满减条件';
+      }
+    }
+
+    // 四舍五入到两位小数
+    finalPrice = Math.round(finalPrice * 100) / 100;
+    savedAmount = Math.round((originalPrice - finalPrice) * 100) / 100;
+    var ratePercent = Math.round(discountRate * 10000) / 100;
+
+    // 显示结果
+    finalPriceEl.textContent = '¥' + finalPrice.toFixed(2);
+    discountRateEl.textContent = ratePercent.toFixed(2) + '%';
+    savedAmountEl.textContent = '¥' + savedAmount.toFixed(2);
+    calcDetailEl.textContent = detailText + '。原价 ¥' + originalPrice.toFixed(2) + '，折后价 ¥' + finalPrice.toFixed(2) + '，共省 ¥' + savedAmount.toFixed(2) + '。';
+    resultBox.style.display = 'block';
+  }
+
+  // 重置
+  function reset() {
+    originalPriceInput.value = '';
+    discountTypeSelect.value = 'percent';
+    discountValueInput.value = '';
+    fullReductionInput.value = '';
+    resultBox.style.display = 'none';
+    clearError();
+    originalPriceInput.classList.remove('input-error');
+    discountValueInput.classList.remove('input-error');
+  }
+
+  // 复制结果
+  function copyResult() {
+    if (resultBox.style.display === 'none') {
+      showError('请先点击「计算折扣」按钮生成结果');
+      return;
+    }
+    var text = '折扣计算结果：折后价 ' + finalPriceEl.textContent + '，折扣率 ' + discountRateEl.textContent + '，省下 ' + savedAmountEl.textContent + '。' + calcDetailEl.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        copyBtn.textContent = '已复制';
+        setTimeout(function() { copyBtn.textContent = '复制结果'; }, 1500);
+      }).catch(function() {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      copyBtn.textContent = '已复制';
+      setTimeout(function() { copyBtn.textContent = '复制结果'; }, 1500);
+    } catch (e) {
+      showError('复制失败，请手动复制');
+    }
+    document.body.removeChild(textarea);
+  }
+
+  function showError(msg) {
+    errorTip.textContent = msg;
+    errorTip.style.display = 'block';
+  }
+
+  function clearError() {
+    errorTip.textContent = '';
+    errorTip.style.display = 'none';
+    originalPriceInput.classList.remove('input-error');
+    discountValueInput.classList.remove('input-error');
+  }
+
+  // 事件绑定
+  calcBtn.addEventListener('click', calculate);
+  resetBtn.addEventListener('click', reset);
+  copyBtn.addEventListener('click', copyResult);
+
+  // 输入时清除错误状态
+  originalPriceInput.addEventListener('input', function() {
+    this.classList.remove('input-error');
+    if (errorTip.style.display === 'block') clearError();
+  });
+  discountValueInput.addEventListener('input', function() {
+    this.classList.remove('input-error');
+    if (errorTip.style.display === 'block') clearError();
+  });
+
+})();
+</script>
+<div class="zbk-tool-foot" style="max-width:860px;margin:38px auto 0;padding:18px 16px;border-top:1px solid var(--line,#e5e7eb);font-size:14px;color:#6b7280;line-height:1.9">
+<b style="color:#374151">开源仓库与下载</b>
+<div style="margin-bottom:10px"><a href="https://www.zhibanku.com/" style="color:#2563eb;text-decoration:none;font-weight:600">← 返回知办库首页</a></div>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+<a href="https://github.com/aaqunar-a11y/zhibanku-toolbox/tree/main/tools/discount-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">GitHub 开源源码</a>
+<a href="https://gitee.com/xie881018/go-go-go/tree/main/tools/discount-calc" target="_blank" rel="noopener" style="display:inline-block;border:1px solid var(--line,#e5e7eb);background:#2563eb;color:#fff;border-radius:9px;padding:9px 15px;font-size:14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0">Gitee 开源源码（国内）</a>
+</div>
+<div style="margin-top:6px"><a href="https://www.zhibanku.com/tools/discount-calc-download.html" style="color:#2563eb;text-decoration:none">查看绿色版下载页 →</a></div>
+</div>
+</body>
+</html>
